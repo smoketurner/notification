@@ -1,0 +1,10 @@
+sudo: false
+language: java
+jdk:
+  - openjdk7
+  - oraclejdk7
+  - oraclejdk8
+after_success:
+  - mvn cobertura:cobertura coveralls:report
+  - if [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then mvn deploy --settings maven_deploy_settings.xml; else echo 'Pull request, skipping deploy.'; fi
+

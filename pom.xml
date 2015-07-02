@@ -14,6 +14,14 @@
     <description>Notification</description>
     <url>https://github.com/smoketurner/notification</url>
 
+    <licenses>
+        <license>
+            <name>Apache 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -46,12 +54,41 @@
             <id>notification</id>
             <url>${project.version}</url>
         </site>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
+
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/smoketurner/notification</url>
+    </ciManagement>
 
     <issueManagement>
         <system>github</system>
         <url>https://github.com/smoketurner/notification/issues</url>
     </issueManagement>
+
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -59,6 +96,7 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>4.12</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -224,7 +262,7 @@
                     <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
                 <version>0.12</version>
@@ -242,7 +280,7 @@
                         <phase>site-deploy</phase>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
@@ -253,6 +291,18 @@
                     </formats>
                     <aggregate>true</aggregate>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sourceforge.cobertura</groupId>
+                        <artifactId>cobertura</artifactId>
+                        <version>2.1.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>3.0.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -300,12 +350,17 @@
                     <reportSet>
                         <reports>
                             <report>index</report>
+                            <report>summary</report>
                             <report>dependency-info</report>
-                            <report>dependencies</report>
-                            <report>issue-tracking</report>
-                            <report>scm</report>
                             <report>license</report>
+                            <report>scm</report>
+                            <report>issue-tracking</report>
+                            <report>mailing-list</report>
+                            <report>cim</report>
                             <report>project-team</report>
+                            <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>modules</report>
                         </reports>
                     </reportSet>
                 </reportSets>
@@ -316,8 +371,16 @@
                 <version>2.10.1</version>
                 <configuration>
                     <additionalparam>${javadoc.doclint.none}</additionalparam>
-                    <show>public</show>
+                    <quiet>true</quiet>
                 </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>html</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>
