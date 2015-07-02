@@ -1,7 +1,8 @@
 Notification
 ============
 [![Build Status](https://travis-ci.org/smoketurner/notification.svg?branch=master)](https://travis-ci.org/smoketurner/notification)
-[![Coverage Status](https://img.shields.io/coveralls/smoketurner/notification.svg)](https://coveralls.io/r/smoketurner/notification)
+[![Coverage Status](https://coveralls.io/repos/smoketurner/notification/badge.svg)](https://coveralls.io/r/smoketurner/notification)
+
 
 Notification is a reference implementation for a HTTP-based notification web service, similar to Yammer's [Streamie](http://basho.com/posts/business/riak-and-scala-at-yammer/) service. This project was developed using:
 
