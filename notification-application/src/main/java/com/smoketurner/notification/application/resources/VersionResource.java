@@ -1,0 +1,40 @@
+package com.smoketurner.notification.application.resources;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import io.dropwizard.jersey.caching.CacheControl;
+import javax.annotation.Nonnull;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+@Path("/version")
+public class VersionResource {
+
+    private final String version;
+
+    /**
+     * Constructor
+     */
+    public VersionResource() {
+        version = getClass().getPackage().getImplementationVersion();
+    }
+
+    /**
+     * Constructor
+     *
+     * @param version
+     *            Version to expose in the endpoint
+     */
+    public VersionResource(@Nonnull final String version) {
+        this.version = checkNotNull(version);
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
+    public Response getVersion() {
+        return Response.ok(version).type(MediaType.TEXT_PLAIN).build();
+    }
+}

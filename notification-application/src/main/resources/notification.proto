@@ -1,0 +1,17 @@
+package notification;
+
+option java_package = "com.smoketurner.notification.application.protos";
+option java_outer_classname = "NotificationProtos";
+option optimize_for = SPEED;
+
+message NotificationPB {
+  required int64 id = 1;
+  required string category = 2;
+  required string message = 3;
+  required int64 created_at = 4;
+};
+
+message NotificationListPB {
+  repeated NotificationPB notification = 1;
+  repeated int64 deleted_id = 2;
+};
