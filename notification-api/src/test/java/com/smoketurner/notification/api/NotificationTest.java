@@ -2,7 +2,6 @@ package com.smoketurner.notification.api;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import io.dropwizard.jackson.Jackson;
 import java.util.TreeSet;
 import jersey.repackaged.com.google.common.collect.Sets;
@@ -35,42 +34,6 @@ public class NotificationTest {
         final Notification actual = MAPPER.readValue(
                 fixture("fixtures/notification.json"), Notification.class);
         assertThat(actual).isEqualTo(notification);
-    }
-
-    @Test
-    public void categoryCannotBeNull() throws Exception {
-        try {
-            Notification.newBuilder().withCategory(null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-    }
-
-    @Test
-    public void categoryCannotBeEmpty() throws Exception {
-        try {
-            Notification.newBuilder().withCategory("");
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
-    }
-
-    @Test
-    public void messageCannotBeNull() throws Exception {
-        try {
-            Notification.newBuilder().withMessage(null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-    }
-
-    @Test
-    public void messageCannotBeEmpty() throws Exception {
-        try {
-            Notification.newBuilder().withMessage("");
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
     }
 
     @Test
