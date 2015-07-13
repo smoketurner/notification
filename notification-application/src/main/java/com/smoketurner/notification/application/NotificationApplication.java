@@ -13,6 +13,7 @@ import com.smoketurner.notification.application.config.NotificationConfiguration
 import com.smoketurner.notification.application.config.RiakClusterFactory;
 import com.smoketurner.notification.application.config.SnowizardConfiguration;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
+import com.smoketurner.notification.application.filter.CharsetResponseFilter;
 import com.smoketurner.notification.application.health.RiakHealthCheck;
 import com.smoketurner.notification.application.managed.NotificationStoreManager;
 import com.smoketurner.notification.application.resources.NotificationResource;
@@ -41,9 +42,12 @@ public class NotificationApplication extends
 
         final MetricRegistry registry = environment.metrics();
 
+        // returns all DateTime objects as ISO8601 strings
         environment.getObjectMapper().configure(
                 SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        environment.jersey().register(new NotificationExceptionMapper());
+        environment.jersey().register(NotificationExceptionMapper.class);
+        // adds charset=UTF-8 to the response headers
+        environment.jersey().register(CharsetResponseFilter.class);
 
         // snowizard
         final SnowizardConfiguration snowizardConfig = configuration

@@ -1,6 +1,7 @@
 package com.smoketurner.notification.application.riak;
 
 import io.dropwizard.jersey.protobuf.ProtocolBufferMediaType;
+import java.util.Map;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
@@ -8,10 +9,12 @@ import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.convert.ConversionException;
 import com.basho.riak.client.api.convert.Converter;
 import com.basho.riak.client.core.util.BinaryValue;
+import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB;
 import com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB;
+import com.smoketurner.notification.application.protos.NotificationProtos.Property;
 
 public class NotificationListConverter extends
         Converter<NotificationListObject> {
@@ -64,6 +67,12 @@ public class NotificationListConverter extends
     }
 
     public static Notification convert(final NotificationPB notification) {
+        final ImmutableMap.Builder<String, String> builder = ImmutableMap
+                .builder();
+        for (final Property property : notification.getPropertyList()) {
+            builder.put(property.getKey(), property.getValue());
+        }
+
         return Notification
                 .newBuilder()
                 .withId(notification.getId())
@@ -71,14 +80,25 @@ public class NotificationListConverter extends
                 .withMessage(notification.getMessage())
                 .withCreatedAt(
                         new DateTime(notification.getCreatedAt(),
-                                DateTimeZone.UTC)).build();
+                                DateTimeZone.UTC))
+                .withProperties(builder.build()).build();
     }
 
     public static NotificationPB convert(final Notification notification) {
-        return NotificationPB.newBuilder().setId(notification.getId().get())
+        final NotificationPB.Builder builder = NotificationPB.newBuilder()
+                .setId(notification.getId().get())
                 .setCategory(notification.getCategory())
                 .setMessage(notification.getMessage())
-                .setCreatedAt(notification.getCreatedAt().get().getMillis())
-                .build();
+                .setCreatedAt(notification.getCreatedAt().get().getMillis());
+
+        if (notification.getProperties().isPresent()) {
+            for (Map.Entry<String, String> property : notification
+                    .getProperties().get().entrySet()) {
+                builder.addProperty(Property.newBuilder()
+                        .setKey(property.getKey())
+                        .setValue(property.getValue()));
+            }
+        }
+        return builder.build();
     }
 }

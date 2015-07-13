@@ -58,6 +58,7 @@ public final class CursorObject implements Comparable<CursorObject> {
         this.value = checkNotNull(value);
     }
 
+    @JsonProperty
     public String getKey() {
         return key;
     }

@@ -26,6 +26,7 @@ import com.google.common.base.Optional;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.managed.NotificationStoreManager;
+import com.smoketurner.notification.application.riak.CursorObject;
 import com.smoketurner.notification.application.riak.CursorUpdate;
 import com.smoketurner.notification.application.riak.NotificationListAddition;
 import com.smoketurner.notification.application.riak.NotificationListDeletion;
@@ -122,8 +123,7 @@ public class NotificationStore {
             final FetchValue.Response response = client.execute(fv);
             list = response.getValue(NotificationListObject.class);
         } catch (UnresolvedConflictException e) {
-            LOGGER.error(
-                    "Unable to resolve Riak siblings for key: " + location, e);
+            LOGGER.error("Unable to resolve siblings for key: " + location, e);
             throw new NotificationStoreException(e);
         } catch (ExecutionException e) {
             LOGGER.error("Unable to fetch key: " + location, e);
@@ -137,6 +137,28 @@ public class NotificationStore {
         if (list == null) {
             return Optional.absent();
         }
+
+        final Optional<CursorObject> cursor = fetchCursor(username);
+        if (cursor.isPresent()) {
+            LOGGER.debug("Current cursor: {}", cursor.get().getValue());
+        } else {
+            LOGGER.debug("No current cursor found for {}", username);
+        }
+
+        if (!list.getNotificationList().isEmpty()) {
+            // update the cursor to the latest notification ID only if the
+            // cursor is less than the latest ID
+            final Notification first = list.getNotificationList().get(0);
+            final long firstId = first.getId().get();
+            if (cursor.isPresent()) {
+                if (cursor.get().getValue() < firstId) {
+                    updateCursor(username, firstId);
+                }
+            } else {
+                updateCursor(username, firstId);
+            }
+        }
+
         return Optional.of(list.getNotificationList());
     }
 
@@ -220,6 +242,8 @@ public class NotificationStore {
             Thread.currentThread().interrupt();
             throw new NotificationStoreException(e);
         }
+
+        deleteCursor(username);
     }
 
     /**
@@ -265,6 +289,50 @@ public class NotificationStore {
     }
 
     /**
+     * Fetch the cursor for a given user
+     *
+     * @param username
+     *            User to get the cursor for
+     * @return the notifications cursor
+     * @throws NotificationStoreException
+     *             if unable to fetch the cursor
+     */
+    public Optional<CursorObject> fetchCursor(@Nonnull final String username)
+            throws NotificationStoreException {
+
+        checkNotNull(username);
+        checkArgument(!username.isEmpty(), "username cannot be empty");
+
+        final String key = String.format("%s-%s", username, CURSOR_NAME);
+
+        final Location location = new Location(cursorsNamespace, key);
+
+        LOGGER.debug("Fetching key: {}", location);
+
+        final CursorObject cursor;
+        final FetchValue fv = new FetchValue.Builder(location).build();
+        try {
+            final FetchValue.Response response = client.execute(fv);
+            cursor = response.getValue(CursorObject.class);
+        } catch (UnresolvedConflictException e) {
+            LOGGER.error("Unable to resolve siblings for key: " + location, e);
+            throw new NotificationStoreException(e);
+        } catch (ExecutionException e) {
+            LOGGER.error("Unable to fetch key: " + location, e);
+            throw new NotificationStoreException(e);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Interrupted fetching key: " + location, e);
+            Thread.currentThread().interrupt();
+            throw new NotificationStoreException(e);
+        }
+
+        if (cursor == null) {
+            return Optional.absent();
+        }
+        return Optional.of(cursor);
+    }
+
+    /**
      * Update a given cursor with the specified value.
      *
      * @param username
@@ -288,7 +356,7 @@ public class NotificationStore {
                 .withUpdate(update)
                 .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
 
-        LOGGER.debug("Updating key: {}", location);
+        LOGGER.debug("Updating key ({}) to value: {}", location, value);
         try {
             client.execute(updateValue);
         } catch (ExecutionException e) {
@@ -296,6 +364,37 @@ public class NotificationStore {
             throw new NotificationStoreException(e);
         } catch (InterruptedException e) {
             LOGGER.warn("Update request was interrupted", e);
+            Thread.currentThread().interrupt();
+            throw new NotificationStoreException(e);
+        }
+    }
+
+    /**
+     * Delete the notifications cursor for a given user
+     * 
+     * @param username
+     *            User delete their cursor
+     * @throws NotificationStoreException
+     *             if unable to delete the notifications cursor
+     */
+    public void deleteCursor(@Nonnull final String username)
+            throws NotificationStoreException {
+        checkNotNull(username);
+        checkArgument(!username.isEmpty(), "username cannot be empty");
+
+        final String key = String.format("%s-%s", username, CURSOR_NAME);
+        final Location location = new Location(cursorsNamespace, key);
+        final DeleteValue deleteValue = new DeleteValue.Builder(location)
+                .build();
+
+        LOGGER.debug("Deleting key: {}", location);
+        try {
+            client.execute(deleteValue);
+        } catch (ExecutionException e) {
+            LOGGER.error("Unable to delete key: " + location, e);
+            throw new NotificationStoreException(e);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Delete request was interrupted", e);
             Thread.currentThread().interrupt();
             throw new NotificationStoreException(e);
         }
