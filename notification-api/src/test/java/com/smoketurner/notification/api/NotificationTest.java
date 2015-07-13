@@ -7,19 +7,43 @@ import java.util.TreeSet;
 import jersey.repackaged.com.google.common.collect.Sets;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.junit.Before;
 import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public class NotificationTest {
     private final ObjectMapper MAPPER = Jackson.newObjectMapper();
-    private final Notification notification = Notification
-            .newBuilder()
-            .withId(12345L)
-            .withCategory("new-follower")
-            .withMessage("you have a new follower")
-            .withCreatedAt(
-                    new DateTime("2015-06-29T21:04:12Z", DateTimeZone.UTC))
-            .build();
+    private Notification notification;
+
+    @Before
+    public void setUp() throws Exception {
+        final Notification notification2 = Notification
+                .newBuilder()
+                .withId(12346L)
+                .withCategory("new-follower")
+                .withMessage("you have a new follower")
+                .withCreatedAt(
+                        new DateTime("2015-06-29T21:04:12Z", DateTimeZone.UTC))
+                .withUnseen(true)
+                .withProperties(
+                        ImmutableMap.of("first_name", "Test 2", "last_name",
+                                "User 2")).build();
+
+        notification = Notification
+                .newBuilder()
+                .withId(12345L)
+                .withCategory("new-follower")
+                .withMessage("you have a new follower")
+                .withCreatedAt(
+                        new DateTime("2015-06-29T21:04:12Z", DateTimeZone.UTC))
+                .withUnseen(true)
+                .withProperties(
+                        ImmutableMap.of("first_name", "Test", "last_name",
+                                "User"))
+                .withNotifications(ImmutableList.of(notification2)).build();
+    }
 
     @Test
     public void serializesToJSON() throws Exception {

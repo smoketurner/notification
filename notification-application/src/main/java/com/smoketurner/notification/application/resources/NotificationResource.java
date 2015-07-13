@@ -21,7 +21,6 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import com.google.common.primitives.Longs;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.exceptions.NotificationException;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
@@ -100,9 +99,9 @@ public class NotificationResource {
             for (String id : Splitter.on(',').trimResults()
                     .split(idsParam.get())) {
                 try {
-                    ids.add(Longs.tryParse(id));
-                } catch (NullPointerException ignore) {
-                    // ignore nulls
+                    ids.add(Long.parseLong(id));
+                } catch (NumberFormatException ignore) {
+                    // ignore
                 }
             }
 

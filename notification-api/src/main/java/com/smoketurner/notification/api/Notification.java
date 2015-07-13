@@ -1,6 +1,9 @@
 package com.smoketurner.notification.api;
 
 import io.dropwizard.jackson.JsonSnakeCase;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
@@ -9,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 
 @Immutable
@@ -31,6 +34,12 @@ public final class Notification implements Comparable<Notification> {
 
     private DateTime createdAt;
 
+    private Boolean unseen;
+
+    private Map<String, String> properties;
+
+    private Collection<Notification> notifications;
+
     /**
      * Constructor
      *
@@ -39,18 +48,28 @@ public final class Notification implements Comparable<Notification> {
      * @param category
      * @param message
      * @param createdAt
+     * @param unseen
+     * @param properties
+     * @param notifications
      */
     @JsonCreator
-    private Notification(@JsonProperty("id") final Optional<Long> id,
+    private Notification(
+            @JsonProperty("id") final Optional<Long> id,
             @JsonProperty("id_str") final Optional<String> idStr,
             @JsonProperty("category") final String category,
             @JsonProperty("message") final String message,
-            @JsonProperty("created_at") final Optional<DateTime> createdAt) {
+            @JsonProperty("created_at") final Optional<DateTime> createdAt,
+            @JsonProperty("unseen") final Optional<Boolean> unseen,
+            @JsonProperty("properties") final Optional<Map<String, String>> properties,
+            @JsonProperty("notifications") final Optional<Collection<Notification>> notifications) {
         this.id = id.orNull();
         this.idStr = idStr.orNull();
         this.category = category;
         this.message = message;
         this.createdAt = createdAt.orNull();
+        this.unseen = unseen.orNull();
+        this.properties = properties.orNull();
+        this.notifications = notifications.orNull();
     }
 
     public static Builder newBuilder() {
@@ -63,6 +82,9 @@ public final class Notification implements Comparable<Notification> {
         private String category;
         private String message;
         private DateTime createdAt;
+        private Boolean unseen;
+        private Map<String, String> properties;
+        private Collection<Notification> notifications;
 
         public Builder fromNotification(final Notification other) {
             this.id = other.id;
@@ -70,6 +92,9 @@ public final class Notification implements Comparable<Notification> {
             this.category = other.category;
             this.message = other.message;
             this.createdAt = other.createdAt;
+            this.unseen = other.unseen;
+            this.properties = other.properties;
+            this.notifications = other.notifications;
             return this;
         }
 
@@ -94,10 +119,29 @@ public final class Notification implements Comparable<Notification> {
             return this;
         }
 
+        public Builder withUnseen(final Boolean unseen) {
+            this.unseen = unseen;
+            return this;
+        }
+
+        public Builder withProperties(final Map<String, String> properties) {
+            this.properties = properties;
+            return this;
+        }
+
+        public Builder withNotifications(
+                final Collection<Notification> notifications) {
+            this.notifications = ImmutableList.copyOf(notifications);
+            return this;
+        }
+
         public Notification build() {
             return new Notification(Optional.fromNullable(id),
                     Optional.fromNullable(idStr), category, message,
-                    Optional.fromNullable(createdAt));
+                    Optional.fromNullable(createdAt),
+                    Optional.fromNullable(unseen),
+                    Optional.fromNullable(properties),
+                    Optional.fromNullable(notifications));
         }
     }
 
@@ -126,6 +170,21 @@ public final class Notification implements Comparable<Notification> {
         return Optional.fromNullable(createdAt);
     }
 
+    @JsonProperty
+    public Optional<Boolean> getUnseen() {
+        return Optional.fromNullable(unseen);
+    }
+
+    @JsonProperty
+    public Optional<Map<String, String>> getProperties() {
+        return Optional.fromNullable(properties);
+    }
+
+    @JsonProperty
+    public Optional<Collection<Notification>> getNotifications() {
+        return Optional.fromNullable(notifications);
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -136,22 +195,29 @@ public final class Notification implements Comparable<Notification> {
         }
 
         final Notification other = (Notification) obj;
-        return Objects.equal(id, other.id) && Objects.equal(idStr, other.idStr)
-                && Objects.equal(category, other.category)
-                && Objects.equal(message, other.message)
-                && Objects.equal(createdAt, other.createdAt);
+        return Objects.equals(id, other.id)
+                && Objects.equals(idStr, other.idStr)
+                && Objects.equals(category, other.category)
+                && Objects.equals(message, other.message)
+                && Objects.equals(createdAt, other.createdAt)
+                && Objects.equals(unseen, other.unseen)
+                && Objects.equals(properties, other.properties)
+                && Objects.equals(notifications, other.notifications);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, idStr, category, message, createdAt);
+        return Objects.hash(id, idStr, category, message, createdAt, unseen,
+                properties, notifications);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("id", id)
                 .add("idStr", idStr).add("category", category)
-                .add("message", message).add("createdAt", createdAt).toString();
+                .add("message", message).add("createdAt", createdAt)
+                .add("unseen", unseen).add("properties", properties)
+                .add("notifications", notifications).toString();
     }
 
     @Override

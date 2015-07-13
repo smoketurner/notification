@@ -14,6 +14,7 @@ import com.smoketurner.notification.application.config.RiakClusterFactory;
 import com.smoketurner.notification.application.config.SnowizardConfiguration;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.health.RiakHealthCheck;
+import com.smoketurner.notification.application.managed.NotificationStoreManager;
 import com.smoketurner.notification.application.resources.NotificationResource;
 import com.smoketurner.notification.application.resources.PingResource;
 import com.smoketurner.notification.application.resources.VersionResource;
@@ -65,6 +66,7 @@ public class NotificationApplication extends
                 .register("riak", new RiakHealthCheck(client));
 
         final NotificationStore store = new NotificationStore(client, snowizard);
+        environment.lifecycle().manage(new NotificationStoreManager(store));
 
         // resources
         environment.jersey().register(new NotificationResource(store));

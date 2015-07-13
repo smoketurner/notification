@@ -1,6 +1,7 @@
 package com.smoketurner.notification.application.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -23,6 +24,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
@@ -220,5 +222,16 @@ public class NotificationResourceTest {
         verify(store).removeAll("test");
         assertThat(response.getStatus()).isEqualTo(500);
         assertThat(actual.getCode()).isEqualTo(500);
+    }
+
+    @Test
+    public void testRemoveIds() throws Exception {
+        final Response response = resources.client()
+                .target("/v1/notifications/test?ids=1,2,asdf,3").request()
+                .delete();
+
+        verify(store).remove("test", ImmutableSet.of(1L, 2L, 3L));
+        verify(store, never()).removeAll(anyString());
+        assertThat(response.getStatus()).isEqualTo(204);
     }
 }

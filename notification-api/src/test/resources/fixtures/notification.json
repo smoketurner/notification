@@ -3,5 +3,24 @@
   "id_str": "12345",
   "category": "new-follower",
   "message": "you have a new follower",
-  "created_at": "2015-06-29T21:04:12Z"
+  "created_at": "2015-06-29T21:04:12Z",
+  "unseen": true,
+  "properties": {
+    "first_name": "Test",
+    "last_name": "User"
+  },
+  "notifications": [
+    {
+      "id": 12346,
+      "id_str": "12346",
+      "category": "new-follower",
+      "message": "you have a new follower",
+      "created_at": "2015-06-29T21:04:12Z",
+      "unseen": true,
+      "properties": {
+        "first_name": "Test 2",
+        "last_name": "User 2"
+      }
+    }
+  ]
 }
