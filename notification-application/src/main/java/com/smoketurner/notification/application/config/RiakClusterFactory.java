@@ -1,6 +1,5 @@
 package com.smoketurner.notification.application.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import io.dropwizard.setup.Environment;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
@@ -10,6 +9,7 @@ import javax.annotation.Nonnull;
 import jersey.repackaged.com.google.common.collect.Lists;
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import com.smoketurner.notification.application.managed.RiakClusterManager;
@@ -25,7 +25,7 @@ public class RiakClusterFactory {
      * @param environment
      */
     public RiakClusterFactory(@Nonnull final Environment environment) {
-        this.environment = checkNotNull(environment);
+        this.environment = Preconditions.checkNotNull(environment);
     }
 
     public RiakCluster build(final RiakConfiguration config)

@@ -27,8 +27,8 @@ public class NotificationListConverter extends
     }
 
     @Override
-    public NotificationListObject toDomain(BinaryValue value, String contentType)
-            throws ConversionException {
+    public NotificationListObject toDomain(final BinaryValue value,
+            final String contentType) throws ConversionException {
 
         if (!ProtocolBufferMediaType.APPLICATION_PROTOBUF.equals(contentType)) {
             LOGGER.error("Invalid Content-Type: {}", contentType);

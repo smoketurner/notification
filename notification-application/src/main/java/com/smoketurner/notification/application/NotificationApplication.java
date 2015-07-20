@@ -2,6 +2,8 @@ package com.smoketurner.notification.application;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.ConflictResolverFactory;
 import com.basho.riak.client.api.convert.ConverterFactory;
@@ -15,6 +17,7 @@ import com.smoketurner.notification.application.config.SnowizardConfiguration;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.filter.CharsetResponseFilter;
 import com.smoketurner.notification.application.health.RiakHealthCheck;
+import com.smoketurner.notification.application.managed.CursorStoreManager;
 import com.smoketurner.notification.application.managed.NotificationStoreManager;
 import com.smoketurner.notification.application.resources.NotificationResource;
 import com.smoketurner.notification.application.resources.PingResource;
@@ -22,10 +25,14 @@ import com.smoketurner.notification.application.resources.VersionResource;
 import com.smoketurner.notification.application.riak.NotificationListConverter;
 import com.smoketurner.notification.application.riak.NotificationListObject;
 import com.smoketurner.notification.application.riak.NotificationListResolver;
+import com.smoketurner.notification.application.store.CursorStore;
 import com.smoketurner.notification.application.store.NotificationStore;
 
 public class NotificationApplication extends
         Application<NotificationConfiguration> {
+
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(NotificationApplication.class);
 
     public static void main(final String[] args) throws Exception {
         new NotificationApplication().run(args);
@@ -54,6 +61,9 @@ public class NotificationApplication extends
                 .getSnowizard();
         final IdWorker snowizard = new IdWorker(snowizardConfig.getWorkerId(),
                 snowizardConfig.getDatacenterId(), 0, false, registry);
+        LOGGER.info("Worker ID: {}, Datacenter ID: {}",
+                snowizardConfig.getWorkerId(),
+                snowizardConfig.getDatacenterId());
 
         // riak
         final RiakClusterFactory factory = new RiakClusterFactory(environment);
@@ -69,7 +79,10 @@ public class NotificationApplication extends
         environment.healthChecks()
                 .register("riak", new RiakHealthCheck(client));
 
-        final NotificationStore store = new NotificationStore(client, snowizard);
+        final CursorStore cursorStore = new CursorStore(registry, client);
+        final NotificationStore store = new NotificationStore(registry, client,
+                snowizard, cursorStore);
+        environment.lifecycle().manage(new CursorStoreManager(cursorStore));
         environment.lifecycle().manage(new NotificationStoreManager(store));
 
         // resources

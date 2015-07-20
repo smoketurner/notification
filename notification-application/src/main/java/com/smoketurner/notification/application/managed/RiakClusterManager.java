@@ -1,9 +1,9 @@
 package com.smoketurner.notification.application.managed;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import io.dropwizard.lifecycle.Managed;
 import javax.annotation.Nonnull;
 import com.basho.riak.client.core.RiakCluster;
+import com.google.common.base.Preconditions;
 
 public class RiakClusterManager implements Managed {
 
@@ -16,7 +16,7 @@ public class RiakClusterManager implements Managed {
      *            Riak cluster instance to manage
      */
     public RiakClusterManager(@Nonnull final RiakCluster cluster) {
-        this.cluster = checkNotNull(cluster);
+        this.cluster = Preconditions.checkNotNull(cluster);
     }
 
     @Override

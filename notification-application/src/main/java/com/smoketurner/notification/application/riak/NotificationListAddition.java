@@ -1,9 +1,9 @@
 package com.smoketurner.notification.application.riak;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.commands.kv.UpdateValue;
+import com.google.common.base.Preconditions;
 import com.smoketurner.notification.api.Notification;
 
 public class NotificationListAddition extends
@@ -20,7 +20,7 @@ public class NotificationListAddition extends
      *            Notification to add
      */
     public NotificationListAddition(final Notification notification) {
-        this.notification = checkNotNull(notification);
+        this.notification = Preconditions.checkNotNull(notification);
     }
 
     @Override

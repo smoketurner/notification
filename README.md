@@ -14,7 +14,6 @@ Notification is a reference implementation for a HTTP-based notification web ser
 Enhancements
 ------------
 1.) Add rollup support
-2.) Add seen/unseen support
 
 
 Support

@@ -1,11 +1,11 @@
 package com.smoketurner.notification.application.health;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 import javax.annotation.Nonnull;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.core.RiakNode;
 import com.codahale.metrics.health.HealthCheck;
+import com.google.common.base.Preconditions;
 
 public class RiakHealthCheck extends HealthCheck {
 
@@ -18,7 +18,7 @@ public class RiakHealthCheck extends HealthCheck {
      *            Riak client
      */
     public RiakHealthCheck(@Nonnull final RiakClient client) {
-        this.client = checkNotNull(client);
+        this.client = Preconditions.checkNotNull(client);
     }
 
     @Override

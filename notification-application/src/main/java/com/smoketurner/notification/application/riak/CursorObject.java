@@ -1,6 +1,5 @@
 package com.smoketurner.notification.application.riak;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Objects;
 import com.basho.riak.client.api.annotations.RiakBucketName;
 import com.basho.riak.client.api.annotations.RiakContentType;
@@ -15,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 
@@ -54,8 +54,8 @@ public final class CursorObject implements Comparable<CursorObject> {
     @JsonCreator
     public CursorObject(@JsonProperty("key") final String key,
             @JsonProperty("value") final Long value) {
-        this.key = checkNotNull(key);
-        this.value = checkNotNull(value);
+        this.key = Preconditions.checkNotNull(key);
+        this.value = Preconditions.checkNotNull(value);
     }
 
     @JsonProperty

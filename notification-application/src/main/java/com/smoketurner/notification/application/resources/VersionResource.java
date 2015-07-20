@@ -1,6 +1,5 @@
 package com.smoketurner.notification.application.resources;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import io.dropwizard.jersey.caching.CacheControl;
 import javax.annotation.Nonnull;
 import javax.ws.rs.GET;
@@ -8,6 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import com.google.common.base.Preconditions;
 
 @Path("/version")
 public class VersionResource {
@@ -28,7 +28,7 @@ public class VersionResource {
      *            Version to expose in the endpoint
      */
     public VersionResource(@Nonnull final String version) {
-        this.version = checkNotNull(version);
+        this.version = Preconditions.checkNotNull(version);
     }
 
     @GET

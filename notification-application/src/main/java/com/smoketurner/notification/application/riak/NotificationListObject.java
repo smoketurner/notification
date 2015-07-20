@@ -1,6 +1,5 @@
 package com.smoketurner.notification.application.riak;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +15,7 @@ import com.basho.riak.client.api.annotations.RiakVTag;
 import com.basho.riak.client.api.cap.VClock;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
@@ -61,7 +61,7 @@ public final class NotificationListObject {
      * @param key
      */
     public NotificationListObject(@Nonnull final String key) {
-        this.key = checkNotNull(key);
+        this.key = Preconditions.checkNotNull(key);
     }
 
     /**
@@ -70,7 +70,7 @@ public final class NotificationListObject {
      * @param other
      */
     public NotificationListObject(@Nonnull final NotificationListObject other) {
-        checkNotNull(other);
+        Preconditions.checkNotNull(other);
         this.key = other.key;
         this.vclock = other.vclock;
         this.tombstone = other.tombstone;

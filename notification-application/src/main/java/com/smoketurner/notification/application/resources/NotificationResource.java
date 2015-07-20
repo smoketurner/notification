@@ -1,8 +1,6 @@
 package com.smoketurner.notification.application.resources;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -16,12 +14,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import jersey.repackaged.com.google.common.base.Splitter;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
+import com.google.common.base.Preconditions;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.LongSetParam;
 import com.smoketurner.notification.application.exceptions.NotificationException;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.store.NotificationStore;
@@ -38,7 +35,7 @@ public class NotificationResource {
      *            Notification data store
      */
     public NotificationResource(@Nonnull final NotificationStore store) {
-        this.store = checkNotNull(store);
+        this.store = Preconditions.checkNotNull(store);
     }
 
     @GET
@@ -91,22 +88,11 @@ public class NotificationResource {
     @Timed
     @Path("/{username}")
     public Response delete(@PathParam("username") final String username,
-            @QueryParam("ids") final Optional<String> idsParam) {
+            @QueryParam("ids") final Optional<LongSetParam> idsParam) {
 
-        if (idsParam.isPresent() && !Strings.isNullOrEmpty(idsParam.get())) {
-            final Set<Long> ids = Sets.newHashSet();
-
-            for (String id : Splitter.on(',').trimResults()
-                    .split(idsParam.get())) {
-                try {
-                    ids.add(Long.parseLong(id));
-                } catch (NumberFormatException ignore) {
-                    // ignore
-                }
-            }
-
+        if (idsParam.isPresent()) {
             try {
-                store.remove(username, ids);
+                store.remove(username, idsParam.get().get());
             } catch (NotificationStoreException e) {
                 throw new NotificationException(
                         Response.Status.INTERNAL_SERVER_ERROR,

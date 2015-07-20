@@ -23,7 +23,7 @@ public class SnowizardConfiguration {
     }
 
     @JsonProperty
-    public void setDatacenterId(final Integer datacenterId) {
+    public void setDatacenterId(final int datacenterId) {
         this.datacenterId = datacenterId;
     }
 
@@ -33,7 +33,7 @@ public class SnowizardConfiguration {
     }
 
     @JsonProperty
-    public void setWorkerId(final Integer workerId) {
+    public void setWorkerId(final int workerId) {
         this.workerId = workerId;
     }
 }
