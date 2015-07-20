@@ -27,51 +27,77 @@ public class NotificationListResolverTest {
 
     @Test
     public void testMultipleSibling() throws Exception {
-        final Notification notification1 = Notification.builder().withId(1L)
-                .build();
-        final Notification notification2 = Notification.builder().withId(2L)
-                .build();
-        final Notification notification3 = Notification.builder().withId(3L)
-                .build();
-        final Notification notification4 = Notification.builder().withId(4L)
-                .build();
-        final Notification notification5 = Notification.builder().withId(5L)
-                .build();
-        final Notification notification6 = Notification.builder().withId(6L)
-                .build();
+        final Notification n1 = createNotification(1L);
+        final Notification n2 = createNotification(2L);
+        final Notification n3 = createNotification(3L);
+        final Notification n4 = createNotification(4L);
+        final Notification n5 = createNotification(5L);
+        final Notification n6 = createNotification(6L);
 
         final NotificationListObject list1 = new NotificationListObject("test");
-        list1.addNotification(notification1);
-        list1.addNotification(notification4);
-        list1.addNotification(notification2);
-        list1.addNotification(notification3);
+        list1.addNotification(n1);
+        list1.addNotification(n4);
+        list1.addNotification(n2);
+        list1.addNotification(n3);
 
         final NotificationListObject list2 = new NotificationListObject("test");
-        list1.addNotification(notification2);
-        list1.addNotification(notification3);
-        list1.addNotification(notification5);
+        list1.addNotification(n2);
+        list1.addNotification(n3);
+        list1.addNotification(n5);
 
         final NotificationListObject list3 = new NotificationListObject("test");
-        list1.addNotification(notification6);
-        list1.addNotification(notification2);
-        list1.addNotification(notification5);
+        list1.addNotification(n6);
+        list1.addNotification(n2);
+        list1.addNotification(n5);
 
         final List<NotificationListObject> siblings = ImmutableList.of(list1,
                 list2, list3);
 
         final NotificationListObject expected = new NotificationListObject(
                 "test");
-        expected.addNotification(notification1);
-        expected.addNotification(notification2);
-        expected.addNotification(notification3);
-        expected.addNotification(notification4);
-        expected.addNotification(notification5);
-        expected.addNotification(notification6);
+        expected.addNotification(n1);
+        expected.addNotification(n2);
+        expected.addNotification(n3);
+        expected.addNotification(n4);
+        expected.addNotification(n5);
+        expected.addNotification(n6);
 
         final NotificationListObject actual = resolver.resolve(siblings);
         assertThat(actual).isEqualTo(expected);
-        assertThat(actual.getNotifications()).containsExactly(notification6,
-                notification5, notification4, notification3, notification2,
-                notification1);
+        assertThat(actual.getNotifications()).containsExactly(n6, n5, n4, n3,
+                n2, n1);
+    }
+
+    @Test
+    public void testRemoveNotifications() throws Exception {
+        final List<Notification> notifications = ImmutableList.of(
+                createNotification(1L), createNotification(2L),
+                createNotification(3L), Notification.builder().build());
+
+        final List<Notification> expected = ImmutableList.of(
+                createNotification(2L), createNotification(3L));
+
+        final List<Notification> actual = NotificationListResolver
+                .removeNotifications(notifications, ImmutableList.of(1L));
+        assertThat(actual).containsExactlyElementsOf(expected);
+    }
+
+    @Test
+    public void testRemoveNotificationsEmpty() throws Exception {
+        final List<Notification> notifications = ImmutableList.of(
+                createNotification(1L), createNotification(2L),
+                createNotification(3L), Notification.builder().build());
+
+        final List<Notification> expected = ImmutableList.of(
+                createNotification(1L), createNotification(2L),
+                createNotification(3L));
+
+        final List<Notification> actual = NotificationListResolver
+                .removeNotifications(notifications, ImmutableList.<Long> of());
+        assertThat(actual).containsExactlyElementsOf(expected);
+    }
+
+    private Notification createNotification(final long id) {
+        return Notification.builder().withId(id).build();
     }
 }

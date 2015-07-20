@@ -13,7 +13,7 @@ public class CursorResolver implements ConflictResolver<CursorObject> {
             .getLogger(CursorResolver.class);
 
     @Override
-    public CursorObject resolve(List<CursorObject> siblings)
+    public CursorObject resolve(final List<CursorObject> siblings)
             throws UnresolvedConflictException {
         LOGGER.debug("Found {} siblings", siblings.size());
         if (siblings.size() > 1) {

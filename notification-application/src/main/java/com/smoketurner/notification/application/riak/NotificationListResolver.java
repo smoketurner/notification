@@ -80,9 +80,6 @@ public class NotificationListResolver implements
     public static List<Notification> removeNotifications(
             final Iterable<Notification> notifications,
             final Collection<Long> ids) {
-        if (ids.isEmpty()) {
-            return ImmutableList.copyOf(notifications);
-        }
 
         return ImmutableList.copyOf(Iterables.filter(notifications,
                 new Predicate<Notification>() {
