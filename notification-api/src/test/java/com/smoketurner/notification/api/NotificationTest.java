@@ -20,7 +20,7 @@ public class NotificationTest {
     @Before
     public void setUp() throws Exception {
         final Notification notification2 = Notification
-                .newBuilder()
+                .builder()
                 .withId(12346L)
                 .withCategory("new-follower")
                 .withMessage("you have a new follower")
@@ -32,7 +32,7 @@ public class NotificationTest {
                                 "User 2")).build();
 
         notification = Notification
-                .newBuilder()
+                .builder()
                 .withId(12345L)
                 .withCategory("new-follower")
                 .withMessage("you have a new follower")
@@ -62,11 +62,11 @@ public class NotificationTest {
 
     @Test
     public void testComparison() throws Exception {
-        final Notification notification1 = Notification.newBuilder().withId(1L)
+        final Notification notification1 = Notification.builder().withId(1L)
                 .build();
-        final Notification notification2 = Notification.newBuilder().withId(2L)
+        final Notification notification2 = Notification.builder().withId(2L)
                 .build();
-        final Notification notification3 = Notification.newBuilder().withId(3L)
+        final Notification notification3 = Notification.builder().withId(3L)
                 .build();
 
         assertThat(notification1.compareTo(notification1)).isZero();

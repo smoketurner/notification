@@ -1,0 +1,22 @@
+# Snowizard-specific options.
+snowizard:
+
+  datacenterId: 1
+  workerId: 1
+
+# Riak-specific options.
+riak:
+
+  nodes:
+    - 127.0.0.1:8087
+
+# HTTP-specific options.
+server:
+
+  applicationConnectors:
+    - type: http
+      port: 0
+  
+  adminConnectors:
+    - type: http
+      port: 0

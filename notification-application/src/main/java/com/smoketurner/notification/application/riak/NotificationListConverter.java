@@ -48,6 +48,7 @@ public class NotificationListConverter extends
         for (NotificationPB notification : list.getNotificationList()) {
             obj.addNotification(convert(notification));
         }
+        obj.deleteNotifications(list.getDeletedIdList());
         return obj;
     }
 
@@ -56,8 +57,8 @@ public class NotificationListConverter extends
             throws ConversionException {
 
         final NotificationListPB.Builder builder = NotificationListPB
-                .newBuilder();
-        for (Notification notification : domainObject.getNotificationList()) {
+                .newBuilder().addAllDeletedId(domainObject.getDeletedIds());
+        for (Notification notification : domainObject.getNotifications()) {
             builder.addNotification(convert(notification));
         }
         final NotificationListPB list = builder.build();
@@ -74,7 +75,7 @@ public class NotificationListConverter extends
         }
 
         return Notification
-                .newBuilder()
+                .builder()
                 .withId(notification.getId())
                 .withCategory(notification.getCategory())
                 .withMessage(notification.getMessage())

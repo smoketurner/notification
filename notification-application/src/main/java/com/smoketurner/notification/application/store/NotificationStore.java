@@ -3,6 +3,7 @@ package com.smoketurner.notification.application.store;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.joda.time.DateTime;
@@ -38,7 +39,7 @@ public class NotificationStore {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(NotificationStore.class);
-    private static final String CURSOR_NAME = "notifications";
+    public static final String CURSOR_NAME = "notifications";
     private static final Namespace NAMESPACE = new Namespace("notifications",
             StandardCharsets.UTF_8);
     private final RiakClient client;
@@ -47,7 +48,7 @@ public class NotificationStore {
 
     // timers
     private final Timer fetchTimer;
-    private final Timer storeTimer;
+    private final Timer updateTimer;
     private final Timer deleteTimer;
 
     /**
@@ -69,7 +70,7 @@ public class NotificationStore {
         Preconditions.checkNotNull(registry);
         this.fetchTimer = registry.timer(MetricRegistry.name(
                 NotificationStore.class, "fetch"));
-        this.storeTimer = registry.timer(MetricRegistry.name(
+        this.updateTimer = registry.timer(MetricRegistry.name(
                 NotificationStore.class, "store"));
         this.deleteTimer = registry.timer(MetricRegistry.name(
                 NotificationStore.class, "delete"));
@@ -147,9 +148,7 @@ public class NotificationStore {
             return Optional.absent();
         }
 
-        final List<Notification> notifications = setUnseenState(username,
-                list.getNotificationList());
-        return Optional.of(notifications);
+        return Optional.of(setUnseenState(username, list.getNotifications()));
     }
 
     /**
@@ -166,7 +165,7 @@ public class NotificationStore {
      *             if unable to update the cursor
      */
     public List<Notification> setUnseenState(@Nonnull final String username,
-            final List<Notification> notifications)
+            final TreeSet<Notification> notifications)
             throws NotificationStoreException {
 
         Preconditions.checkNotNull(username);
@@ -176,11 +175,12 @@ public class NotificationStore {
 
         // if there are no notifications, just return
         if (notifications.isEmpty()) {
-            return notifications;
+            return ImmutableList.copyOf(notifications);
         }
 
-        // get the ID of the most recent notification
-        final long mostRecentId = notifications.get(0).getId().get();
+        // get the ID of the most recent notification (this should never be
+        // zero)
+        final long mostRecentId = notifications.first().getId().or(0L);
         LOGGER.debug("Most recent notification ID: {}", mostRecentId);
 
         final Optional<Long> cursor = cursors.fetch(username, CURSOR_NAME);
@@ -188,7 +188,7 @@ public class NotificationStore {
         if (!cursor.isPresent()) {
             LOGGER.debug("User ({}) has no cursor", username);
 
-            // if there are no seen notifications, update to the cursor to the
+            // if the user has no cursor, update to the cursor to the
             // most recent notification
             cursors.store(username, CURSOR_NAME, mostRecentId);
 
@@ -197,25 +197,22 @@ public class NotificationStore {
                     .addAll(setUnseenState(notifications, true)).build();
         }
 
-        LOGGER.debug("Current cursor ID: {}", lastSeenId);
+        LOGGER.debug("Last seen notification ID: {}", lastSeenId);
 
         // if the latest seen notification ID is less than the most recent
         // notification ID, then update the cursor to the most recent
         // notification ID.
         if (lastSeenId < mostRecentId) {
-            LOGGER.debug("Updating cursor ID to {}", mostRecentId);
+            LOGGER.debug("Updating cursor to {}", mostRecentId);
             cursors.store(username, CURSOR_NAME, mostRecentId);
         }
 
-        // get the position of the last seen notification ID
-        final int lastSeenOffset = findNotification(notifications, lastSeenId);
-        LOGGER.debug("lastSeenId: {}, lastSeenOffset: {}", lastSeenId,
-                lastSeenOffset);
-        // if the notification is not found in the list, assume all of the
-        // notifications are unseen.
-        if (lastSeenOffset == -1) {
-            LOGGER.debug("Last seen ID {} not found, assuming all unseen",
-                    lastSeenId);
+        // get the parent ID of the last seen notification ID
+        final Optional<Notification> lastNotification = findNotification(
+                notifications, lastSeenId);
+        if (!lastNotification.isPresent()) {
+            // if the last notification is not found, set all of the
+            // notifications as unseen
             return ImmutableList.<Notification> builder()
                     .addAll(setUnseenState(notifications, true)).build();
         }
@@ -223,15 +220,13 @@ public class NotificationStore {
         final ImmutableList.Builder<Notification> builder = ImmutableList
                 .builder();
 
-        // unseen=true
-        final List<Notification> unseen = notifications.subList(0,
-                lastSeenOffset);
-        builder.addAll(setUnseenState(unseen, true));
+        // Set the head of the list as being unseen
+        builder.addAll(setUnseenState(
+                notifications.headSet(lastNotification.get()), true));
 
-        // unseen=false
-        final List<Notification> seen = notifications.subList(lastSeenOffset,
-                notifications.size());
-        builder.addAll(setUnseenState(seen, false));
+        // Set the tail of the list as being seen
+        builder.addAll(setUnseenState(
+                notifications.tailSet(lastNotification.get()), false));
 
         return builder.build();
     }
@@ -264,7 +259,7 @@ public class NotificationStore {
             throw new NotificationStoreException(e);
         }
 
-        final Notification updatedNotification = Notification.newBuilder()
+        final Notification updatedNotification = Notification.builder()
                 .fromNotification(notification).withId(id).withCreatedAt(now())
                 .build();
 
@@ -278,7 +273,7 @@ public class NotificationStore {
 
         LOGGER.debug("Updating key: {}", location);
 
-        final Timer.Context context = storeTimer.time();
+        final Timer.Context context = updateTimer.time();
         try {
             client.execute(updateValue);
         } catch (ExecutionException e) {
@@ -363,7 +358,7 @@ public class NotificationStore {
                 .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
 
         LOGGER.debug("Updating key: {}", location);
-        final Timer.Context context = deleteTimer.time();
+        final Timer.Context context = updateTimer.time();
         try {
             client.execute(updateValue);
         } catch (ExecutionException e) {
@@ -393,7 +388,7 @@ public class NotificationStore {
                 new Function<Notification, Notification>() {
                     @Override
                     public Notification apply(final Notification notification) {
-                        return Notification.newBuilder()
+                        return Notification.builder()
                                 .fromNotification(notification)
                                 .withUnseen(unseen).build();
                     }
@@ -401,17 +396,18 @@ public class NotificationStore {
     }
 
     /**
-     * Find the offset of a given notification if it exists
+     * Return the parent notification that matches the given ID or is the parent
+     * of a child notification.
      *
      * @param notifications
      *            Notifications to search through
      * @param id
      *            Notification ID to find
-     * @return the position of the notification in notifications
+     * @return the notification
      */
-    public int findNotification(final Iterable<Notification> notifications,
-            final long id) {
-        return Iterables.indexOf(notifications, new Predicate<Notification>() {
+    public Optional<Notification> findNotification(
+            final Iterable<Notification> notifications, final long id) {
+        return Iterables.tryFind(notifications, new Predicate<Notification>() {
             @Override
             public boolean apply(final Notification notification) {
                 // first check that the ID matches
@@ -424,13 +420,13 @@ public class NotificationStore {
 
                 // then check to see if the notification is included in any
                 // rolled up notifications
-                final Collection<Notification> childNotifications = notification
+                final Collection<Notification> children = notification
                         .getNotifications().or(
                                 ImmutableList.<Notification> of());
-                if (childNotifications.isEmpty()) {
+                if (children.isEmpty()) {
                     return false;
                 }
-                return findNotification(childNotifications, id) != -1;
+                return (findNotification(children, id)).isPresent();
             }
         });
     }

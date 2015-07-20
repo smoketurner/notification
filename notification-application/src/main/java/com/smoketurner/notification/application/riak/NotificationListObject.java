@@ -1,7 +1,6 @@
 package com.smoketurner.notification.application.riak;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
@@ -16,7 +15,6 @@ import com.basho.riak.client.api.cap.VClock;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 
@@ -77,7 +75,7 @@ public final class NotificationListObject {
         this.contentType = other.contentType;
         this.lastModified = other.lastModified;
         this.vtag = other.vtag;
-        this.addNotifications(other.getNotificationList());
+        this.addNotifications(other.getNotifications());
         this.deleteNotifications(other.getDeletedIds());
     }
 
@@ -93,6 +91,11 @@ public final class NotificationListObject {
         while (this.notifications.size() > MAX_NOTIFICATIONS) {
             this.notifications.pollLast();
         }
+    }
+
+    public void setNotifications(final Collection<Notification> notifications) {
+        this.notifications.clear();
+        addNotifications(notifications);
     }
 
     public void deleteNotification(final long id) {
@@ -111,8 +114,8 @@ public final class NotificationListObject {
         return key;
     }
 
-    public List<Notification> getNotificationList() {
-        return ImmutableList.copyOf(notifications);
+    public TreeSet<Notification> getNotifications() {
+        return notifications;
     }
 
     public Set<Long> getDeletedIds() {

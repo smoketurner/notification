@@ -27,17 +27,17 @@ public class NotificationListResolverTest {
 
     @Test
     public void testMultipleSibling() throws Exception {
-        final Notification notification1 = Notification.newBuilder().withId(1L)
+        final Notification notification1 = Notification.builder().withId(1L)
                 .build();
-        final Notification notification2 = Notification.newBuilder().withId(2L)
+        final Notification notification2 = Notification.builder().withId(2L)
                 .build();
-        final Notification notification3 = Notification.newBuilder().withId(3L)
+        final Notification notification3 = Notification.builder().withId(3L)
                 .build();
-        final Notification notification4 = Notification.newBuilder().withId(4L)
+        final Notification notification4 = Notification.builder().withId(4L)
                 .build();
-        final Notification notification5 = Notification.newBuilder().withId(5L)
+        final Notification notification5 = Notification.builder().withId(5L)
                 .build();
-        final Notification notification6 = Notification.newBuilder().withId(6L)
+        final Notification notification6 = Notification.builder().withId(6L)
                 .build();
 
         final NotificationListObject list1 = new NotificationListObject("test");
@@ -70,7 +70,7 @@ public class NotificationListResolverTest {
 
         final NotificationListObject actual = resolver.resolve(siblings);
         assertThat(actual).isEqualTo(expected);
-        assertThat(actual.getNotificationList()).containsExactly(notification6,
+        assertThat(actual.getNotifications()).containsExactly(notification6,
                 notification5, notification4, notification3, notification2,
                 notification1);
     }

@@ -1,5 +1,6 @@
 package com.smoketurner.notification.application.resources;
 
+import io.dropwizard.jersey.caching.CacheControl;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
@@ -42,6 +43,7 @@ public class NotificationResource {
     @Timed
     @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)
+    @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
     public List<Notification> fetch(@PathParam("username") final String username) {
         final Optional<List<Notification>> list;
         try {

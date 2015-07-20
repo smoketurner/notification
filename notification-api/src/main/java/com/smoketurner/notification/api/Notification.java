@@ -72,7 +72,7 @@ public final class Notification implements Comparable<Notification> {
         this.notifications = notifications.orNull();
     }
 
-    public static Builder newBuilder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -221,7 +221,7 @@ public final class Notification implements Comparable<Notification> {
     }
 
     @Override
-    public int compareTo(Notification that) {
+    public int compareTo(final Notification that) {
         return ComparisonChain.start()
                 .compare(this.id, that.id, Ordering.natural().reverse())
                 .result();

@@ -8,7 +8,7 @@ public class NotificationListAdditionTest {
 
     @Test
     public void testAddsToNotification() {
-        final Notification notification = Notification.newBuilder().withId(1L)
+        final Notification notification = Notification.builder().withId(1L)
                 .build();
 
         final NotificationListAddition update = new NotificationListAddition(
@@ -26,7 +26,7 @@ public class NotificationListAdditionTest {
 
     @Test
     public void testNoOriginal() {
-        final Notification notification = Notification.newBuilder().withId(1L)
+        final Notification notification = Notification.builder().withId(1L)
                 .build();
 
         final NotificationListAddition update = new NotificationListAddition(

@@ -48,6 +48,12 @@
             <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-client</artifactId>
+            <version>${dropwizard.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard.modules</groupId>
             <artifactId>dropwizard-protobuf</artifactId>
             <version>${dropwizard.version}-1</version>
