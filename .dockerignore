@@ -1,0 +1,6 @@
+.git
+.project
+.classpath
+.settings
+target
+Dockerfile
