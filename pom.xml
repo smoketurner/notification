@@ -284,12 +284,17 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.7</version>
                 <configuration>
                     <formats>
                         <format>xml</format>
                     </formats>
                     <aggregate>true</aggregate>
+                    <instrumentation>
+                        <ignores>
+                            <ignore>com.smoketurner.notification.application.protos.*</ignore>
+                        </ignores>
+                    </instrumentation>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -302,7 +307,7 @@
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.1.0</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
