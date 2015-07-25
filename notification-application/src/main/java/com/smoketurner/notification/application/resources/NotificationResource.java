@@ -17,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.http.HttpHeaders;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import com.codahale.metrics.annotation.Timed;
@@ -35,6 +34,8 @@ import com.smoketurner.notification.application.store.NotificationStore;
 @Path("/v1/notifications")
 public class NotificationResource {
 
+    private static final String ACCEPT_RANGES_HEADER = "Accept-Ranges";
+    private static final String CONTENT_RANGE_HEADER = "Content-Range";
     private static final String NEXT_RANGE_HEADER = "Next-Range";
     private static final int DEFAULT_LIMIT = 20;
     private static final int MAX_LIMIT = 1000;
@@ -56,8 +57,7 @@ public class NotificationResource {
     @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
-    public Response fetch(
-            @HeaderParam(HttpHeaders.RANGE) final String rangeHeader,
+    public Response fetch(@HeaderParam("Range") final String rangeHeader,
             @PathParam("username") final String username) {
         final Optional<UserNotifications> list;
         try {
@@ -80,7 +80,7 @@ public class NotificationResource {
         // if there are no notifications, just return an empty list
         if (total < 1) {
             return Response.ok(notifications)
-                    .header(HttpHeaders.ACCEPT_RANGES, RANGE_NAME).build();
+                    .header(ACCEPT_RANGES_HEADER, RANGE_NAME).build();
         }
 
         final Notification mostRecent = notifications.first();
@@ -113,8 +113,8 @@ public class NotificationResource {
         final long lastId = subSet.last().getId(0L);
 
         // Add the Accept-Ranges, Content-Range and Next-Range response headers
-        builder.header(HttpHeaders.ACCEPT_RANGES, RANGE_NAME);
-        builder.header(HttpHeaders.CONTENT_RANGE,
+        builder.header(ACCEPT_RANGES_HEADER, RANGE_NAME);
+        builder.header(CONTENT_RANGE_HEADER,
                 String.format("%s %d..%d", RANGE_NAME, firstId, lastId));
         if (firstId > lastId) {
             builder.header(NEXT_RANGE_HEADER,

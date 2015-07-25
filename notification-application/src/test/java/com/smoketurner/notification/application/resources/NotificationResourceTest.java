@@ -52,11 +52,11 @@ public class NotificationResourceTest {
 
     @Test
     public void testFetch() throws Exception {
-        final Set<Notification> expected = ImmutableSortedSet
+        final ImmutableSortedSet<Notification> expected = ImmutableSortedSet
                 .of(createNotification(1L));
         final UserNotifications notifications = new UserNotifications(expected);
         when(store.fetch("test")).thenReturn(Optional.of(notifications));
-        when(store.skip(notifications.getNotifications(), 1L, 10)).thenReturn(
+        when(store.skip(notifications.getNotifications(), 1L, 20)).thenReturn(
                 expected);
 
         final Response response = resources.client()
@@ -67,7 +67,7 @@ public class NotificationResourceTest {
                 });
 
         verify(store).fetch("test");
-        verify(store).skip(notifications.getNotifications(), 1L, 10);
+        verify(store).skip(notifications.getNotifications(), 1L, 20);
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
                 .isEqualTo(MediaType.APPLICATION_JSON + ";charset=UTF-8");
@@ -120,16 +120,16 @@ public class NotificationResourceTest {
     public void testFetchRangeEmpty() throws Exception {
         final ImmutableList.Builder<Notification> builder = ImmutableList
                 .builder();
-        for (long i = 20; i > 0; i--) {
+        for (long i = 30; i > 0; i--) {
             builder.add(createNotification(i));
         }
         final List<Notification> all = builder.build();
 
-        final List<Notification> expected = all.subList(0, 10);
+        final List<Notification> expected = all.subList(0, 20);
 
         final UserNotifications notifications = new UserNotifications(all);
         when(store.fetch("test")).thenReturn(Optional.of(notifications));
-        when(store.skip(notifications.getNotifications(), 20L, 10)).thenReturn(
+        when(store.skip(notifications.getNotifications(), 30L, 20)).thenReturn(
                 expected);
 
         final Response response = resources.client()
@@ -140,15 +140,15 @@ public class NotificationResourceTest {
                 });
 
         verify(store).fetch("test");
-        verify(store).skip(notifications.getNotifications(), 20L, 10);
+        verify(store).skip(notifications.getNotifications(), 30L, 20);
         assertThat(response.getStatus()).isEqualTo(206);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
                 .isEqualTo(MediaType.APPLICATION_JSON + ";charset=UTF-8");
         assertThat(response.getHeaderString("Accept-Ranges")).isEqualTo("id");
         assertThat(response.getHeaderString("Content-Range")).isEqualTo(
-                "id 20..11");
+                "id 30..11");
         assertThat(response.getHeaderString("Next-Range")).isEqualTo(
-                "id 11; max=10");
+                "id 11; max=20");
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
@@ -156,16 +156,16 @@ public class NotificationResourceTest {
     public void testFetchRangeInvalidId() throws Exception {
         final ImmutableList.Builder<Notification> builder = ImmutableList
                 .builder();
-        for (long i = 20; i > 0; i--) {
+        for (long i = 30; i > 0; i--) {
             builder.add(createNotification(i));
         }
         final List<Notification> all = builder.build();
 
-        final List<Notification> expected = all.subList(0, 10);
+        final List<Notification> expected = all.subList(0, 20);
 
         final UserNotifications notifications = new UserNotifications(all);
         when(store.fetch("test")).thenReturn(Optional.of(notifications));
-        when(store.skip(notifications.getNotifications(), 1000L, 10))
+        when(store.skip(notifications.getNotifications(), 1000L, 20))
                 .thenReturn(expected);
 
         final Response response = resources.client()
@@ -177,15 +177,15 @@ public class NotificationResourceTest {
                 });
 
         verify(store).fetch("test");
-        verify(store).skip(notifications.getNotifications(), 1000L, 10);
+        verify(store).skip(notifications.getNotifications(), 1000L, 20);
         assertThat(response.getStatus()).isEqualTo(206);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
                 .isEqualTo(MediaType.APPLICATION_JSON + ";charset=UTF-8");
         assertThat(response.getHeaderString("Accept-Ranges")).isEqualTo("id");
         assertThat(response.getHeaderString("Content-Range")).isEqualTo(
-                "id 20..11");
+                "id 30..11");
         assertThat(response.getHeaderString("Next-Range")).isEqualTo(
-                "id 11; max=10");
+                "id 11; max=20");
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 

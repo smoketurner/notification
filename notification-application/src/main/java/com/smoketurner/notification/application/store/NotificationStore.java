@@ -379,6 +379,7 @@ public class NotificationStore {
      */
     public Iterable<Notification> setUnseenState(
             final Iterable<Notification> notifications, final boolean unseen) {
+        Preconditions.checkNotNull(notifications);
         return Iterables.transform(notifications,
                 new Function<Notification, Notification>() {
                     @Override
@@ -402,18 +403,20 @@ public class NotificationStore {
      */
     public Optional<Notification> findNotification(
             final Iterable<Notification> notifications, final long id) {
+        Preconditions.checkNotNull(notifications);
         return Iterables.tryFind(notifications, new Predicate<Notification>() {
             @Override
             public boolean apply(final Notification notification) {
                 // first check that the ID matches
-                final long notificationId = notification.getId(0L);
-                if (notificationId == 0L) {
+                final Optional<Long> notificationId = notification.getId();
+                if (!notificationId.isPresent()) {
                     return false;
-                } else if (notificationId == id) {
+                } else if (notificationId.get() == id) {
                     return true;
                 }
 
-                // then check to see if the notification is included in any
+                // then check to see if the notification is included in
+                // any
                 // rolled up notifications
                 final Collection<Notification> children = notification
                         .getNotifications().or(
@@ -438,18 +441,20 @@ public class NotificationStore {
      */
     public int indexOfNotification(final Iterable<Notification> notifications,
             final long id) {
+        Preconditions.checkNotNull(notifications);
         return Iterables.indexOf(notifications, new Predicate<Notification>() {
             @Override
             public boolean apply(final Notification notification) {
                 // first check that the ID matches
-                final long notificationId = notification.getId(0L);
-                if (notificationId == 0L) {
+                final Optional<Long> notificationId = notification.getId();
+                if (!notificationId.isPresent()) {
                     return false;
-                } else if (notificationId == id) {
+                } else if (notificationId.get() == id) {
                     return true;
                 }
 
-                // then check to see if the notification is included in any
+                // then check to see if the notification is included in
+                // any
                 // rolled up notifications
                 final Collection<Notification> children = notification
                         .getNotifications().or(
@@ -478,6 +483,7 @@ public class NotificationStore {
     public Iterable<Notification> skip(
             final Iterable<Notification> notifications, final long startId,
             final int count) {
+        Preconditions.checkNotNull(notifications);
         final int position = indexOfNotification(notifications, startId);
         if (position == -1) {
             return Iterables.limit(notifications, count);

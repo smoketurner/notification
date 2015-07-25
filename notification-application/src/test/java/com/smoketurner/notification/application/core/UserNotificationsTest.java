@@ -33,8 +33,8 @@ public class UserNotificationsTest {
         final List<Notification> seen = ImmutableList.of(Notification.builder()
                 .withId(2L).build());
         final List<Notification> expected = ImmutableList.of(Notification
-                .builder().withId(1L).build(), Notification.builder()
-                .withId(2L).build());
+                .builder().withId(2L).build(), Notification.builder()
+                .withId(1L).build());
         final UserNotifications notifications = new UserNotifications(unseen,
                 seen);
         assertThat(notifications.isEmpty()).isFalse();
