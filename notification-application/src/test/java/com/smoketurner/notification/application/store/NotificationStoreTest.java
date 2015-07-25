@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -14,8 +15,10 @@ import com.codahale.metrics.MetricRegistry;
 import com.ge.snowizard.core.IdWorker;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.UserNotifications;
 
 public class NotificationStoreTest {
 
@@ -34,7 +37,7 @@ public class NotificationStoreTest {
     };
 
     @Test
-    public void testSetSeenState() throws Exception {
+    public void testSplitNotifications() throws Exception {
         when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME))
                 .thenReturn(Optional.of(4L));
 
@@ -45,14 +48,14 @@ public class NotificationStoreTest {
         final Notification n5 = createNotification(5);
         final Notification n6 = createNotification(6);
 
-        final Notification n1Seen = Notification.builder()
-                .fromNotification(n1).withUnseen(false).build();
-        final Notification n2Seen = Notification.builder()
-                .fromNotification(n2).withUnseen(false).build();
-        final Notification n3Seen = Notification.builder()
-                .fromNotification(n3).withUnseen(false).build();
-        final Notification n4Seen = Notification.builder()
-                .fromNotification(n4).withUnseen(false).build();
+        final Notification n1Seen = Notification.builder().fromNotification(n1)
+                .withUnseen(false).build();
+        final Notification n2Seen = Notification.builder().fromNotification(n2)
+                .withUnseen(false).build();
+        final Notification n3Seen = Notification.builder().fromNotification(n3)
+                .withUnseen(false).build();
+        final Notification n4Seen = Notification.builder().fromNotification(n4)
+                .withUnseen(false).build();
         final Notification n5Unseen = Notification.builder()
                 .fromNotification(n5).withUnseen(true).build();
         final Notification n6Unseen = Notification.builder()
@@ -64,14 +67,18 @@ public class NotificationStoreTest {
         final List<Notification> expected = ImmutableList.of(n6Unseen,
                 n5Unseen, n4Seen, n3Seen, n2Seen, n1Seen);
 
-        final List<Notification> actual = store.setUnseenState(TEST_USER,
+        final UserNotifications actual = store.splitNotifications(TEST_USER,
                 notifications);
         verify(cursors).fetch(TEST_USER, NotificationStore.CURSOR_NAME);
-        assertThat(actual).containsExactlyElementsOf(expected);
+        assertThat(actual.getNotifications()).containsExactlyElementsOf(
+                expected);
+        assertThat(actual.getUnseen()).containsExactly(n6Unseen, n5Unseen);
+        assertThat(actual.getSeen()).containsExactly(n4Seen, n3Seen, n2Seen,
+                n1Seen);
     }
 
     @Test
-    public void testSetSeenStateFirst() throws Exception {
+    public void testSplitNotificationsFirst() throws Exception {
         when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME))
                 .thenReturn(Optional.of(0L));
 
@@ -82,34 +89,38 @@ public class NotificationStoreTest {
         final Notification n5 = createNotification(5);
         final Notification n6 = createNotification(6);
 
-        final Notification n1Seen = Notification.builder()
-                .fromNotification(n1).withUnseen(true).build();
-        final Notification n2Seen = Notification.builder()
-                .fromNotification(n2).withUnseen(true).build();
-        final Notification n3Seen = Notification.builder()
-                .fromNotification(n3).withUnseen(true).build();
-        final Notification n4Seen = Notification.builder()
-                .fromNotification(n4).withUnseen(true).build();
-        final Notification n5Unseen = Notification.builder()
-                .fromNotification(n5).withUnseen(true).build();
-        final Notification n6Unseen = Notification.builder()
-                .fromNotification(n6).withUnseen(true).build();
+        final Notification n1Seen = Notification.builder().fromNotification(n1)
+                .withUnseen(true).build();
+        final Notification n2Seen = Notification.builder().fromNotification(n2)
+                .withUnseen(true).build();
+        final Notification n3Seen = Notification.builder().fromNotification(n3)
+                .withUnseen(true).build();
+        final Notification n4Seen = Notification.builder().fromNotification(n4)
+                .withUnseen(true).build();
+        final Notification n5Seen = Notification.builder().fromNotification(n5)
+                .withUnseen(true).build();
+        final Notification n6Seen = Notification.builder().fromNotification(n6)
+                .withUnseen(true).build();
 
         final TreeSet<Notification> notifications = Sets
                 .newTreeSet(ImmutableList.of(n6, n5, n4, n3, n2, n1));
 
-        final List<Notification> expected = ImmutableList.of(n6Unseen,
-                n5Unseen, n4Seen, n3Seen, n2Seen, n1Seen);
+        final List<Notification> expected = ImmutableList.of(n6Seen, n5Seen,
+                n4Seen, n3Seen, n2Seen, n1Seen);
 
-        final List<Notification> actual = store.setUnseenState(TEST_USER,
+        final UserNotifications actual = store.splitNotifications(TEST_USER,
                 notifications);
         verify(cursors).fetch(TEST_USER, NotificationStore.CURSOR_NAME);
         verify(cursors).store(TEST_USER, NotificationStore.CURSOR_NAME, 6L);
-        assertThat(actual).containsExactlyElementsOf(expected);
+        assertThat(actual.getNotifications()).containsExactlyElementsOf(
+                expected);
+        assertThat(actual.getUnseen()).containsExactly(n6Seen, n5Seen, n4Seen,
+                n3Seen, n2Seen, n1Seen);
+        assertThat(actual.getSeen()).isEmpty();
     }
 
     @Test
-    public void testSetSeenStateNoCursor() throws Exception {
+    public void testSplitNotificationsNoCursor() throws Exception {
         when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME))
                 .thenReturn(Optional.<Long> absent());
 
@@ -122,50 +133,51 @@ public class NotificationStoreTest {
                 .newTreeSet(ImmutableList.of(n1));
         final List<Notification> expected = ImmutableList.of(n1Unseen);
 
-        final List<Notification> actual = store.setUnseenState(TEST_USER,
+        final UserNotifications actual = store.splitNotifications(TEST_USER,
                 notifications);
         verify(cursors).fetch(TEST_USER, NotificationStore.CURSOR_NAME);
         verify(cursors).store(TEST_USER, NotificationStore.CURSOR_NAME, 1L);
-        assertThat(actual).containsExactlyElementsOf(expected);
+        assertThat(actual.getNotifications()).containsExactlyElementsOf(
+                expected);
     }
 
     @Test
-    public void testSetSeenStateUserNull() throws Exception {
+    public void testSplitNotificationsUserNull() throws Exception {
         try {
-            store.setUnseenState(null, Sets.<Notification> newTreeSet());
+            store.splitNotifications(null, Sets.<Notification> newTreeSet());
             failBecauseExceptionWasNotThrown(NullPointerException.class);
         } catch (NullPointerException e) {
         }
     }
 
     @Test
-    public void testSetSeenStateUserEmpty() throws Exception {
+    public void testSplitNotificationsUserEmpty() throws Exception {
         try {
-            store.setUnseenState("", Sets.<Notification> newTreeSet());
+            store.splitNotifications("", Sets.<Notification> newTreeSet());
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
         } catch (IllegalArgumentException e) {
         }
     }
 
     @Test
-    public void testSetSeenStateNotificationsNull() throws Exception {
+    public void testSplitNotificationsNotificationsNull() throws Exception {
         try {
-            store.setUnseenState(TEST_USER, null);
+            store.splitNotifications(TEST_USER, null);
             failBecauseExceptionWasNotThrown(NullPointerException.class);
         } catch (NullPointerException e) {
         }
     }
 
     @Test
-    public void testSetSeenStateNotificationsEmpty() throws Exception {
-        final List<Notification> expected = ImmutableList.of();
-        final List<Notification> actual = store.setUnseenState(TEST_USER,
+    public void testSplitNotificationsNotificationsEmpty() throws Exception {
+        final Set<Notification> expected = ImmutableSortedSet.of();
+        final UserNotifications actual = store.splitNotifications(TEST_USER,
                 Sets.<Notification> newTreeSet());
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual.getNotifications()).isEqualTo(expected);
     }
 
     @Test
-    public void testSetUnseenStateIterable() throws Exception {
+    public void testSetUnseenState() throws Exception {
         ImmutableList.Builder<Notification> builder = ImmutableList.builder();
         for (long i = 1; i < 11; i++) {
             builder.add(createNotification(i));
@@ -233,6 +245,67 @@ public class NotificationStoreTest {
                 Optional.<Notification> absent());
         assertThat(store.findNotification(notifications, 150)).isEqualTo(
                 Optional.of(n150));
+    }
+
+    @Test
+    public void testSkip() throws Exception {
+        final ImmutableSortedSet.Builder<Notification> builder = ImmutableSortedSet
+                .<Notification> naturalOrder();
+        for (long i = 1; i <= 100; i++) {
+            builder.add(createNotification(i));
+        }
+        final ImmutableSortedSet<Notification> notifications = builder.build();
+
+        final ImmutableList.Builder<Notification> builder2 = ImmutableList
+                .<Notification> builder();
+        for (long i = 100; i > 90; i--) {
+            builder2.add(createNotification(i));
+        }
+        final List<Notification> expected = builder2.build();
+
+        final Iterable<Notification> actual = store.skip(notifications, 0, 10);
+        assertThat(actual).containsExactlyElementsOf(expected);
+    }
+
+    @Test
+    public void testSkipWithStart() throws Exception {
+        final ImmutableSortedSet.Builder<Notification> builder = ImmutableSortedSet
+                .<Notification> naturalOrder();
+        for (long i = 1; i <= 100; i++) {
+            builder.add(createNotification(i));
+        }
+        final ImmutableSortedSet<Notification> notifications = builder.build();
+
+        final ImmutableList.Builder<Notification> builder2 = ImmutableList
+                .<Notification> builder();
+        for (long i = 55; i > 45; i--) {
+            builder2.add(createNotification(i));
+        }
+        final List<Notification> expected = builder2.build();
+
+        final Iterable<Notification> actual = store.skip(notifications, 56, 10);
+        assertThat(actual).containsExactlyElementsOf(expected);
+    }
+
+    @Test
+    public void testSkipWithStartNotFound() throws Exception {
+        final ImmutableSortedSet.Builder<Notification> builder = ImmutableSortedSet
+                .<Notification> naturalOrder();
+        for (long i = 1; i <= 100; i++) {
+            builder.add(createNotification(i));
+        }
+        final ImmutableSortedSet<Notification> notifications = builder.build();
+
+        final ImmutableList.Builder<Notification> builder2 = ImmutableList
+                .<Notification> builder();
+        for (long i = 100; i > 90; i--) {
+            builder2.add(createNotification(i));
+        }
+        final List<Notification> expected = builder2.build();
+
+        final Iterable<Notification> actual = store.skip(notifications, 1000,
+                10);
+        assertThat(actual).containsExactlyElementsOf(expected);
     }
 
     private Notification createNotification(final long id) {

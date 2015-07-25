@@ -2,7 +2,6 @@ package com.smoketurner.notification.application.store;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
@@ -30,6 +29,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.UserNotifications;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.riak.NotificationListAddition;
 import com.smoketurner.notification.application.riak.NotificationListDeletion;
@@ -113,7 +113,7 @@ public class NotificationStore {
      * @throws NotificationStoreException
      *             if unable to fetch the notifications
      */
-    public Optional<List<Notification>> fetch(@Nonnull final String username)
+    public Optional<UserNotifications> fetch(@Nonnull final String username)
             throws NotificationStoreException {
 
         Preconditions.checkNotNull(username);
@@ -148,7 +148,8 @@ public class NotificationStore {
             return Optional.absent();
         }
 
-        return Optional.of(setUnseenState(username, list.getNotifications()));
+        return Optional
+                .of(splitNotifications(username, list.getNotifications()));
     }
 
     /**
@@ -159,12 +160,11 @@ public class NotificationStore {
      *            Username of the notifications
      * @param notifications
      *            Original notifications list
-     * @return a notifications list beginning with the unseen notifications,
-     *         then the seen the notifications
+     * @return the seen and unseen notifications
      * @throws NotificationStoreException
      *             if unable to update the cursor
      */
-    public List<Notification> setUnseenState(@Nonnull final String username,
+    public UserNotifications splitNotifications(@Nonnull final String username,
             final TreeSet<Notification> notifications)
             throws NotificationStoreException {
 
@@ -175,12 +175,12 @@ public class NotificationStore {
 
         // if there are no notifications, just return
         if (notifications.isEmpty()) {
-            return ImmutableList.copyOf(notifications);
+            return new UserNotifications();
         }
 
         // get the ID of the most recent notification (this should never be
         // zero)
-        final long mostRecentId = notifications.first().getId().or(0L);
+        final long mostRecentId = notifications.first().getId(0L);
         LOGGER.debug("Most recent notification ID: {}", mostRecentId);
 
         final Optional<Long> cursor = cursors.fetch(username, CURSOR_NAME);
@@ -193,8 +193,7 @@ public class NotificationStore {
             cursors.store(username, CURSOR_NAME, mostRecentId);
 
             // set all of the notifications to unseen=true
-            return ImmutableList.<Notification> builder()
-                    .addAll(setUnseenState(notifications, true)).build();
+            return new UserNotifications(setUnseenState(notifications, true));
         }
 
         LOGGER.debug("Last seen notification ID: {}", lastSeenId);
@@ -213,22 +212,18 @@ public class NotificationStore {
         if (!lastNotification.isPresent()) {
             // if the last notification is not found, set all of the
             // notifications as unseen
-            return ImmutableList.<Notification> builder()
-                    .addAll(setUnseenState(notifications, true)).build();
+            return new UserNotifications(setUnseenState(notifications, true));
         }
 
-        final ImmutableList.Builder<Notification> builder = ImmutableList
-                .builder();
-
         // Set the head of the list as being unseen
-        builder.addAll(setUnseenState(
-                notifications.headSet(lastNotification.get()), true));
+        final Iterable<Notification> unseen = setUnseenState(
+                notifications.headSet(lastNotification.get()), true);
 
         // Set the tail of the list as being seen
-        builder.addAll(setUnseenState(
-                notifications.tailSet(lastNotification.get()), false));
+        final Iterable<Notification> seen = setUnseenState(
+                notifications.tailSet(lastNotification.get()), false);
 
-        return builder.build();
+        return new UserNotifications(unseen, seen);
     }
 
     /**
@@ -411,10 +406,10 @@ public class NotificationStore {
             @Override
             public boolean apply(final Notification notification) {
                 // first check that the ID matches
-                final Optional<Long> notificationId = notification.getId();
-                if (!notificationId.isPresent()) {
+                final long notificationId = notification.getId(0L);
+                if (notificationId == 0L) {
                     return false;
-                } else if (notificationId.get() == id) {
+                } else if (notificationId == id) {
                     return true;
                 }
 
@@ -429,6 +424,66 @@ public class NotificationStore {
                 return (findNotification(children, id)).isPresent();
             }
         });
+    }
+
+    /**
+     * Return the parent notification that matches the given ID or is the parent
+     * of a child notification, or -1 if the notification was not found.
+     *
+     * @param notifications
+     *            Notifications to search through
+     * @param id
+     *            Notification ID to find
+     * @return the position of the notification or -1 if not found
+     */
+    public int indexOfNotification(final Iterable<Notification> notifications,
+            final long id) {
+        return Iterables.indexOf(notifications, new Predicate<Notification>() {
+            @Override
+            public boolean apply(final Notification notification) {
+                // first check that the ID matches
+                final long notificationId = notification.getId(0L);
+                if (notificationId == 0L) {
+                    return false;
+                } else if (notificationId == id) {
+                    return true;
+                }
+
+                // then check to see if the notification is included in any
+                // rolled up notifications
+                final Collection<Notification> children = notification
+                        .getNotifications().or(
+                                ImmutableList.<Notification> of());
+                if (children.isEmpty()) {
+                    return false;
+                }
+                return indexOfNotification(children, id) != -1;
+            }
+        });
+    }
+
+    /**
+     * Returns an iterable that skips forward to a given notification ID then
+     * only returns count more notifications. If the given notification ID is
+     * not found
+     * 
+     * @param notifications
+     *            Iterable of notifications
+     * @param startId
+     *            notification ID to start at
+     * @param count
+     *            Number of notifications to return
+     * @return Iterable containing the subset of the original notifications
+     */
+    public Iterable<Notification> skip(
+            final Iterable<Notification> notifications, final long startId,
+            final int count) {
+        final int position = indexOfNotification(notifications, startId);
+        if (position == -1) {
+            return Iterables.limit(notifications, count);
+        }
+        return Iterables.limit(Iterables.skip(notifications, position + 1),
+                count);
     }
 
     /**

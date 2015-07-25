@@ -8,6 +8,7 @@ import javax.annotation.concurrent.Immutable;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -148,6 +149,22 @@ public final class Notification implements Comparable<Notification> {
     @JsonProperty
     public Optional<Long> getId() {
         return Optional.fromNullable(id);
+    }
+
+    /**
+     * This is a helper method to return the notification ID if its set,
+     * otherwise return the default value given.
+     * 
+     * @param value
+     *            Value to return if no notification ID is set
+     * @return Notification ID or zero if not set
+     */
+    @JsonIgnore
+    public long getId(final long value) {
+        if (id == null) {
+            return value;
+        }
+        return id;
     }
 
     @JsonProperty

@@ -16,6 +16,7 @@ import com.smoketurner.notification.application.config.RiakClusterFactory;
 import com.smoketurner.notification.application.config.SnowizardConfiguration;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.filter.CharsetResponseFilter;
+import com.smoketurner.notification.application.filter.IdResponseFilter;
 import com.smoketurner.notification.application.health.RiakHealthCheck;
 import com.smoketurner.notification.application.managed.CursorStoreManager;
 import com.smoketurner.notification.application.managed.NotificationStoreManager;
@@ -55,6 +56,8 @@ public class NotificationApplication extends
         environment.jersey().register(NotificationExceptionMapper.class);
         // adds charset=UTF-8 to the response headers
         environment.jersey().register(CharsetResponseFilter.class);
+        // adds a Request-Id response header
+        environment.jersey().register(IdResponseFilter.class);
 
         // snowizard
         final SnowizardConfiguration snowizardConfig = configuration

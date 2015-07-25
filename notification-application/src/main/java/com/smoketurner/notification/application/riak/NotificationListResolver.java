@@ -43,7 +43,7 @@ public class NotificationListResolver implements
             if (!deletedIds.isEmpty()) {
                 LOGGER.debug("IDs to delete: {}", deletedIds);
                 resolved.setNotifications(removeNotifications(
-                        resolved.getNotifications(), resolved.getDeletedIds()));
+                        resolved.getNotifications(), deletedIds));
                 resolved.clearDeletedIds();
             }
 

@@ -4,7 +4,7 @@ import io.dropwizard.setup.Environment;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.util.LinkedList;
+import java.util.List;
 import javax.annotation.Nonnull;
 import jersey.repackaged.com.google.common.collect.Lists;
 import com.basho.riak.client.core.RiakCluster;
@@ -42,12 +42,13 @@ public class RiakClusterFactory {
         if (!Strings.isNullOrEmpty(config.getUsername())
                 && !Strings.isNullOrEmpty(config.getPassword())
                 && !Strings.isNullOrEmpty(config.getKeyStore())) {
+            // TODO finish keyStore implementation
             final KeyStore keystore = KeyStore.getInstance("PKS");
             builder.withAuth(config.getUsername(), config.getPassword(),
                     keystore);
         }
 
-        final LinkedList<RiakNode> nodes = Lists.newLinkedList();
+        final List<RiakNode> nodes = Lists.newArrayList();
         for (HostAndPort address : config.getNodes()) {
             final RiakNode node = builder
                     .withRemoteAddress(address.getHostText())

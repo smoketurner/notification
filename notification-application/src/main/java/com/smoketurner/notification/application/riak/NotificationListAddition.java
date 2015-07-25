@@ -26,7 +26,7 @@ public class NotificationListAddition extends
     @Override
     public NotificationListObject apply(NotificationListObject original) {
         if (original == null) {
-            LOGGER.debug("original is null, creating new object");
+            LOGGER.debug("original is null, creating new notification list");
             original = new NotificationListObject();
         }
         original.addNotification(notification);

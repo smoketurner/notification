@@ -27,7 +27,7 @@ public class CursorUpdate extends UpdateValue.Update<CursorObject> {
     @Override
     public CursorObject apply(CursorObject original) {
         if (original == null) {
-            LOGGER.debug("original is null, creating new object");
+            LOGGER.debug("original is null, creating new cursor");
             original = new CursorObject(key, value);
         }
         original.setValue(value);

@@ -1,12 +1,13 @@
 package com.smoketurner.notification.application.resources;
 
 import io.dropwizard.jersey.caching.CacheControl;
-import java.util.List;
+import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -14,12 +15,19 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.http.HttpHeaders;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSortedSet;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.core.LongSetParam;
+import com.smoketurner.notification.application.core.RangeHeader;
+import com.smoketurner.notification.application.core.UserNotifications;
 import com.smoketurner.notification.application.exceptions.NotificationException;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.store.NotificationStore;
@@ -27,6 +35,10 @@ import com.smoketurner.notification.application.store.NotificationStore;
 @Path("/v1/notifications")
 public class NotificationResource {
 
+    private static final String NEXT_RANGE_HEADER = "Next-Range";
+    private static final int DEFAULT_LIMIT = 20;
+    private static final int MAX_LIMIT = 1000;
+    private static final String RANGE_NAME = "id";
     private final NotificationStore store;
 
     /**
@@ -44,8 +56,10 @@ public class NotificationResource {
     @Path("/{username}")
     @Produces(MediaType.APPLICATION_JSON)
     @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
-    public List<Notification> fetch(@PathParam("username") final String username) {
-        final Optional<List<Notification>> list;
+    public Response fetch(
+            @HeaderParam(HttpHeaders.RANGE) final String rangeHeader,
+            @PathParam("username") final String username) {
+        final Optional<UserNotifications> list;
         try {
             list = store.fetch(username);
         } catch (NotificationStoreException e) {
@@ -59,7 +73,55 @@ public class NotificationResource {
                     "Notifications not found");
         }
 
-        return list.get();
+        final ImmutableSortedSet<Notification> notifications = list.get()
+                .getNotifications();
+        final int total = notifications.size();
+
+        // if there are no notifications, just return an empty list
+        if (total < 1) {
+            return Response.ok(notifications)
+                    .header(HttpHeaders.ACCEPT_RANGES, RANGE_NAME).build();
+        }
+
+        final Notification mostRecent = notifications.first();
+        long startId = mostRecent.getId(0L);
+
+        int limit = DEFAULT_LIMIT;
+        final ResponseBuilder builder;
+        if (rangeHeader == null) {
+            builder = Response.ok();
+        } else {
+            builder = Response.status(Response.Status.PARTIAL_CONTENT);
+            final RangeHeader range = RangeHeader.parse(rangeHeader);
+            if (range.getId().isPresent()) {
+                startId = range.getId().get();
+            }
+            limit = range.getMax().or(DEFAULT_LIMIT);
+            if (limit > MAX_LIMIT) {
+                limit = MAX_LIMIT;
+            }
+        }
+
+        // Add the Last-Modified response header
+        builder.lastModified(new Date(mostRecent.getCreatedAt()
+                .or(DateTime.now(DateTimeZone.UTC)).getMillis()));
+
+        final ImmutableSortedSet<Notification> subSet = ImmutableSortedSet
+                .copyOf(store.skip(notifications, startId, limit));
+
+        final long firstId = subSet.first().getId(0L);
+        final long lastId = subSet.last().getId(0L);
+
+        // Add the Accept-Ranges, Content-Range and Next-Range response headers
+        builder.header(HttpHeaders.ACCEPT_RANGES, RANGE_NAME);
+        builder.header(HttpHeaders.CONTENT_RANGE,
+                String.format("%s %d..%d", RANGE_NAME, firstId, lastId));
+        if (firstId > lastId) {
+            builder.header(NEXT_RANGE_HEADER,
+                    String.format("%s %d; max=%d", RANGE_NAME, lastId, limit));
+        }
+
+        return builder.entity(subSet).build();
     }
 
     @POST
