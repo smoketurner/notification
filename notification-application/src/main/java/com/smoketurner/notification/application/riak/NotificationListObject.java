@@ -18,7 +18,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 
-public final class NotificationListObject {
+public class NotificationListObject {
 
     private static final int MAX_NOTIFICATIONS = 1000;
 

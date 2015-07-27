@@ -62,23 +62,24 @@ public class NotificationTest {
 
     @Test
     public void testComparison() throws Exception {
-        final Notification notification1 = Notification.builder().withId(1L)
-                .build();
-        final Notification notification2 = Notification.builder().withId(2L)
-                .build();
-        final Notification notification3 = Notification.builder().withId(3L)
-                .build();
+        final Notification n1 = Notification.builder().withId(1L).build();
+        final Notification n2 = Notification.builder().withId(2L).build();
+        final Notification n3 = Notification.builder().withId(3L).build();
 
-        assertThat(notification1.compareTo(notification1)).isZero();
-        assertThat(notification1.compareTo(notification2)).isEqualTo(1);
-        assertThat(notification2.compareTo(notification1)).isEqualTo(-1);
+        assertThat(n1.compareTo(n1)).isZero();
+        assertThat(n1.compareTo(n2)).isEqualTo(1);
+        assertThat(n2.compareTo(n1)).isEqualTo(-1);
 
         final TreeSet<Notification> notifications = Sets.newTreeSet();
-        notifications.add(notification1);
-        notifications.add(notification2);
-        notifications.add(notification3);
+        notifications.add(n1);
+        notifications.add(n2);
+        notifications.add(n3);
 
-        assertThat(notifications).containsExactly(notification3, notification2,
-                notification1);
+        assertThat(notifications).containsExactly(n3, n2, n1);
+
+        final Notification n1b = Notification.builder().withId(1L)
+                .withUnseen(true).build();
+
+        assertThat(n1.compareTo(n1b) == 0).isEqualTo(n1.equals(n1b));
     }
 }

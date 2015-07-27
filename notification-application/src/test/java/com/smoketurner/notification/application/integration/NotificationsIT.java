@@ -5,14 +5,18 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.List;
+import java.util.TreeSet;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.NotificationApplication;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
@@ -41,14 +45,9 @@ public class NotificationsIT {
 
     @Test
     public void testCreateNotification() throws Exception {
-        final Notification notification = Notification.builder()
-                .withCategory("test-category")
-                .withMessage("this is only a test").build();
+        final Notification notification = createNotification();
 
-        final Response response = client
-                .target(String.format(
-                        "http://localhost:%d/v1/notifications/%s",
-                        RULE.getLocalPort(), TEST_USER)).request()
+        final Response response = client.target(getUrl()).request()
                 .post(Entity.json(notification));
 
         final Notification actual = response.readEntity(Notification.class);
@@ -63,11 +62,58 @@ public class NotificationsIT {
     }
 
     @Test
+    public void testPagination() throws Exception {
+        testDeleteAllNotifications();
+
+        final TreeSet<Notification> expected = Sets.newTreeSet();
+        for (int i = 0; i < 100; i++) {
+            final Notification response = client
+                    .target(getUrl())
+                    .request()
+                    .post(Entity.json(createNotification()), Notification.class);
+            expected.add(Notification.builder().fromNotification(response)
+                    .withUnseen(true).build());
+        }
+
+        int requests = 0;
+        String nextRange = null;
+        final ImmutableList.Builder<Notification> results = ImmutableList
+                .builder();
+        boolean paginate = true;
+        while (paginate) {
+            final Invocation.Builder builder = client.target(getUrl())
+                    .request();
+            if (nextRange != null) {
+                builder.header("Range", nextRange);
+            }
+
+            final Response response = builder.get();
+            nextRange = response.getHeaderString("Next-Range");
+            if (nextRange == null) {
+                paginate = false;
+            }
+
+            if (response.getStatus() == 200 || response.getStatus() == 206) {
+                final List<Notification> list = response
+                        .readEntity(new GenericType<List<Notification>>() {
+                        });
+                assertThat(list.size()).isEqualTo(20);
+                results.addAll(list);
+            }
+
+            requests++;
+        }
+
+        final List<Notification> actual = results.build();
+        assertThat(actual).containsExactlyElementsOf(expected);
+        assertThat(requests).isEqualTo(5);
+
+        testDeleteAllNotifications();
+    }
+
+    @Test
     public void testFetchNotifications() {
-        final Response response = client
-                .target(String.format(
-                        "http://localhost:%d/v1/notifications/%s",
-                        RULE.getLocalPort(), TEST_USER)).request().get();
+        final Response response = client.target(getUrl()).request().get();
 
         if (response.getStatus() != 404) {
             assertThat(response.getStatus()).isEqualTo(200);
@@ -83,11 +129,17 @@ public class NotificationsIT {
 
     @Test
     public void testDeleteAllNotifications() {
-        final Response response = client
-                .target(String.format(
-                        "http://localhost:%d/v1/notifications/%s",
-                        RULE.getLocalPort(), TEST_USER)).request().delete();
-
+        final Response response = client.target(getUrl()).request().delete();
         assertThat(response.getStatus()).isEqualTo(204);
+    }
+
+    private static String getUrl() {
+        return String.format("http://127.0.0.1:%d/v1/notifications/%s",
+                RULE.getLocalPort(), TEST_USER);
+    }
+
+    private static Notification createNotification() {
+        return Notification.builder().withCategory("test-category")
+                .withMessage("this is only a test").build();
     }
 }

@@ -6,11 +6,11 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.List;
 import javax.annotation.Nonnull;
-import jersey.repackaged.com.google.common.collect.Lists;
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.net.HostAndPort;
 import com.smoketurner.notification.application.managed.RiakClusterManager;
 

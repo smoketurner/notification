@@ -2,6 +2,7 @@ package com.smoketurner.notification.application.resources;
 
 import io.dropwizard.jersey.caching.CacheControl;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -19,10 +20,13 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.core.LongSetParam;
 import com.smoketurner.notification.application.core.RangeHeader;
@@ -34,6 +38,8 @@ import com.smoketurner.notification.application.store.NotificationStore;
 @Path("/v1/notifications")
 public class NotificationResource {
 
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(NotificationResource.class);
     private static final String ACCEPT_RANGES_HEADER = "Accept-Ranges";
     private static final String CONTENT_RANGE_HEADER = "Content-Range";
     private static final String NEXT_RANGE_HEADER = "Next-Range";
@@ -83,42 +89,76 @@ public class NotificationResource {
                     .header(ACCEPT_RANGES_HEADER, RANGE_NAME).build();
         }
 
-        final Notification mostRecent = notifications.first();
-        long startId = mostRecent.getId(0L);
+        // The newest notification is always the first notification in the
+        // list and is used to set the Last-Modified response header below.
+        final Notification newest = notifications.first();
+        final Notification oldest = notifications.last();
+
+        Notification from = newest;
+        boolean fromInclusive = true;
+        Notification to = oldest;
+        boolean toInclusive = true;
 
         int limit = DEFAULT_LIMIT;
         final ResponseBuilder builder;
+
         if (rangeHeader == null) {
             builder = Response.ok();
+            try {
+                to = Iterables.getLast(store.skip(notifications,
+                        from.getId(0L), true, limit));
+            } catch (NoSuchElementException e) {
+                LOGGER.debug("List of notifications is empty, using oldest");
+                to = oldest;
+            }
         } else {
             builder = Response.status(Response.Status.PARTIAL_CONTENT);
             final RangeHeader range = RangeHeader.parse(rangeHeader);
-            if (range.getId().isPresent()) {
-                startId = range.getId().get();
-            }
             limit = range.getMax().or(DEFAULT_LIMIT);
             if (limit > MAX_LIMIT) {
                 limit = MAX_LIMIT;
             }
+            try {
+                if (range.getFromId().isPresent()) {
+                    from = notifications.floor(Notification.builder()
+                            .withId(range.getFromId().get()).build());
+                    if (from == null) {
+                        from = newest;
+                    }
+                    fromInclusive = range.getFromInclusive().or(true);
+
+                    to = Iterables.getLast(store.skip(notifications,
+                            from.getId(0L), fromInclusive, limit));
+                } else {
+                    to = Iterables.getLast(store.skip(notifications,
+                            from.getId(0L), true, limit));
+                }
+            } catch (NoSuchElementException e) {
+                LOGGER.debug("List of notifications is empty, using oldest");
+                to = oldest;
+            }
         }
 
+        // Add the Accept-Ranges response header
+        builder.header(ACCEPT_RANGES_HEADER, RANGE_NAME);
+
         // Add the Last-Modified response header
-        builder.lastModified(new Date(mostRecent.getCreatedAt()
+        builder.lastModified(new Date(newest.getCreatedAt()
                 .or(DateTime.now(DateTimeZone.UTC)).getMillis()));
 
-        final ImmutableSortedSet<Notification> subSet = ImmutableSortedSet
-                .copyOf(store.skip(notifications, startId, limit));
+        final ImmutableSortedSet<Notification> subSet = notifications.subSet(
+                from, fromInclusive, to, toInclusive);
+        if (subSet.size() > 0) {
+            final long firstId = subSet.first().getId(0L);
+            final long lastId = subSet.last().getId(0L);
 
-        final long firstId = subSet.first().getId(0L);
-        final long lastId = subSet.last().getId(0L);
-
-        // Add the Accept-Ranges, Content-Range and Next-Range response headers
-        builder.header(ACCEPT_RANGES_HEADER, RANGE_NAME);
-        builder.header(CONTENT_RANGE_HEADER,
-                String.format("%s %d..%d", RANGE_NAME, firstId, lastId));
-        if (firstId > lastId) {
-            builder.header(NEXT_RANGE_HEADER,
-                    String.format("%s %d; max=%d", RANGE_NAME, lastId, limit));
+            // Add the Content-Range and Next-Range response headers
+            builder.header(CONTENT_RANGE_HEADER,
+                    String.format("%s %d..%d", RANGE_NAME, firstId, lastId));
+            if (subSet.last().compareTo(oldest) == -1) {
+                builder.header(NEXT_RANGE_HEADER, String.format(
+                        "%s ]%d..; max=%d", RANGE_NAME, lastId, limit));
+            }
         }
 
         return builder.entity(subSet).build();

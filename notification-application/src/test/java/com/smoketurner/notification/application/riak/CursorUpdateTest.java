@@ -10,7 +10,7 @@ public class CursorUpdateTest {
         final CursorUpdate update = new CursorUpdate("test-notifications",
                 12345L);
 
-        final CursorObject original = new CursorObject("test-notifications", 1);
+        final CursorObject original = new CursorObject("test-notifications", 1L);
 
         final CursorObject expected = new CursorObject("test-notifications",
                 12345L);

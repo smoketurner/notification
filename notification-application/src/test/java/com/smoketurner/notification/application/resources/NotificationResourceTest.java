@@ -56,8 +56,8 @@ public class NotificationResourceTest {
                 .of(createNotification(1L));
         final UserNotifications notifications = new UserNotifications(expected);
         when(store.fetch("test")).thenReturn(Optional.of(notifications));
-        when(store.skip(notifications.getNotifications(), 1L, 20)).thenReturn(
-                expected);
+        when(store.skip(notifications.getNotifications(), 1L, true, 20))
+                .thenReturn(expected);
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")
@@ -67,7 +67,7 @@ public class NotificationResourceTest {
                 });
 
         verify(store).fetch("test");
-        verify(store).skip(notifications.getNotifications(), 1L, 20);
+        verify(store).skip(notifications.getNotifications(), 1L, true, 20);
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
                 .isEqualTo(MediaType.APPLICATION_JSON + ";charset=UTF-8");
@@ -88,31 +88,31 @@ public class NotificationResourceTest {
         final List<Notification> all = builder.build();
 
         final Set<Notification> expected = ImmutableSortedSet.of(
-                createNotification(20L), createNotification(19L));
+                createNotification(19L), createNotification(18L));
 
         final UserNotifications notifications = new UserNotifications(all);
         when(store.fetch("test")).thenReturn(Optional.of(notifications));
-        when(store.skip(notifications.getNotifications(), 20L, 2)).thenReturn(
-                expected);
+        when(store.skip(notifications.getNotifications(), 20L, false, 2))
+                .thenReturn(expected);
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")
                 .request(MediaType.APPLICATION_JSON)
-                .header("Range", "id 20; max=2").get();
+                .header("Range", "id ]20..; max=2").get();
         final List<Notification> actual = response
                 .readEntity(new GenericType<List<Notification>>() {
                 });
 
         verify(store).fetch("test");
-        verify(store).skip(notifications.getNotifications(), 20L, 2);
+        verify(store).skip(notifications.getNotifications(), 20L, false, 2);
         assertThat(response.getStatus()).isEqualTo(206);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
                 .isEqualTo(MediaType.APPLICATION_JSON + ";charset=UTF-8");
         assertThat(response.getHeaderString("Accept-Ranges")).isEqualTo("id");
         assertThat(response.getHeaderString("Content-Range")).isEqualTo(
-                "id 20..19");
+                "id 19..18");
         assertThat(response.getHeaderString("Next-Range")).isEqualTo(
-                "id 19; max=2");
+                "id ]18..; max=2");
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
@@ -129,8 +129,8 @@ public class NotificationResourceTest {
 
         final UserNotifications notifications = new UserNotifications(all);
         when(store.fetch("test")).thenReturn(Optional.of(notifications));
-        when(store.skip(notifications.getNotifications(), 30L, 20)).thenReturn(
-                expected);
+        when(store.skip(notifications.getNotifications(), 30L, true, 20))
+                .thenReturn(expected);
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")
@@ -140,7 +140,7 @@ public class NotificationResourceTest {
                 });
 
         verify(store).fetch("test");
-        verify(store).skip(notifications.getNotifications(), 30L, 20);
+        verify(store).skip(notifications.getNotifications(), 30L, true, 20);
         assertThat(response.getStatus()).isEqualTo(206);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
                 .isEqualTo(MediaType.APPLICATION_JSON + ";charset=UTF-8");
@@ -148,7 +148,7 @@ public class NotificationResourceTest {
         assertThat(response.getHeaderString("Content-Range")).isEqualTo(
                 "id 30..11");
         assertThat(response.getHeaderString("Next-Range")).isEqualTo(
-                "id 11; max=20");
+                "id ]11..; max=20");
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
@@ -165,19 +165,19 @@ public class NotificationResourceTest {
 
         final UserNotifications notifications = new UserNotifications(all);
         when(store.fetch("test")).thenReturn(Optional.of(notifications));
-        when(store.skip(notifications.getNotifications(), 1000L, 20))
+        when(store.skip(notifications.getNotifications(), 30L, true, 20))
                 .thenReturn(expected);
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")
-                .request(MediaType.APPLICATION_JSON).header("Range", "id 1000")
-                .get();
+                .request(MediaType.APPLICATION_JSON)
+                .header("Range", "id 1000..").get();
         final List<Notification> actual = response
                 .readEntity(new GenericType<List<Notification>>() {
                 });
 
         verify(store).fetch("test");
-        verify(store).skip(notifications.getNotifications(), 1000L, 20);
+        verify(store).skip(notifications.getNotifications(), 30L, true, 20);
         assertThat(response.getStatus()).isEqualTo(206);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
                 .isEqualTo(MediaType.APPLICATION_JSON + ";charset=UTF-8");
@@ -185,7 +185,7 @@ public class NotificationResourceTest {
         assertThat(response.getHeaderString("Content-Range")).isEqualTo(
                 "id 30..11");
         assertThat(response.getHeaderString("Next-Range")).isEqualTo(
-                "id 11; max=20");
+                "id ]11..; max=20");
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
@@ -202,8 +202,8 @@ public class NotificationResourceTest {
 
         final UserNotifications notifications = new UserNotifications(all);
         when(store.fetch("test")).thenReturn(Optional.of(notifications));
-        when(store.skip(notifications.getNotifications(), 20L, 3)).thenReturn(
-                expected);
+        when(store.skip(notifications.getNotifications(), 20L, true, 3))
+                .thenReturn(expected);
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")
@@ -214,7 +214,7 @@ public class NotificationResourceTest {
                 });
 
         verify(store).fetch("test");
-        verify(store).skip(notifications.getNotifications(), 20L, 3);
+        verify(store).skip(notifications.getNotifications(), 20L, true, 3);
         assertThat(response.getStatus()).isEqualTo(206);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
                 .isEqualTo(MediaType.APPLICATION_JSON + ";charset=UTF-8");
@@ -222,7 +222,7 @@ public class NotificationResourceTest {
         assertThat(response.getHeaderString("Content-Range")).isEqualTo(
                 "id 20..18");
         assertThat(response.getHeaderString("Next-Range")).isEqualTo(
-                "id 18; max=3");
+                "id ]18..; max=3");
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 

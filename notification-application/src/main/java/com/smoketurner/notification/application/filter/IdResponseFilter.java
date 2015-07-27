@@ -20,7 +20,7 @@ public class IdResponseFilter implements ContainerResponseFilter {
     public void filter(final ContainerRequestContext request,
             final ContainerResponseContext response) throws IOException {
         final UUID id = UUID.randomUUID();
-        LOGGER.info("method={}, path={}, request_id={} status={} bytes={}",
+        LOGGER.info("method={} path={} request_id={} status={} bytes={}",
                 request.getMethod(), request.getUriInfo().getPath(), id,
                 response.getStatus(), response.getLength());
         response.getHeaders().add(REQUEST_ID, id);

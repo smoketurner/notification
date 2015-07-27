@@ -8,6 +8,7 @@ import javax.annotation.concurrent.Immutable;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Longs;
 
@@ -15,40 +16,68 @@ import com.google.common.primitives.Longs;
 public final class RangeHeader {
 
     private static final Pattern ID_PATTERN = Pattern
-            .compile("(?<field>\\w+) (\\])?(?<id>\\d+)(\\.\\.)?");
+            .compile("(?<field>\\w+) (?<fromInclusive>\\]?)(?<fromId>\\d*)\\.\\.(?<toId>\\d*)(?<toInclusive>\\[?)");
     private static final Pattern OPTIONS_PATTERN = Pattern
             .compile("max=(?<max>\\d+)");
     private final String field;
-    private final Long id;
+    private final Long fromId;
+    private final Boolean fromInclusive;
+    private final Long toId;
+    private final Boolean toInclusive;
     private final Integer max;
 
     /**
      * Constructor
      *
      * @param field
-     * @param id
+     * @param fromId
+     * @param fromInclusive
+     * @param toId
+     * @param toInclusive
      * @param max
      */
-    public RangeHeader(final String field, final Long id, final Integer max) {
+    public RangeHeader(final String field, final Long fromId,
+            final Boolean fromInclusive, final Long toId,
+            final Boolean toInclusive, final Integer max) {
         this.field = field;
-        this.id = id;
+        this.fromId = fromId;
+        this.fromInclusive = fromInclusive;
+        this.toId = toId;
+        this.toInclusive = toInclusive;
         this.max = max;
     }
 
     public static RangeHeader parse(final String header) {
+        String field = null;
+        Long fromId = null;
+        Boolean fromInclusive = null;
+        Long toId = null;
+        Boolean toInclusive = null;
+        Integer max = null;
+
+        if (header == null) {
+            return new RangeHeader(field, fromId, fromInclusive, toId,
+                    toInclusive, max);
+        }
+
         final List<String> parts = ImmutableList.copyOf(Splitter.on(';')
                 .trimResults().split(header));
-
-        String field = null;
-        Long id = null;
-        Integer max = null;
 
         final int count = parts.size();
         if (count > 0) {
             final Matcher first = ID_PATTERN.matcher(parts.get(0));
             if (first.matches()) {
                 field = first.group("field");
-                id = Longs.tryParse(first.group("id"));
+                fromId = Longs.tryParse(first.group("fromId"));
+                if (fromId != null) {
+                    fromInclusive = Strings.isNullOrEmpty(first
+                            .group("fromInclusive"));
+                }
+                toId = Longs.tryParse(first.group("toId"));
+                if (toId != null) {
+                    toInclusive = Strings.isNullOrEmpty(first
+                            .group("toInclusive"));
+                }
             }
         }
         if (count > 1) {
@@ -61,15 +90,28 @@ public final class RangeHeader {
             }
         }
 
-        return new RangeHeader(field, id, max);
+        return new RangeHeader(field, fromId, fromInclusive, toId, toInclusive,
+                max);
     }
 
     public Optional<String> getField() {
         return Optional.fromNullable(field);
     }
 
-    public Optional<Long> getId() {
-        return Optional.fromNullable(id);
+    public Optional<Long> getFromId() {
+        return Optional.fromNullable(fromId);
+    }
+
+    public Optional<Boolean> getFromInclusive() {
+        return Optional.fromNullable(fromInclusive);
+    }
+
+    public Optional<Long> getToId() {
+        return Optional.fromNullable(toId);
+    }
+
+    public Optional<Boolean> getToInclusive() {
+        return Optional.fromNullable(toInclusive);
     }
 
     public Optional<Integer> getMax() {
@@ -87,18 +129,24 @@ public final class RangeHeader {
 
         final RangeHeader other = (RangeHeader) obj;
         return Objects.equals(field, other.field)
-                && Objects.equals(id, other.id)
+                && Objects.equals(fromId, other.fromId)
+                && Objects.equals(fromInclusive, other.fromInclusive)
+                && Objects.equals(toId, other.toId)
+                && Objects.equals(toInclusive, other.toInclusive)
                 && Objects.equals(max, other.max);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(field, id, max);
+        return Objects.hash(field, fromId, fromInclusive, toId, toInclusive,
+                max);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("field", field)
-                .add("id", id).add("max", max).toString();
+                .add("fromId", fromId).add("fromInclusive", fromInclusive)
+                .add("toId", toId).add("toInclusive", toInclusive)
+                .add("max", max).toString();
     }
 }

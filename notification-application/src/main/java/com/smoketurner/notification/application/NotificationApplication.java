@@ -1,6 +1,9 @@
 package com.smoketurner.notification.application;
 
 import io.dropwizard.Application;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +26,8 @@ import com.smoketurner.notification.application.managed.NotificationStoreManager
 import com.smoketurner.notification.application.resources.NotificationResource;
 import com.smoketurner.notification.application.resources.PingResource;
 import com.smoketurner.notification.application.resources.VersionResource;
+import com.smoketurner.notification.application.riak.CursorObject;
+import com.smoketurner.notification.application.riak.CursorResolver;
 import com.smoketurner.notification.application.riak.NotificationListConverter;
 import com.smoketurner.notification.application.riak.NotificationListObject;
 import com.smoketurner.notification.application.riak.NotificationListResolver;
@@ -42,6 +47,15 @@ public class NotificationApplication extends
     @Override
     public String getName() {
         return "notification";
+    }
+
+    @Override
+    public void initialize(Bootstrap<NotificationConfiguration> bootstrap) {
+        // Enable variable substitution with environment variables
+        bootstrap
+                .setConfigurationSourceProvider(new SubstitutingSourceProvider(
+                        bootstrap.getConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor()));
     }
 
     @Override
@@ -76,6 +90,8 @@ public class NotificationApplication extends
 
         ConflictResolverFactory.INSTANCE.registerConflictResolver(
                 NotificationListObject.class, new NotificationListResolver());
+        ConflictResolverFactory.INSTANCE.registerConflictResolver(
+                CursorObject.class, new CursorResolver());
         ConverterFactory.INSTANCE.registerConverterForClass(
                 NotificationListObject.class, new NotificationListConverter());
 

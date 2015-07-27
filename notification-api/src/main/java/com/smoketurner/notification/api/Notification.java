@@ -16,6 +16,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Ordering;
 
 @Immutable
@@ -69,7 +70,7 @@ public final class Notification implements Comparable<Notification> {
         this.message = message;
         this.createdAt = createdAt.orNull();
         this.unseen = unseen.orNull();
-        this.properties = properties.orNull();
+        this.properties = properties.or(ImmutableMap.<String, String> of());
         this.notifications = notifications.orNull();
     }
 
@@ -212,20 +213,12 @@ public final class Notification implements Comparable<Notification> {
         }
 
         final Notification other = (Notification) obj;
-        return Objects.equals(id, other.id)
-                && Objects.equals(idStr, other.idStr)
-                && Objects.equals(category, other.category)
-                && Objects.equals(message, other.message)
-                && Objects.equals(createdAt, other.createdAt)
-                && Objects.equals(unseen, other.unseen)
-                && Objects.equals(properties, other.properties)
-                && Objects.equals(notifications, other.notifications);
+        return Objects.equals(id, other.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, idStr, category, message, createdAt, unseen,
-                properties, notifications);
+        return Objects.hash(id);
     }
 
     @Override

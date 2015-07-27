@@ -47,6 +47,12 @@ public final class CursorObject implements Comparable<CursorObject> {
 
     /**
      * Constructor
+     */
+    public CursorObject() {
+    }
+
+    /**
+     * Constructor
      *
      * @param key
      * @param value

@@ -180,8 +180,8 @@ public class NotificationStore {
 
         // get the ID of the most recent notification (this should never be
         // zero)
-        final long mostRecentId = notifications.first().getId(0L);
-        LOGGER.debug("Most recent notification ID: {}", mostRecentId);
+        final long newestId = notifications.first().getId(0L);
+        LOGGER.debug("Newest notification ID: {}", newestId);
 
         final Optional<Long> cursor = cursors.fetch(username, CURSOR_NAME);
         final long lastSeenId = cursor.or(0L);
@@ -189,8 +189,8 @@ public class NotificationStore {
             LOGGER.debug("User ({}) has no cursor", username);
 
             // if the user has no cursor, update to the cursor to the
-            // most recent notification
-            cursors.store(username, CURSOR_NAME, mostRecentId);
+            // newest notification
+            cursors.store(username, CURSOR_NAME, newestId);
 
             // set all of the notifications to unseen=true
             return new UserNotifications(setUnseenState(notifications, true));
@@ -198,17 +198,17 @@ public class NotificationStore {
 
         LOGGER.debug("Last seen notification ID: {}", lastSeenId);
 
-        // if the latest seen notification ID is less than the most recent
-        // notification ID, then update the cursor to the most recent
+        // if the latest seen notification ID is less than the newest
+        // notification ID, then update the cursor to the newest
         // notification ID.
-        if (lastSeenId < mostRecentId) {
-            LOGGER.debug("Updating cursor to {}", mostRecentId);
-            cursors.store(username, CURSOR_NAME, mostRecentId);
+        if (lastSeenId < newestId) {
+            LOGGER.debug("Updating cursor to {}", newestId);
+            cursors.store(username, CURSOR_NAME, newestId);
         }
 
         // get the parent ID of the last seen notification ID
-        final Optional<Notification> lastNotification = findNotification(
-                notifications, lastSeenId);
+        final Optional<Notification> lastNotification = tryFind(notifications,
+                lastSeenId);
         if (!lastNotification.isPresent()) {
             // if the last notification is not found, set all of the
             // notifications as unseen
@@ -401,7 +401,7 @@ public class NotificationStore {
      *            Notification ID to find
      * @return the notification
      */
-    public Optional<Notification> findNotification(
+    public Optional<Notification> tryFind(
             final Iterable<Notification> notifications, final long id) {
         Preconditions.checkNotNull(notifications);
         return Iterables.tryFind(notifications, new Predicate<Notification>() {
@@ -424,14 +424,14 @@ public class NotificationStore {
                 if (children.isEmpty()) {
                     return false;
                 }
-                return (findNotification(children, id)).isPresent();
+                return (tryFind(children, id)).isPresent();
             }
         });
     }
 
     /**
-     * Return the parent notification that matches the given ID or is the parent
-     * of a child notification, or -1 if the notification was not found.
+     * Returns the index in notifications that matches the given ID or is the
+     * parent of a child notification, or -1 if the notification was not found.
      *
      * @param notifications
      *            Notifications to search through
@@ -439,8 +439,7 @@ public class NotificationStore {
      *            Notification ID to find
      * @return the position of the notification or -1 if not found
      */
-    public int indexOfNotification(final Iterable<Notification> notifications,
-            final long id) {
+    public int indexOf(final Iterable<Notification> notifications, final long id) {
         Preconditions.checkNotNull(notifications);
         return Iterables.indexOf(notifications, new Predicate<Notification>() {
             @Override
@@ -462,7 +461,7 @@ public class NotificationStore {
                 if (children.isEmpty()) {
                     return false;
                 }
-                return indexOfNotification(children, id) != -1;
+                return indexOf(children, id) != -1;
             }
         });
     }
@@ -476,20 +475,26 @@ public class NotificationStore {
      *            Iterable of notifications
      * @param startId
      *            notification ID to start at
-     * @param count
+     * @param inclusive
+     *            Whether to include the startId notification or not
+     * @param limitSize
      *            Number of notifications to return
      * @return Iterable containing the subset of the original notifications
      */
     public Iterable<Notification> skip(
             final Iterable<Notification> notifications, final long startId,
-            final int count) {
+            final boolean inclusive, final int limitSize) {
         Preconditions.checkNotNull(notifications);
-        final int position = indexOfNotification(notifications, startId);
+        final int position = indexOf(notifications, startId);
         if (position == -1) {
-            return Iterables.limit(notifications, count);
+            return Iterables.limit(notifications, limitSize);
+        }
+        if (inclusive) {
+            return Iterables.limit(Iterables.skip(notifications, position),
+                    limitSize);
         }
         return Iterables.limit(Iterables.skip(notifications, position + 1),
-                count);
+                limitSize);
     }
 
     /**

@@ -227,23 +227,23 @@ public class NotificationStoreTest {
 
         final List<Notification> notifications = builder.build();
 
-        assertThat(store.findNotification(notifications, 1)).isEqualTo(
+        assertThat(store.tryFind(notifications, 1)).isEqualTo(
                 Optional.of(createNotification(1)));
-        assertThat(store.findNotification(notifications, 5)).isEqualTo(
+        assertThat(store.tryFind(notifications, 5)).isEqualTo(
                 Optional.of(createNotification(5)));
-        assertThat(store.findNotification(notifications, 10)).isEqualTo(
+        assertThat(store.tryFind(notifications, 10)).isEqualTo(
                 Optional.of(createNotification(10)));
-        assertThat(store.findNotification(notifications, 12)).isEqualTo(
+        assertThat(store.tryFind(notifications, 12)).isEqualTo(
                 Optional.<Notification> absent());
-        assertThat(store.findNotification(notifications, 100)).isEqualTo(
+        assertThat(store.tryFind(notifications, 100)).isEqualTo(
                 Optional.of(n100));
-        assertThat(store.findNotification(notifications, 101)).isEqualTo(
+        assertThat(store.tryFind(notifications, 101)).isEqualTo(
                 Optional.of(n100));
-        assertThat(store.findNotification(notifications, 102)).isEqualTo(
+        assertThat(store.tryFind(notifications, 102)).isEqualTo(
                 Optional.of(n100));
-        assertThat(store.findNotification(notifications, 103)).isEqualTo(
+        assertThat(store.tryFind(notifications, 103)).isEqualTo(
                 Optional.<Notification> absent());
-        assertThat(store.findNotification(notifications, 150)).isEqualTo(
+        assertThat(store.tryFind(notifications, 150)).isEqualTo(
                 Optional.of(n150));
     }
 
@@ -263,7 +263,8 @@ public class NotificationStoreTest {
         }
         final List<Notification> expected = builder2.build();
 
-        final Iterable<Notification> actual = store.skip(notifications, 0, 10);
+        final Iterable<Notification> actual = store.skip(notifications, 0,
+                true, 10);
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
@@ -283,7 +284,8 @@ public class NotificationStoreTest {
         }
         final List<Notification> expected = builder2.build();
 
-        final Iterable<Notification> actual = store.skip(notifications, 56, 10);
+        final Iterable<Notification> actual = store.skip(notifications, 56,
+                false, 10);
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
@@ -304,7 +306,7 @@ public class NotificationStoreTest {
         final List<Notification> expected = builder2.build();
 
         final Iterable<Notification> actual = store.skip(notifications, 1000,
-                10);
+                true, 10);
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
