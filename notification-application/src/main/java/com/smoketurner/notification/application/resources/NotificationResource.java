@@ -33,8 +33,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.glassfish.jersey.server.JSONP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.codahale.metrics.annotation.Timed;
@@ -74,9 +73,10 @@ public class NotificationResource {
     }
 
     @GET
+    @JSONP
     @Timed
     @Path("/{username}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_JSON, "application/javascript" })
     @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
     public Response fetch(@HeaderParam("Range") final String rangeHeader,
             @PathParam("username") final String username) {
@@ -158,8 +158,7 @@ public class NotificationResource {
         builder.header(ACCEPT_RANGES_HEADER, RANGE_NAME);
 
         // Add the Last-Modified response header
-        builder.lastModified(new Date(newest.getCreatedAt()
-                .or(DateTime.now(DateTimeZone.UTC)).getMillis()));
+        builder.lastModified(new Date(newest.getCreatedAt().getMillis()));
 
         final ImmutableSortedSet<Notification> subSet = notifications.subSet(
                 from, fromInclusive, to, toInclusive);

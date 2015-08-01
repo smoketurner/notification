@@ -16,6 +16,7 @@
 package com.smoketurner.notification.application.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import java.util.List;
@@ -39,6 +41,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -52,6 +55,7 @@ import com.smoketurner.notification.application.store.NotificationStore;
 
 public class NotificationResourceTest {
 
+    private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
     private static final NotificationStore store = mock(NotificationStore.class);
 
     @ClassRule
@@ -82,7 +86,8 @@ public class NotificationResourceTest {
                 });
 
         verify(store).fetch("test");
-        verify(store).skip(notifications.getNotifications(), 1L, true, 20);
+        verify(store);
+        store.skip(notifications.getNotifications(), 1L, true, 20);
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
                 .isEqualTo(MediaType.APPLICATION_JSON + ";charset=UTF-8");
@@ -91,6 +96,37 @@ public class NotificationResourceTest {
                 "id 1..1");
         assertThat(response.getHeaderString("Next-Range")).isNull();
         assertThat(actual).containsExactlyElementsOf(expected);
+    }
+
+    @Test
+    public void testFetchJSONP() throws Exception {
+        final DateTime now = DateTime.now(DateTimeZone.UTC);
+        final Notification notification = Notification.builder()
+                .fromNotification(createNotification(1L)).withCreatedAt(now)
+                .build();
+        final ImmutableSortedSet<Notification> expected = ImmutableSortedSet
+                .of(notification);
+        final UserNotifications notifications = new UserNotifications(expected);
+        when(store.fetch("test")).thenReturn(Optional.of(notifications));
+        when(store.skip(notifications.getNotifications(), 1L, true, 20))
+                .thenReturn(expected);
+
+        final Response response = resources.client()
+                .target("/v1/notifications/test")
+                .request("application/javascript").get();
+        final String actual = response.readEntity(String.class);
+
+        verify(store).fetch("test");
+        verify(store).skip(notifications.getNotifications(), 1L, true, 20);
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE))
+                .isEqualTo("application/javascript;charset=UTF-8");
+        assertThat(response.getHeaderString("Accept-Ranges")).isEqualTo("id");
+        assertThat(response.getHeaderString("Content-Range")).isEqualTo(
+                "id 1..1");
+        assertThat(response.getHeaderString("Next-Range")).isNull();
+        assertThat(actual).isEqualTo(
+                "callback([" + MAPPER.writeValueAsString(notification) + "])");
     }
 
     @Test
@@ -328,7 +364,7 @@ public class NotificationResourceTest {
                     ConstraintViolationException.class);
         }
 
-        verify(store, never()).store("test", notification);
+        verify(store, never()).store(anyString(), any(Notification.class));
     }
 
     @Test
@@ -345,7 +381,7 @@ public class NotificationResourceTest {
                     ConstraintViolationException.class);
         }
 
-        verify(store, never()).store("test", notification);
+        verify(store, never()).store(anyString(), any(Notification.class));
     }
 
     @Test
@@ -362,7 +398,7 @@ public class NotificationResourceTest {
                     ConstraintViolationException.class);
         }
 
-        verify(store, never()).store("test", notification);
+        verify(store, never()).store(anyString(), any(Notification.class));
     }
 
     @Test
@@ -379,7 +415,7 @@ public class NotificationResourceTest {
                     ConstraintViolationException.class);
         }
 
-        verify(store, never()).store("test", notification);
+        verify(store, never()).store(anyString(), any(Notification.class));
     }
 
     @Test

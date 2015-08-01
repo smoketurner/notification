@@ -22,6 +22,7 @@ import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -40,22 +41,19 @@ import com.google.common.collect.Ordering;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class Notification implements Comparable<Notification> {
 
-    private Long id;
-    private String idStr;
+    private final Long id;
+    private final String idStr;
 
     @NotEmpty
-    private String category;
+    private final String category;
 
     @NotEmpty
-    private String message;
+    private final String message;
 
-    private DateTime createdAt;
-
-    private Boolean unseen;
-
-    private Map<String, String> properties;
-
-    private Collection<Notification> notifications;
+    private final DateTime createdAt;
+    private final Boolean unseen;
+    private final Map<String, String> properties;
+    private final Collection<Notification> notifications;
 
     /**
      * Constructor
@@ -83,7 +81,7 @@ public final class Notification implements Comparable<Notification> {
         this.idStr = idStr.orNull();
         this.category = category;
         this.message = message;
-        this.createdAt = createdAt.orNull();
+        this.createdAt = createdAt.or(DateTime.now(DateTimeZone.UTC));
         this.unseen = unseen.orNull();
         this.properties = properties.or(ImmutableMap.<String, String> of());
         this.notifications = notifications.orNull();
@@ -199,8 +197,8 @@ public final class Notification implements Comparable<Notification> {
     }
 
     @JsonProperty
-    public Optional<DateTime> getCreatedAt() {
-        return Optional.fromNullable(createdAt);
+    public DateTime getCreatedAt() {
+        return createdAt;
     }
 
     @JsonProperty
@@ -209,8 +207,8 @@ public final class Notification implements Comparable<Notification> {
     }
 
     @JsonProperty
-    public Optional<Map<String, String>> getProperties() {
-        return Optional.fromNullable(properties);
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
     @JsonProperty

@@ -105,15 +105,12 @@ public class NotificationListConverter extends
                 .setId(notification.getId().get())
                 .setCategory(notification.getCategory())
                 .setMessage(notification.getMessage())
-                .setCreatedAt(notification.getCreatedAt().get().getMillis());
+                .setCreatedAt(notification.getCreatedAt().getMillis());
 
-        if (notification.getProperties().isPresent()) {
-            for (Map.Entry<String, String> property : notification
-                    .getProperties().get().entrySet()) {
-                builder.addProperty(Property.newBuilder()
-                        .setKey(property.getKey())
-                        .setValue(property.getValue()));
-            }
+        for (Map.Entry<String, String> property : notification.getProperties()
+                .entrySet()) {
+            builder.addProperty(Property.newBuilder().setKey(property.getKey())
+                    .setValue(property.getValue()));
         }
         return builder.build();
     }

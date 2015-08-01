@@ -4,6 +4,16 @@ snowizard:
   datacenterId: 1
   workerId: 1
 
+# Roll-up Rules
+rules:
+
+  new-follower:
+    max-size: 9
+    max-duration: 12 hours
+  like:
+    max-duration: 3 hours
+    match-on: message_id
+
 # Riak-specific options.
 riak:
 

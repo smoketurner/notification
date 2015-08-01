@@ -180,7 +180,7 @@ public class NotificationStore {
      *             if unable to update the cursor
      */
     public UserNotifications splitNotifications(@Nonnull final String username,
-            final TreeSet<Notification> notifications)
+            @Nonnull final TreeSet<Notification> notifications)
             throws NotificationStoreException {
 
         Preconditions.checkNotNull(username);
@@ -203,8 +203,9 @@ public class NotificationStore {
         if (!cursor.isPresent()) {
             LOGGER.debug("User ({}) has no cursor", username);
 
-            // if the user has no cursor, update to the cursor to the
-            // newest notification
+            // if the user has no cursor, update the cursor to the newest
+            // notification
+            LOGGER.debug("Updating cursor to {}", newestId);
             cursors.store(username, CURSOR_NAME, newestId);
 
             // set all of the notifications to unseen=true
@@ -393,7 +394,8 @@ public class NotificationStore {
      * @return the updated notifications
      */
     public Iterable<Notification> setUnseenState(
-            final Iterable<Notification> notifications, final boolean unseen) {
+            @Nonnull final Iterable<Notification> notifications,
+            final boolean unseen) {
         Preconditions.checkNotNull(notifications);
         return Iterables.transform(notifications,
                 new Function<Notification, Notification>() {
@@ -417,7 +419,7 @@ public class NotificationStore {
      * @return the notification
      */
     public Optional<Notification> tryFind(
-            final Iterable<Notification> notifications, final long id) {
+            @Nonnull final Iterable<Notification> notifications, final long id) {
         Preconditions.checkNotNull(notifications);
         return Iterables.tryFind(notifications, new Predicate<Notification>() {
             @Override
@@ -454,7 +456,8 @@ public class NotificationStore {
      *            Notification ID to find
      * @return the position of the notification or -1 if not found
      */
-    public int indexOf(final Iterable<Notification> notifications, final long id) {
+    public int indexOf(@Nonnull final Iterable<Notification> notifications,
+            final long id) {
         Preconditions.checkNotNull(notifications);
         return Iterables.indexOf(notifications, new Predicate<Notification>() {
             @Override
@@ -497,8 +500,8 @@ public class NotificationStore {
      * @return Iterable containing the subset of the original notifications
      */
     public Iterable<Notification> skip(
-            final Iterable<Notification> notifications, final long startId,
-            final boolean inclusive, final int limitSize) {
+            @Nonnull final Iterable<Notification> notifications,
+            final long startId, final boolean inclusive, final int limitSize) {
         Preconditions.checkNotNull(notifications);
         final int position = indexOf(notifications, startId);
         if (position == -1) {

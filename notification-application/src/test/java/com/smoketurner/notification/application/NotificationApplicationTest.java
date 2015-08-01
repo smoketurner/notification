@@ -15,35 +15,60 @@
  */
 package com.smoketurner.notification.application;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.setup.Environment;
+import org.junit.Before;
+import org.junit.Test;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smoketurner.notification.application.config.NotificationConfiguration;
+import com.smoketurner.notification.application.resources.NotificationResource;
+import com.smoketurner.notification.application.resources.PingResource;
+import com.smoketurner.notification.application.resources.VersionResource;
 
-/**
- * Unit test for simple App.
- */
-public class NotificationApplicationTest extends TestCase {
-    /**
-     * Create the test case
-     *
-     * @param testName
-     *            name of the test case
-     */
-    public NotificationApplicationTest(String testName) {
-        super(testName);
+public class NotificationApplicationTest {
+    private final MetricRegistry registry = new MetricRegistry();
+    private final ObjectMapper mapper = Jackson.newObjectMapper();
+    private final Environment environment = mock(Environment.class);
+    private final JerseyEnvironment jersey = mock(JerseyEnvironment.class);
+    private final LifecycleEnvironment lifecycle = mock(LifecycleEnvironment.class);
+    private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
+    private final NotificationApplication application = new NotificationApplication();
+    private final NotificationConfiguration config = new NotificationConfiguration();
+
+    @Before
+    public void setup() throws Exception {
+        config.getSnowizard().setDatacenterId(1);
+        config.getSnowizard().setWorkerId(1);
+        when(environment.metrics()).thenReturn(registry);
+        when(environment.jersey()).thenReturn(jersey);
+        when(environment.getObjectMapper()).thenReturn(mapper);
+        when(environment.lifecycle()).thenReturn(lifecycle);
+        when(environment.healthChecks()).thenReturn(healthChecks);
     }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-        return new TestSuite(NotificationApplicationTest.class);
+    @Test
+    public void buildsAVersionResource() throws Exception {
+        application.run(config, environment);
+        verify(jersey).register(isA(VersionResource.class));
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp() {
-        assertTrue(true);
+    @Test
+    public void buildsAPingResource() throws Exception {
+        application.run(config, environment);
+        verify(jersey).register(isA(PingResource.class));
+    }
+
+    @Test
+    public void buildsANotificationResource() throws Exception {
+        application.run(config, environment);
+        verify(jersey).register(isA(NotificationResource.class));
     }
 }

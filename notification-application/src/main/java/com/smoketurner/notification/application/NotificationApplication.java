@@ -20,6 +20,7 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
@@ -30,8 +31,9 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ge.snowizard.core.IdWorker;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
-import com.smoketurner.notification.application.config.RiakClusterFactory;
+import com.smoketurner.notification.application.config.RiakConfiguration;
 import com.smoketurner.notification.application.config.SnowizardConfiguration;
+import com.smoketurner.notification.application.core.Rule;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.filter.CharsetResponseFilter;
 import com.smoketurner.notification.application.filter.IdResponseFilter;
@@ -77,6 +79,10 @@ public class NotificationApplication extends
     public void run(final NotificationConfiguration configuration,
             final Environment environment) throws Exception {
 
+        for (Map.Entry<String, Rule> rule : configuration.getRules().entrySet()) {
+            LOGGER.debug("Loaded rule ({}): {}", rule.getKey(), rule.getValue());
+        }
+
         final MetricRegistry registry = environment.metrics();
 
         // returns all DateTime objects as ISO8601 strings
@@ -98,9 +104,8 @@ public class NotificationApplication extends
                 snowizardConfig.getDatacenterId());
 
         // riak
-        final RiakClusterFactory factory = new RiakClusterFactory(environment);
-        final RiakCluster cluster = factory.build(configuration.getRiak());
-
+        final RiakConfiguration riakConfig = configuration.getRiak();
+        final RiakCluster cluster = riakConfig.build(environment);
         final RiakClient client = new RiakClient(cluster);
 
         ConflictResolverFactory.INSTANCE.registerConflictResolver(

@@ -16,11 +16,16 @@
 package com.smoketurner.notification.application.config;
 
 import io.dropwizard.Configuration;
+import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Maps;
+import com.smoketurner.notification.application.core.Rule;
 
 public class NotificationConfiguration extends Configuration {
+
+    private final Map<String, Rule> rules = Maps.newHashMap();
 
     @Valid
     @NotNull
@@ -31,6 +36,11 @@ public class NotificationConfiguration extends Configuration {
     @NotNull
     @JsonProperty
     private final SnowizardConfiguration snowizard = new SnowizardConfiguration();
+
+    @JsonProperty
+    public Map<String, Rule> getRules() {
+        return rules;
+    }
 
     @JsonProperty
     public RiakConfiguration getRiak() {

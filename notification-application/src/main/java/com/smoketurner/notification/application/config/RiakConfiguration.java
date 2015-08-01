@@ -15,20 +15,34 @@
  */
 package com.smoketurner.notification.application.config;
 
+import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
+import java.net.UnknownHostException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nonnull;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
+import com.basho.riak.client.core.RiakCluster;
+import com.basho.riak.client.core.RiakNode;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.net.HostAndPort;
+import com.smoketurner.notification.application.managed.RiakClusterManager;
 
 public class RiakConfiguration {
 
+    private static final int DEFAULT_RIAK_PORT = 8087;
+
     @NotEmpty
-    private List<HostAndPort> nodes;
+    private List<HostAndPort> nodes = Lists.newArrayList();
 
     private String username;
 
@@ -144,5 +158,41 @@ public class RiakConfiguration {
     @JsonProperty
     public void setConnectionTimeout(final Duration timeout) {
         this.connectionTimeout = timeout;
+    }
+
+    @JsonIgnore
+    public RiakCluster build(@Nonnull final Environment environment)
+            throws UnknownHostException, KeyStoreException {
+        Preconditions.checkNotNull(environment);
+
+        final RiakNode.Builder builder = new RiakNode.Builder()
+                .withMinConnections(minConnections)
+                .withConnectionTimeout((int) connectionTimeout.toMilliseconds())
+                .withIdleTimeout((int) idleTimeout.toMilliseconds())
+                .withBlockOnMaxConnections(false);
+        if (maxConnections > 0) {
+            builder.withMaxConnections(maxConnections);
+        }
+        if (!Strings.isNullOrEmpty(username)
+                && !Strings.isNullOrEmpty(password)
+                && !Strings.isNullOrEmpty(keyStore)) {
+            // TODO finish keyStore implementation
+            final KeyStore keystore = KeyStore.getInstance("PKS");
+            builder.withAuth(username, password, keystore);
+        }
+
+        final List<RiakNode> nodes = Lists.newArrayList();
+        for (HostAndPort address : this.nodes) {
+            final RiakNode node = builder
+                    .withRemoteAddress(address.getHostText())
+                    .withRemotePort(address.getPortOrDefault(DEFAULT_RIAK_PORT))
+                    .build();
+            nodes.add(node);
+        }
+
+        final RiakCluster cluster = RiakCluster.builder(nodes)
+                .withExecutionAttempts(executionAttempts).build();
+        environment.lifecycle().manage(new RiakClusterManager(cluster));
+        return cluster;
     }
 }

@@ -73,7 +73,7 @@ public class NotificationsIT {
         assertThat(actual.getCategory()).isEqualTo(notification.getCategory());
         assertThat(actual.getMessage()).isEqualTo(notification.getMessage());
         assertThat(actual.getId().isPresent()).isTrue();
-        assertThat(actual.getCreatedAt().isPresent()).isTrue();
+        assertThat(actual.getCreatedAt()).isNotNull();
     }
 
     @Test
@@ -138,7 +138,7 @@ public class NotificationsIT {
             assertThat(actual.size()).isGreaterThan(0);
             final Notification first = actual.get(0);
             assertThat(first.getId().isPresent()).isTrue();
-            assertThat(first.getCreatedAt().isPresent()).isTrue();
+            assertThat(first.getCreatedAt()).isNotNull();
         }
     }
 

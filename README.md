@@ -2,6 +2,8 @@ Notification
 ============
 [![Build Status](https://travis-ci.org/smoketurner/notification.svg?branch=master)](https://travis-ci.org/smoketurner/notification)
 [![Coverage Status](https://coveralls.io/repos/smoketurner/notification/badge.svg)](https://coveralls.io/r/smoketurner/notification)
+[![Maven Central](https://img.shields.io/maven-central/v/com.smoketurner/notification-parent.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.smoketurner/notification-parent/)
+[![GitHub license](https://img.shields.io/github/license/smoketurner/notification.svg?style=flat-square)]()
 
 Notification is an implementation of an HTTP-based notification web service, based on Yammer's [Streamie](http://basho.com/posts/business/riak-and-scala-at-yammer/) service. This project was developed using:
 
@@ -11,7 +13,7 @@ Notification is an implementation of an HTTP-based notification web service, bas
 
 Design
 ------
-Similar to Yammer's implementation, the Notification service relies on monitonically increasing identifiers (using [Snowizard](https://github.com/GeneralElectric/snowizard) which is an implementation of Twitter's [Snowflake](https://github.com/twitter/snowflake/releases/tag/snowflake-2010) ID generation service) that are used to resolving conflicts within Riak. The ID's are also used to provide a sorting order for the notifications so the newest notifications always appear at the top of a user's notification list. Every unique username can store up to 1000 notifications before the older notifications are aged out of the system.
+Similar to Yammer's implementation, the Notification service relies on monitonically increasing identifiers (using [Snowizard](https://github.com/GeneralElectric/snowizard) which is an implementation of Twitter's [Snowflake](https://github.com/twitter/snowflake/releases/tag/snowflake-2010) ID generation service) that are used to resolving conflicts within Riak. The IDs are also used to provide a sorting order for the notifications so the newest notifications always appear at the top of a user's notification list. Every unique username can store up to 1000 notifications before the older notifications are aged out of the system.
 
 Notifications are stored in the `notifications` bucket in Riak. The service also stores a cursor representing the most recent seen notification for that user. Cursors are stored in the `cursors` bucket in Riak. A cursor looks like:
 
@@ -34,6 +36,20 @@ java -jar target/notification-application/notification-application-1.0.0-SNAPSHO
 ```
 
 The Notification service should be listening on port `8080` for API requests, and Dropwizard's administrative interface is available on port `8180` (both of these ports can be changed in the `notification.yml` configuration file).
+
+Production
+----------
+To deploy the Notification service into production, it can safely sit behind any HTTP-based load balancer (nginx, haproxy, F5, etc.). You must modify the `notification.yml` file on each server to specify a unique `datacenterId` and `workerId` combination to ensure unique notification IDs are being generated.
+
+```
+# Snowizard-specific options.
+snowizard:
+
+  datacenterId: 1
+  workerId: 1
+```
+
+To connect to Riak, you can put Riak behind a load-balancer, but to support the Notification service automatically retrying Riak requests to separate nodes in the cluster, it is recommended to configure each Riak node individual in the configuration file.
 
 Usage
 -----
