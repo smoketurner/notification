@@ -17,6 +17,7 @@ package com.smoketurner.notification.application.store;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
@@ -44,6 +45,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.Rollup;
+import com.smoketurner.notification.application.core.Rule;
 import com.smoketurner.notification.application.core.UserNotifications;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.riak.NotificationListAddition;
@@ -60,6 +63,7 @@ public class NotificationStore {
     private final RiakClient client;
     private final IdWorker snowizard;
     private final CursorStore cursors;
+    private final Map<String, Rule> rules;
 
     // timers
     private final Timer fetchTimer;
@@ -77,11 +81,14 @@ public class NotificationStore {
      *            ID Generator
      * @param cursors
      *            Cursor data store
+     * @param rules
+     *            Rollup rules
      */
     public NotificationStore(@Nonnull final MetricRegistry registry,
             @Nonnull final RiakClient client,
             @Nonnull final IdWorker snowizard,
-            @Nonnull final CursorStore cursors) {
+            @Nonnull final CursorStore cursors,
+            @Nonnull final Map<String, Rule> rules) {
         Preconditions.checkNotNull(registry);
         this.fetchTimer = registry.timer(MetricRegistry.name(
                 NotificationStore.class, "fetch"));
@@ -93,6 +100,7 @@ public class NotificationStore {
         this.client = Preconditions.checkNotNull(client);
         this.snowizard = Preconditions.checkNotNull(snowizard);
         this.cursors = Preconditions.checkNotNull(cursors);
+        this.rules = Preconditions.checkNotNull(rules);
     }
 
     /**
@@ -198,6 +206,8 @@ public class NotificationStore {
         final long newestId = notifications.first().getId(0L);
         LOGGER.debug("Newest notification ID: {}", newestId);
 
+        final Rollup unseenRollup = new Rollup(rules);
+
         final Optional<Long> cursor = cursors.fetch(username, CURSOR_NAME);
         final long lastSeenId = cursor.or(0L);
         if (!cursor.isPresent()) {
@@ -209,7 +219,8 @@ public class NotificationStore {
             cursors.store(username, CURSOR_NAME, newestId);
 
             // set all of the notifications to unseen=true
-            return new UserNotifications(setUnseenState(notifications, true));
+            return new UserNotifications(unseenRollup.rollup(setUnseenState(
+                    notifications, true)));
         }
 
         LOGGER.debug("Last seen notification ID: {}", lastSeenId);
@@ -228,7 +239,8 @@ public class NotificationStore {
         if (!lastNotification.isPresent()) {
             // if the last notification is not found, set all of the
             // notifications as unseen
-            return new UserNotifications(setUnseenState(notifications, true));
+            return new UserNotifications(unseenRollup.rollup(setUnseenState(
+                    notifications, true)));
         }
 
         // Set the head of the list as being unseen
@@ -239,7 +251,10 @@ public class NotificationStore {
         final Iterable<Notification> seen = setUnseenState(
                 notifications.tailSet(lastNotification.get()), false);
 
-        return new UserNotifications(unseen, seen);
+        final Rollup seenRollup = new Rollup(rules);
+
+        return new UserNotifications(unseenRollup.rollup(unseen),
+                seenRollup.rollup(seen));
     }
 
     /**

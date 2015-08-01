@@ -13,6 +13,8 @@ rules:
   like:
     max-duration: 3 hours
     match-on: message_id
+  test-category:
+    max-size: 2
 
 # Riak-specific options.
 riak:

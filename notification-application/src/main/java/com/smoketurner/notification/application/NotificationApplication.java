@@ -20,7 +20,6 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
@@ -33,7 +32,6 @@ import com.ge.snowizard.core.IdWorker;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
 import com.smoketurner.notification.application.config.RiakConfiguration;
 import com.smoketurner.notification.application.config.SnowizardConfiguration;
-import com.smoketurner.notification.application.core.Rule;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.filter.CharsetResponseFilter;
 import com.smoketurner.notification.application.filter.IdResponseFilter;
@@ -79,10 +77,6 @@ public class NotificationApplication extends
     public void run(final NotificationConfiguration configuration,
             final Environment environment) throws Exception {
 
-        for (Map.Entry<String, Rule> rule : configuration.getRules().entrySet()) {
-            LOGGER.debug("Loaded rule ({}): {}", rule.getKey(), rule.getValue());
-        }
-
         final MetricRegistry registry = environment.metrics();
 
         // returns all DateTime objects as ISO8601 strings
@@ -121,7 +115,7 @@ public class NotificationApplication extends
         // data stores
         final CursorStore cursorStore = new CursorStore(registry, client);
         final NotificationStore store = new NotificationStore(registry, client,
-                snowizard, cursorStore);
+                snowizard, cursorStore, configuration.getRules());
         environment.lifecycle().manage(new CursorStoreManager(cursorStore));
         environment.lifecycle().manage(new NotificationStoreManager(store));
 

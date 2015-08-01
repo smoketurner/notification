@@ -148,10 +148,6 @@ Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
 
 This will remove all of the `test` user's notifications, their cursor and will always return a `204` response code.
 
-Enhancements
-------------
-1. Add rollup support
-
 Support
 -------
 

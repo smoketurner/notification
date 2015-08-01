@@ -16,24 +16,18 @@
 package com.smoketurner.notification.application.core;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 
 public class Rollup {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(Rollup.class);
     private final Map<String, Rule> rules;
-    private final List<Matcher> matchers = Lists.newArrayList();
+    private final TreeSet<Matcher> matchers = Sets.newTreeSet();
 
     /**
      * Constructor
@@ -45,8 +39,22 @@ public class Rollup {
         this.rules = Preconditions.checkNotNull(rules);
     }
 
+    /**
+     * Iterates over the notifications and uses the {@link Rule} and
+     * {@link Matcher} objects to roll up the notifications based on the rules.
+     * 
+     * @param notifications
+     *            Notifications to roll up
+     * @return Rolled up notifications
+     */
     public Iterable<Notification> rollup(
             @Nonnull final Iterable<Notification> notifications) {
+
+        Preconditions.checkNotNull(notifications);
+
+        if (rules.isEmpty()) {
+            return notifications;
+        }
 
         final TreeSet<Notification> rollups = Sets.newTreeSet();
 
@@ -55,8 +63,6 @@ public class Rollup {
             final Notification notification = iterator.next();
 
             if (!rules.containsKey(notification.getCategory())) {
-                LOGGER.debug("No rule found for category: {}",
-                        notification.getCategory());
                 rollups.add(notification);
                 continue;
             }

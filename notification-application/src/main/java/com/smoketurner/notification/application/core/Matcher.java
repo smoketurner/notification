@@ -7,10 +7,12 @@ import java.util.TreeSet;
 import javax.annotation.Nonnull;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 
-public class Matcher {
+public class Matcher implements Comparable<Matcher> {
 
     private final Notification notification;
     private final Rule rule;
@@ -91,7 +93,8 @@ public class Matcher {
     public boolean add(@Nonnull final Notification notification) {
         Preconditions.checkNotNull(notification);
         if (checkSize() && checkDuration(notification)
-                && checkMatch(notification)) {
+                && checkMatch(notification)
+                && !this.notification.equals(notification)) {
             return notifications.add(notification);
         }
         return false;
@@ -102,8 +105,23 @@ public class Matcher {
         return this.notifications.addAll(notifications);
     }
 
+    public long getId() {
+        return notification.getId(0L);
+    }
+
     public Notification getNotification() {
+        if (notifications.size() < 1) {
+            return notification;
+        }
         return Notification.builder().fromNotification(notification)
                 .withNotifications(notifications).build();
+    }
+
+    @Override
+    public int compareTo(final Matcher that) {
+        return ComparisonChain
+                .start()
+                .compare(this.getId(), that.getId(),
+                        Ordering.natural().reverse()).result();
     }
 }
