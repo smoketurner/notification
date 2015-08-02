@@ -2,7 +2,7 @@ Notification
 ============
 [![Build Status](https://travis-ci.org/smoketurner/notification.svg?branch=master)](https://travis-ci.org/smoketurner/notification)
 [![Coverage Status](https://coveralls.io/repos/smoketurner/notification/badge.svg)](https://coveralls.io/r/smoketurner/notification)
-[![Maven Central](https://img.shields.io/maven-central/v/com.smoketurner/notification-parent.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.smoketurner/notification-parent/)
+[![Maven Central](https://img.shields.io/maven-central/v/com.smoketurner.notification/notification-parent.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.smoketurner.notification/notification-parent/)
 [![GitHub license](https://img.shields.io/github/license/smoketurner/notification.svg?style=flat-square)](https://github.com/smoketurner/notification/tree/master)
 
 Notification is an implementation of an HTTP-based notification web service, based on Yammer's [Streamie](http://basho.com/posts/business/riak-and-scala-at-yammer/) service. This project was developed using:
@@ -24,6 +24,24 @@ Notifications are stored in the `notifications` bucket in Riak. The service also
 Where the username is `test`, the cursor name is `notifications` and the value of the cursor is `625336317638742016`.
 
 When a user retrieves their list of notifications, the service will update the value of their cursor to the most recent notification.
+
+Rollups
+-------
+The Notification service supports the concept of "rollups". In the `notification.yml` file, you can control various rollup rules for a given notification category:
+
+```
+# Roll-up Rules
+rules:
+
+  new-follower:
+    max-size: 9
+    max-duration: 12 hours
+  like:
+    max-duration: 3 hours
+    match-on: message_id
+```
+
+This would mean, for the `new-follower` category, roll up to a maximum of 9 notifications as long as there are no more than 12 hours between the first and last notifications. For the `like` category, roll up notifications within a 3 hour time window but they must have a matching `message_id` property value in each notification. As with Yammer's implementation, notifications are first partitioned between the seen and unseen prior to rolling up the notifications. This prevents pulling forward a notification that has already been seen and showing it to the user in a grouping of unseen notifications.
 
 Installation
 ------------
