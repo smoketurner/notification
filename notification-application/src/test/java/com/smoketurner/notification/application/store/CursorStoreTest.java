@@ -1,17 +1,15 @@
 /**
  * Copyright 2015 Smoke Turner, LLC.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.smoketurner.notification.application.store;
 
@@ -35,177 +33,172 @@ import com.smoketurner.notification.application.exceptions.NotificationStoreExce
 
 public class CursorStoreTest {
 
-    private static final String TEST_USER = "test";
-    private static final String CURSOR_NAME = "notifications";
-    private final MetricRegistry registry = new MetricRegistry();
-    private final RiakClient client = mock(RiakClient.class);
-    private final CursorStore store = new CursorStore(registry, client);
+  private static final String TEST_USER = "test";
+  private static final String CURSOR_NAME = "notifications";
+  private final MetricRegistry registry = new MetricRegistry();
+  private final RiakClient client = mock(RiakClient.class);
+  private final CursorStore store = new CursorStore(registry, client);
 
-    @Test
-    @Ignore
-    public void testFetch() throws Exception {
-        final FetchValue.Response response = mock(FetchValue.Response.class);
+  @Test
+  @Ignore
+  public void testFetch() throws Exception {
+    final FetchValue.Response response = mock(FetchValue.Response.class);
 
-        final Optional<Long> expected = Optional.of(1L);
+    final Optional<Long> expected = Optional.of(1L);
 
-        when(client.execute(any(FetchValue.class))).thenReturn(response);
+    when(client.execute(any(FetchValue.class))).thenReturn(response);
 
-        final Optional<Long> actual = store.fetch(TEST_USER, CURSOR_NAME);
-        verify(client).execute(any(FetchValue.class));
-        assertThat(actual).isEqualTo(expected);
+    final Optional<Long> actual = store.fetch(TEST_USER, CURSOR_NAME);
+    verify(client).execute(any(FetchValue.class));
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  public void testStore() throws Exception {
+    store.store(TEST_USER, CURSOR_NAME, 1L);
+    verify(client).execute(any(UpdateValue.class));
+  }
+
+  @Test
+  public void testStoreNullUsername() throws Exception {
+    try {
+      store.store(null, CURSOR_NAME, 1L);
+      failBecauseExceptionWasNotThrown(NullPointerException.class);
+    } catch (NullPointerException e) {
+    }
+    verify(client, never()).execute(any(UpdateValue.class));
+  }
+
+  @Test
+  public void testStoreEmptyUsername() throws Exception {
+    try {
+      store.store("", CURSOR_NAME, 1L);
+      failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+    } catch (IllegalArgumentException e) {
+    }
+    verify(client, never()).execute(any(UpdateValue.class));
+  }
+
+  @Test
+  public void testStoreNullCursorName() throws Exception {
+    try {
+      store.store(TEST_USER, null, 1L);
+      failBecauseExceptionWasNotThrown(NullPointerException.class);
+    } catch (NullPointerException e) {
+    }
+    verify(client, never()).execute(any(UpdateValue.class));
+  }
+
+  @Test
+  public void testStoreEmptyCursorName() throws Exception {
+    try {
+      store.store(TEST_USER, "", 1L);
+      failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+    } catch (IllegalArgumentException e) {
+    }
+    verify(client, never()).execute(any(UpdateValue.class));
+  }
+
+  @Test
+  public void testStoreExecutionException() throws Exception {
+    when(client.execute(any(UpdateValue.class))).thenThrow(new ExecutionException(new Exception()));
+
+    try {
+      store.store(TEST_USER, CURSOR_NAME, 1L);
+      failBecauseExceptionWasNotThrown(NotificationStoreException.class);
+    } catch (NotificationStoreException e) {
     }
 
-    @Test
-    public void testStore() throws Exception {
-        store.store(TEST_USER, CURSOR_NAME, 1L);
-        verify(client).execute(any(UpdateValue.class));
+    verify(client).execute(any(UpdateValue.class));
+  }
+
+  @Test
+  public void testStoreInterruptedException() throws Exception {
+    when(client.execute(any(UpdateValue.class))).thenThrow(new InterruptedException());
+
+    try {
+      store.store(TEST_USER, CURSOR_NAME, 1L);
+      failBecauseExceptionWasNotThrown(NotificationStoreException.class);
+    } catch (NotificationStoreException e) {
     }
 
-    @Test
-    public void testStoreNullUsername() throws Exception {
-        try {
-            store.store(null, CURSOR_NAME, 1L);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-        verify(client, never()).execute(any(UpdateValue.class));
+    verify(client).execute(any(UpdateValue.class));
+  }
+
+  @Test
+  public void testDelete() throws Exception {
+    store.delete(TEST_USER, CURSOR_NAME);
+    verify(client).execute(any(DeleteValue.class));
+  }
+
+  @Test
+  public void testDeleteNullUsername() throws Exception {
+    try {
+      store.delete(null, CURSOR_NAME);
+      failBecauseExceptionWasNotThrown(NullPointerException.class);
+    } catch (NullPointerException e) {
+    }
+    verify(client, never()).execute(any(DeleteValue.class));
+  }
+
+  @Test
+  public void testDeleteEmptyUsername() throws Exception {
+    try {
+      store.delete("", CURSOR_NAME);
+      failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+    } catch (IllegalArgumentException e) {
+    }
+    verify(client, never()).execute(any(DeleteValue.class));
+  }
+
+  @Test
+  public void testDeleteNullCursorName() throws Exception {
+    try {
+      store.delete(TEST_USER, null);
+      failBecauseExceptionWasNotThrown(NullPointerException.class);
+    } catch (NullPointerException e) {
+    }
+    verify(client, never()).execute(any(DeleteValue.class));
+  }
+
+  @Test
+  public void testDeleteEmptyCursorName() throws Exception {
+    try {
+      store.delete(TEST_USER, "");
+      failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+    } catch (IllegalArgumentException e) {
+    }
+    verify(client, never()).execute(any(DeleteValue.class));
+  }
+
+  @Test
+  public void testDeleteExecutionException() throws Exception {
+    when(client.execute(any(DeleteValue.class))).thenThrow(new ExecutionException(new Exception()));
+
+    try {
+      store.delete(TEST_USER, CURSOR_NAME);
+      failBecauseExceptionWasNotThrown(NotificationStoreException.class);
+    } catch (NotificationStoreException e) {
     }
 
-    @Test
-    public void testStoreEmptyUsername() throws Exception {
-        try {
-            store.store("", CURSOR_NAME, 1L);
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
-        verify(client, never()).execute(any(UpdateValue.class));
+    verify(client).execute(any(DeleteValue.class));
+  }
+
+  @Test
+  public void testDeleteInterruptedException() throws Exception {
+    when(client.execute(any(DeleteValue.class))).thenThrow(new InterruptedException());
+
+    try {
+      store.delete(TEST_USER, CURSOR_NAME);
+      failBecauseExceptionWasNotThrown(NotificationStoreException.class);
+    } catch (NotificationStoreException e) {
     }
 
-    @Test
-    public void testStoreNullCursorName() throws Exception {
-        try {
-            store.store(TEST_USER, null, 1L);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-        verify(client, never()).execute(any(UpdateValue.class));
-    }
+    verify(client).execute(any(DeleteValue.class));
+  }
 
-    @Test
-    public void testStoreEmptyCursorName() throws Exception {
-        try {
-            store.store(TEST_USER, "", 1L);
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
-        verify(client, never()).execute(any(UpdateValue.class));
-    }
-
-    @Test
-    public void testStoreExecutionException() throws Exception {
-        when(client.execute(any(UpdateValue.class))).thenThrow(
-                new ExecutionException(new Exception()));
-
-        try {
-            store.store(TEST_USER, CURSOR_NAME, 1L);
-            failBecauseExceptionWasNotThrown(NotificationStoreException.class);
-        } catch (NotificationStoreException e) {
-        }
-
-        verify(client).execute(any(UpdateValue.class));
-    }
-
-    @Test
-    public void testStoreInterruptedException() throws Exception {
-        when(client.execute(any(UpdateValue.class))).thenThrow(
-                new InterruptedException());
-
-        try {
-            store.store(TEST_USER, CURSOR_NAME, 1L);
-            failBecauseExceptionWasNotThrown(NotificationStoreException.class);
-        } catch (NotificationStoreException e) {
-        }
-
-        verify(client).execute(any(UpdateValue.class));
-    }
-
-    @Test
-    public void testDelete() throws Exception {
-        store.delete(TEST_USER, CURSOR_NAME);
-        verify(client).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testDeleteNullUsername() throws Exception {
-        try {
-            store.delete(null, CURSOR_NAME);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-        verify(client, never()).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testDeleteEmptyUsername() throws Exception {
-        try {
-            store.delete("", CURSOR_NAME);
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
-        verify(client, never()).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testDeleteNullCursorName() throws Exception {
-        try {
-            store.delete(TEST_USER, null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-        verify(client, never()).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testDeleteEmptyCursorName() throws Exception {
-        try {
-            store.delete(TEST_USER, "");
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
-        verify(client, never()).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testDeleteExecutionException() throws Exception {
-        when(client.execute(any(DeleteValue.class))).thenThrow(
-                new ExecutionException(new Exception()));
-
-        try {
-            store.delete(TEST_USER, CURSOR_NAME);
-            failBecauseExceptionWasNotThrown(NotificationStoreException.class);
-        } catch (NotificationStoreException e) {
-        }
-
-        verify(client).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testDeleteInterruptedException() throws Exception {
-        when(client.execute(any(DeleteValue.class))).thenThrow(
-                new InterruptedException());
-
-        try {
-            store.delete(TEST_USER, CURSOR_NAME);
-            failBecauseExceptionWasNotThrown(NotificationStoreException.class);
-        } catch (NotificationStoreException e) {
-        }
-
-        verify(client).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testGetCursorKey() {
-        assertThat(store.getCursorKey(TEST_USER, CURSOR_NAME)).isEqualTo(
-                "test-notifications");
-    }
+  @Test
+  public void testGetCursorKey() {
+    assertThat(store.getCursorKey(TEST_USER, CURSOR_NAME)).isEqualTo("test-notifications");
+  }
 }

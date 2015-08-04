@@ -1,17 +1,15 @@
 /**
  * Copyright 2015 Smoke Turner, LLC.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.smoketurner.notification.application.resources;
 
@@ -52,180 +50,166 @@ import com.smoketurner.notification.application.store.NotificationStore;
 @Path("/v1/notifications")
 public class NotificationResource {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(NotificationResource.class);
-    private static final String ACCEPT_RANGES_HEADER = "Accept-Ranges";
-    private static final String CONTENT_RANGE_HEADER = "Content-Range";
-    private static final String NEXT_RANGE_HEADER = "Next-Range";
-    private static final int DEFAULT_LIMIT = 20;
-    private static final int MAX_LIMIT = 1000;
-    private static final String RANGE_NAME = "id";
-    private final NotificationStore store;
+  private static final Logger LOGGER = LoggerFactory.getLogger(NotificationResource.class);
+  private static final String ACCEPT_RANGES_HEADER = "Accept-Ranges";
+  private static final String CONTENT_RANGE_HEADER = "Content-Range";
+  private static final String NEXT_RANGE_HEADER = "Next-Range";
+  private static final int DEFAULT_LIMIT = 20;
+  private static final int MAX_LIMIT = 1000;
+  private static final String RANGE_NAME = "id";
+  private final NotificationStore store;
 
-    /**
-     * Constructor
-     *
-     * @param store
-     *            Notification data store
-     */
-    public NotificationResource(@Nonnull final NotificationStore store) {
-        this.store = Preconditions.checkNotNull(store);
+  /**
+   * Constructor
+   *
+   * @param store Notification data store
+   */
+  public NotificationResource(@Nonnull final NotificationStore store) {
+    this.store = Preconditions.checkNotNull(store);
+  }
+
+  @GET
+  @JSONP
+  @Timed
+  @Path("/{username}")
+  @Produces({MediaType.APPLICATION_JSON, "application/javascript"})
+  @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
+  public Response fetch(@HeaderParam("Range") final String rangeHeader,
+      @PathParam("username") final String username) {
+    final Optional<UserNotifications> list;
+    try {
+      list = store.fetch(username);
+    } catch (NotificationStoreException e) {
+      throw new NotificationException(Response.Status.INTERNAL_SERVER_ERROR,
+          "Unable to fetch notifications");
     }
 
-    @GET
-    @JSONP
-    @Timed
-    @Path("/{username}")
-    @Produces({ MediaType.APPLICATION_JSON, "application/javascript" })
-    @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
-    public Response fetch(@HeaderParam("Range") final String rangeHeader,
-            @PathParam("username") final String username) {
-        final Optional<UserNotifications> list;
-        try {
-            list = store.fetch(username);
-        } catch (NotificationStoreException e) {
-            throw new NotificationException(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Unable to fetch notifications");
-        }
+    if (!list.isPresent()) {
+      throw new NotificationException(Response.Status.NOT_FOUND, "Notifications not found");
+    }
 
-        if (!list.isPresent()) {
-            throw new NotificationException(Response.Status.NOT_FOUND,
-                    "Notifications not found");
-        }
+    final ImmutableSortedSet<Notification> notifications = list.get().getNotifications();
+    final int total = notifications.size();
 
-        final ImmutableSortedSet<Notification> notifications = list.get()
-                .getNotifications();
-        final int total = notifications.size();
+    // if there are no notifications, just return an empty list
+    if (total < 1) {
+      return Response.ok(notifications).header(ACCEPT_RANGES_HEADER, RANGE_NAME).build();
+    }
 
-        // if there are no notifications, just return an empty list
-        if (total < 1) {
-            return Response.ok(notifications)
-                    .header(ACCEPT_RANGES_HEADER, RANGE_NAME).build();
-        }
+    // The newest notification is always the first notification in the
+    // list and is used to set the Last-Modified response header below.
+    final Notification newest = notifications.first();
+    final Notification oldest = notifications.last();
 
-        // The newest notification is always the first notification in the
-        // list and is used to set the Last-Modified response header below.
-        final Notification newest = notifications.first();
-        final Notification oldest = notifications.last();
+    Notification from = newest;
+    boolean fromInclusive = true;
+    Notification to = oldest;
+    boolean toInclusive = true;
 
-        Notification from = newest;
-        boolean fromInclusive = true;
-        Notification to = oldest;
-        boolean toInclusive = true;
+    int limit = DEFAULT_LIMIT;
+    final ResponseBuilder builder;
 
-        int limit = DEFAULT_LIMIT;
-        final ResponseBuilder builder;
+    if (rangeHeader == null) {
+      builder = Response.ok();
+      try {
+        to = Iterables.getLast(store.skip(notifications, from.getId(0L), true, limit));
+      } catch (NoSuchElementException e) {
+        LOGGER.debug("List of notifications is empty, using oldest");
+        to = oldest;
+      }
+    } else {
+      builder = Response.status(Response.Status.PARTIAL_CONTENT);
+      final RangeHeader range = RangeHeader.parse(rangeHeader);
+      limit = range.getMax().or(DEFAULT_LIMIT);
+      if (limit > MAX_LIMIT) {
+        limit = MAX_LIMIT;
+      }
+      try {
+        if (range.getFromId().isPresent()) {
+          from =
+              notifications.floor(Notification.builder().withId(range.getFromId().get()).build());
+          if (from == null) {
+            from = newest;
+          }
+          fromInclusive = range.getFromInclusive().or(true);
 
-        if (rangeHeader == null) {
-            builder = Response.ok();
-            try {
-                to = Iterables.getLast(store.skip(notifications,
-                        from.getId(0L), true, limit));
-            } catch (NoSuchElementException e) {
-                LOGGER.debug("List of notifications is empty, using oldest");
-                to = oldest;
-            }
+          to = Iterables.getLast(store.skip(notifications, from.getId(0L), fromInclusive, limit));
         } else {
-            builder = Response.status(Response.Status.PARTIAL_CONTENT);
-            final RangeHeader range = RangeHeader.parse(rangeHeader);
-            limit = range.getMax().or(DEFAULT_LIMIT);
-            if (limit > MAX_LIMIT) {
-                limit = MAX_LIMIT;
-            }
-            try {
-                if (range.getFromId().isPresent()) {
-                    from = notifications.floor(Notification.builder()
-                            .withId(range.getFromId().get()).build());
-                    if (from == null) {
-                        from = newest;
-                    }
-                    fromInclusive = range.getFromInclusive().or(true);
-
-                    to = Iterables.getLast(store.skip(notifications,
-                            from.getId(0L), fromInclusive, limit));
-                } else {
-                    to = Iterables.getLast(store.skip(notifications,
-                            from.getId(0L), true, limit));
-                }
-            } catch (NoSuchElementException e) {
-                LOGGER.debug("List of notifications is empty, using oldest");
-                to = oldest;
-            }
+          to = Iterables.getLast(store.skip(notifications, from.getId(0L), true, limit));
         }
-
-        // Add the Accept-Ranges response header
-        builder.header(ACCEPT_RANGES_HEADER, RANGE_NAME);
-
-        // Add the Last-Modified response header
-        builder.lastModified(new Date(newest.getCreatedAt().getMillis()));
-
-        final ImmutableSortedSet<Notification> subSet = notifications.subSet(
-                from, fromInclusive, to, toInclusive);
-        if (subSet.size() > 0) {
-            final long firstId = subSet.first().getId(0L);
-            final long lastId = subSet.last().getId(0L);
-
-            // Add the Content-Range and Next-Range response headers
-            builder.header(CONTENT_RANGE_HEADER,
-                    String.format("%s %d..%d", RANGE_NAME, firstId, lastId));
-            if (subSet.last().compareTo(oldest) == -1) {
-                builder.header(NEXT_RANGE_HEADER, String.format(
-                        "%s ]%d..; max=%d", RANGE_NAME, lastId, limit));
-            }
-        }
-
-        return builder.entity(subSet).build();
+      } catch (NoSuchElementException e) {
+        LOGGER.debug("List of notifications is empty, using oldest");
+        to = oldest;
+      }
     }
 
-    @POST
-    @Timed
-    @Path("/{username}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response add(@PathParam("username") final String username,
-            @Valid final Notification notification) {
+    // Add the Accept-Ranges response header
+    builder.header(ACCEPT_RANGES_HEADER, RANGE_NAME);
 
-        final Notification storedNotification;
-        try {
-            storedNotification = store.store(username, notification);
-        } catch (NotificationStoreException e) {
-            throw new NotificationException(
-                    Response.Status.INTERNAL_SERVER_ERROR,
-                    "Unable to store notification");
-        }
+    // Add the Last-Modified response header
+    builder.lastModified(new Date(newest.getCreatedAt().getMillis()));
 
-        return Response
-                .created(
-                        UriBuilder.fromResource(NotificationResource.class)
-                                .path("{username}").build(username))
-                .entity(storedNotification).build();
+    final ImmutableSortedSet<Notification> subSet =
+        notifications.subSet(from, fromInclusive, to, toInclusive);
+    if (subSet.size() > 0) {
+      final long firstId = subSet.first().getId(0L);
+      final long lastId = subSet.last().getId(0L);
+
+      // Add the Content-Range and Next-Range response headers
+      builder.header(CONTENT_RANGE_HEADER, String.format("%s %d..%d", RANGE_NAME, firstId, lastId));
+      if (subSet.last().compareTo(oldest) == -1) {
+        builder.header(NEXT_RANGE_HEADER,
+            String.format("%s ]%d..; max=%d", RANGE_NAME, lastId, limit));
+      }
     }
 
-    @DELETE
-    @Timed
-    @Path("/{username}")
-    public Response delete(@PathParam("username") final String username,
-            @QueryParam("ids") final Optional<LongSetParam> idsParam) {
+    return builder.entity(subSet).build();
+  }
 
-        if (idsParam.isPresent()) {
-            try {
-                store.remove(username, idsParam.get().get());
-            } catch (NotificationStoreException e) {
-                throw new NotificationException(
-                        Response.Status.INTERNAL_SERVER_ERROR,
-                        "Unable to delete notifications");
-            }
-        } else {
-            try {
-                store.removeAll(username);
-            } catch (NotificationStoreException e) {
-                throw new NotificationException(
-                        Response.Status.INTERNAL_SERVER_ERROR,
-                        "Unable to delete all notifications");
-            }
-        }
+  @POST
+  @Timed
+  @Path("/{username}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response add(@PathParam("username") final String username,
+      @Valid final Notification notification) {
 
-        return Response.noContent().build();
+    final Notification storedNotification;
+    try {
+      storedNotification = store.store(username, notification);
+    } catch (NotificationStoreException e) {
+      throw new NotificationException(Response.Status.INTERNAL_SERVER_ERROR,
+          "Unable to store notification");
     }
+
+    return Response
+        .created(
+            UriBuilder.fromResource(NotificationResource.class).path("{username}").build(username))
+        .entity(storedNotification).build();
+  }
+
+  @DELETE
+  @Timed
+  @Path("/{username}")
+  public Response delete(@PathParam("username") final String username,
+      @QueryParam("ids") final Optional<LongSetParam> idsParam) {
+
+    if (idsParam.isPresent()) {
+      try {
+        store.remove(username, idsParam.get().get());
+      } catch (NotificationStoreException e) {
+        throw new NotificationException(Response.Status.INTERNAL_SERVER_ERROR,
+            "Unable to delete notifications");
+      }
+    } else {
+      try {
+        store.removeAll(username);
+      } catch (NotificationStoreException e) {
+        throw new NotificationException(Response.Status.INTERNAL_SERVER_ERROR,
+            "Unable to delete all notifications");
+      }
+    }
+
+    return Response.noContent().build();
+  }
 }

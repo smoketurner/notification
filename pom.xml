@@ -25,12 +25,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <file.encoding>UTF-8</file.encoding>
         <dropwizard.version>0.8.2</dropwizard.version>
     </properties>
 
     <modules>
         <module>notification-api</module>
         <module>notification-application</module>
+        <module>notification-client</module>
     </modules>
 
     <developers>
@@ -210,7 +212,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
-                    <outputDirectory />
+                    <outputDirectory/>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
@@ -330,7 +332,7 @@
                         <id>enforce</id>
                         <configuration>
                             <rules>
-                                <DependencyConvergence />
+                                <DependencyConvergence/>
                             </rules>
                         </configuration>
                         <goals>
