@@ -21,8 +21,10 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +41,12 @@ public class NotificationApplicationTest {
   private final LifecycleEnvironment lifecycle = mock(LifecycleEnvironment.class);
   private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
   private final NotificationApplication application = new NotificationApplication();
-  private final NotificationConfiguration config = new NotificationConfiguration();
+  private final NotificationConfiguration config = new NotificationConfiguration() {
+    @Override
+    public void registerCrossOriginFilter(Environment environment) {
+      return;
+    }
+  };
 
   @Before
   public void setup() throws Exception {

@@ -18,10 +18,7 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.util.EnumSet;
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
+
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.ConflictResolverFactory;
 import com.basho.riak.client.api.convert.ConverterFactory;
@@ -29,8 +26,6 @@ import com.basho.riak.client.core.RiakCluster;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ge.snowizard.core.IdWorker;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
 import com.smoketurner.notification.application.config.RiakConfiguration;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
@@ -52,9 +47,6 @@ import com.smoketurner.notification.application.store.CursorStore;
 import com.smoketurner.notification.application.store.NotificationStore;
 
 public class NotificationApplication extends Application<NotificationConfiguration> {
-
-  private static final ImmutableSet<String> ALLOWED_HEADERS = ImmutableSet.of("X-Requested-With",
-      "Content-Type", "Accept", "Origin", "Range");
 
   public static void main(final String[] args) throws Exception {
     new NotificationApplication().run(args);
@@ -88,11 +80,7 @@ public class NotificationApplication extends Application<NotificationConfigurati
     // adds a X-Runtime response header
     environment.jersey().register(RuntimeFilter.class);
     // adds CORS support
-    final FilterRegistration.Dynamic filter =
-        environment.servlets().addFilter("CrossOriginFilter", CrossOriginFilter.class);
-    filter.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-    filter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM,
-        Joiner.on(',').join(ALLOWED_HEADERS));
+    configuration.registerCrossOriginFilter(environment);
 
     // snowizard
     final IdWorker snowizard = configuration.getSnowizard().build(environment);
