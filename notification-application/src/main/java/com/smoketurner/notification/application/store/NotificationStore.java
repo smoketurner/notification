@@ -18,11 +18,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
+
 import javax.annotation.Nonnull;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
 import com.basho.riak.client.api.commands.buckets.StoreBucketProperties;
@@ -36,6 +39,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.ge.snowizard.core.IdWorker;
 import com.ge.snowizard.exceptions.InvalidSystemClock;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -174,8 +178,7 @@ public class NotificationStore {
       return new UserNotifications();
     }
 
-    // get the ID of the most recent notification (this should never be
-    // zero)
+    // get the ID of the most recent notification (this should never be zero)
     final long newestId = notifications.first().getId(0L);
     LOGGER.debug("Newest notification ID: {}", newestId);
 
@@ -186,8 +189,7 @@ public class NotificationStore {
     if (!cursor.isPresent()) {
       LOGGER.debug("User ({}) has no cursor", username);
 
-      // if the user has no cursor, update the cursor to the newest
-      // notification
+      // if the user has no cursor, update the cursor to the newest notification
       LOGGER.debug("Updating cursor to {}", newestId);
       cursors.store(username, CURSOR_NAME, newestId);
 
@@ -197,9 +199,8 @@ public class NotificationStore {
 
     LOGGER.debug("Last seen notification ID: {}", lastSeenId);
 
-    // if the latest seen notification ID is less than the newest
-    // notification ID, then update the cursor to the newest
-    // notification ID.
+    // if the latest seen notification ID is less than the newest notification ID, then update the
+    // cursor to the newest notification ID.
     if (lastSeenId < newestId) {
       LOGGER.debug("Updating cursor to {}", newestId);
       cursors.store(username, CURSOR_NAME, newestId);
@@ -208,8 +209,7 @@ public class NotificationStore {
     // get the parent ID of the last seen notification ID
     final Optional<Notification> lastNotification = tryFind(notifications, lastSeenId);
     if (!lastNotification.isPresent()) {
-      // if the last notification is not found, set all of the
-      // notifications as unseen
+      // if the last notification is not found, set all of the notifications as unseen
       return new UserNotifications(unseenRollup.rollup(setUnseenState(notifications, true)));
     }
 
@@ -391,9 +391,7 @@ public class NotificationStore {
           return true;
         }
 
-        // then check to see if the notification is included in
-        // any
-        // rolled up notifications
+        // then check to see if the notification is included in any rolled up notifications
         final Collection<Notification> children =
             notification.getNotifications().or(ImmutableList.<Notification>of());
         if (children.isEmpty()) {
@@ -425,9 +423,7 @@ public class NotificationStore {
           return true;
         }
 
-        // then check to see if the notification is included in
-        // any
-        // rolled up notifications
+        // then check to see if the notification is included in any rolled up notifications
         final Collection<Notification> children =
             notification.getNotifications().or(ImmutableList.<Notification>of());
         if (children.isEmpty()) {
@@ -466,6 +462,7 @@ public class NotificationStore {
    *
    * @return the current date time
    */
+  @VisibleForTesting
   public DateTime now() {
     return DateTime.now(DateTimeZone.UTC);
   }

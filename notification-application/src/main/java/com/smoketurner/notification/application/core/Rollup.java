@@ -13,10 +13,11 @@
  */
 package com.smoketurner.notification.application.core;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
+
 import javax.annotation.Nonnull;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
@@ -44,7 +45,6 @@ public class Rollup {
    * @return Rolled up notifications
    */
   public Iterable<Notification> rollup(@Nonnull final Iterable<Notification> notifications) {
-
     Preconditions.checkNotNull(notifications);
 
     if (rules.isEmpty()) {
@@ -53,10 +53,9 @@ public class Rollup {
 
     final TreeSet<Notification> rollups = Sets.newTreeSet();
 
-    final Iterator<Notification> iterator = notifications.iterator();
-    while (iterator.hasNext()) {
-      final Notification notification = iterator.next();
-
+    for (final Notification notification : notifications) {
+      // If the notification category doesn't match any rule categories, add the notification as-is
+      // to the list of rollups.
       if (!rules.containsKey(notification.getCategory())) {
         rollups.add(notification);
         continue;
@@ -64,11 +63,14 @@ public class Rollup {
 
       final Rule rule = rules.get(notification.getCategory());
 
+      // If we don't have any matchers yet, add the first one
       if (matchers.size() < 1) {
         matchers.add(new Matcher(rule, notification));
         continue;
       }
 
+      // Loop through the existing matchers to see if this notification falls into any previous
+      // rollups
       boolean matched = false;
       for (final Matcher match : matchers) {
         if (match.add(notification)) {
@@ -77,11 +79,13 @@ public class Rollup {
         }
       }
 
+      // If the notification didn't match any existing rollups, add it as a new matcher
       if (!matched) {
         matchers.add(new Matcher(rule, notification));
       }
     }
 
+    // Pull out the rolled up notifications out of the matchers
     for (final Matcher match : matchers) {
       rollups.add(match.getNotification());
     }

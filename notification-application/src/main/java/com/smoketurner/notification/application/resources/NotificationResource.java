@@ -14,8 +14,10 @@
 package com.smoketurner.notification.application.resources;
 
 import io.dropwizard.jersey.caching.CacheControl;
+
 import java.util.Date;
 import java.util.NoSuchElementException;
+
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -31,9 +33,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriBuilder;
+
 import org.glassfish.jersey.server.JSONP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -96,8 +100,8 @@ public class NotificationResource {
       return Response.ok(notifications).header(ACCEPT_RANGES_HEADER, RANGE_NAME).build();
     }
 
-    // The newest notification is always the first notification in the
-    // list and is used to set the Last-Modified response header below.
+    // The newest notification is always the first notification in the list and is used to set the
+    // Last-Modified response header below.
     final Notification newest = notifications.first();
     final Notification oldest = notifications.last();
 

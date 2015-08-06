@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -25,8 +26,10 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.net.HostAndPort;
@@ -38,15 +41,30 @@ public class NotificationClient implements Closeable {
   private static final String APPLICATION_JSON = "application/json";
   private final Client client;
   private final HostAndPort destination;
+  private final boolean secure;
 
   /**
    * Constructor
    *
    * @param client Jersey Client
+   * @param destination API endpoint
    */
   public NotificationClient(@Nonnull final Client client, @Nonnull final HostAndPort destination) {
+    this(client, destination, false);
+  }
+
+  /**
+   * Constructor
+   *
+   * @param client Jersey Client
+   * @param destination API endpoint
+   * @param secure Whether to use HTTPS or not
+   */
+  public NotificationClient(@Nonnull final Client client, @Nonnull final HostAndPort destination,
+      final boolean secure) {
     this.client = Preconditions.checkNotNull(client);
     this.destination = Preconditions.checkNotNull(destination);
+    this.secure = secure;
   }
 
   /**
@@ -79,6 +97,7 @@ public class NotificationClient implements Closeable {
       if (response.getStatus() == 200 || response.getStatus() == 206) {
         results.addAll(response.readEntity(new GenericType<List<Notification>>() {}));
       }
+      response.close();
     }
     return results.build();
   }
@@ -107,9 +126,9 @@ public class NotificationClient implements Closeable {
   public void delete(@Nonnull final String username, @Nonnull final Collection<Long> ids) {
     Preconditions.checkNotNull(ids);
     Preconditions.checkArgument(!ids.isEmpty(), "ids cannot be empty");
-    final URI uri = getTarget(username);
+    final URI uri = UriBuilder.fromUri(getTarget(username)).queryParam("ids", ids).build();
     LOGGER.debug("DELETE {}", uri);
-    client.target(uri).queryParam("ids", ids).request().delete();
+    client.target(uri).request().delete();
   }
 
   /**
@@ -123,9 +142,14 @@ public class NotificationClient implements Closeable {
     client.target(uri).request().delete();
   }
 
-  public URI getTarget(@Nonnull final String username) {
-    return UriBuilder
-        .fromUri(String.format("http://%s/v1/notifications/%s", destination, username)).build();
+  private URI getTarget(@Nonnull final String username) {
+    final String uri;
+    if (secure) {
+      uri = String.format("https://%s/v1/notifications/%s", destination, username);
+    } else {
+      uri = String.format("http://%s/v1/notifications/%s", destination, username);
+    }
+    return UriBuilder.fromUri(uri).build();
   }
 
   @Override

@@ -1,12 +1,17 @@
 package com.smoketurner.notification.application.filter;
 
 import java.io.IOException;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.PreMatching;
 
+/**
+ * This class adds an "X-Runtime" HTTP response header that includes the time taken to execute the
+ * request, in seconds.
+ */
 @PreMatching
 public class RuntimeFilter implements ContainerRequestFilter, ContainerResponseFilter {
 

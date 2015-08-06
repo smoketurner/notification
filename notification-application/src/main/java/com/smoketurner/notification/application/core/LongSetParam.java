@@ -14,7 +14,9 @@
 package com.smoketurner.notification.application.core;
 
 import io.dropwizard.jersey.params.AbstractParam;
+
 import java.util.Set;
+
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;

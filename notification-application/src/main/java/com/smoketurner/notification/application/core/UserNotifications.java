@@ -14,8 +14,10 @@
 package com.smoketurner.notification.application.core;
 
 import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;

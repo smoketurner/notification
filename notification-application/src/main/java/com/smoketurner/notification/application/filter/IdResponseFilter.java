@@ -15,13 +15,19 @@ package com.smoketurner.notification.application.filter;
 
 import java.io.IOException;
 import java.util.UUID;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class adds a "Request-Id" HTTP response header and logs the following information: request
+ * method, request path, request ID, response status, response bytes (or -1 if not known)
+ */
 @Provider
 public class IdResponseFilter implements ContainerResponseFilter {
 

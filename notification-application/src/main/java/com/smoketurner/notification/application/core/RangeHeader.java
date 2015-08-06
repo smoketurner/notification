@@ -17,7 +17,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
@@ -59,7 +62,13 @@ public final class RangeHeader {
     this.max = max;
   }
 
-  public static RangeHeader parse(final String header) {
+  /**
+   * Parse a range header
+   *
+   * @param header Range header to parse
+   * @return parsed range header
+   */
+  public static RangeHeader parse(@Nullable final String header) {
     String field = null;
     Long fromId = null;
     Boolean fromInclusive = null;

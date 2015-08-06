@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
+
 import javax.annotation.Nonnull;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
@@ -49,6 +51,13 @@ public class Matcher implements Comparable<Matcher> {
     }
   }
 
+  /**
+   * Checks whether the notification contains the "match-on" field and the value matches the same
+   * value as the first notification in the matcher.
+   * 
+   * @param notification Notification to match
+   * @return true if the notification matches, otherwise false
+   */
   public boolean checkMatch(@Nonnull final Notification notification) {
     Preconditions.checkNotNull(notification);
     if (!rule.getMatchOn().isPresent()) {
@@ -63,6 +72,11 @@ public class Matcher implements Comparable<Matcher> {
     return properties.containsKey(matchOn) && Objects.equals(properties.get(matchOn), matchValue);
   }
 
+  /**
+   * Check whether this matcher has reached "max-size" or not.
+   *
+   * @return true if we can put more notifications in this matcher, otherwise false.
+   */
   public boolean checkSize() {
     if (maxSize != null && notifications.size() >= maxSize) {
       return false;
@@ -70,6 +84,12 @@ public class Matcher implements Comparable<Matcher> {
     return true;
   }
 
+  /**
+   * Check whether the given notification is within the "max-duration" for this matcher or not.
+   *
+   * @param notification Notification to check
+   * @return true if the notification is within the maximum duration, otherwise false.
+   */
   public boolean checkDuration(@Nonnull final Notification notification) {
     Preconditions.checkNotNull(notification);
     if (!rule.getMaxDuration().isPresent()) {
@@ -86,6 +106,12 @@ public class Matcher implements Comparable<Matcher> {
     return false;
   }
 
+  /**
+   * Add the given notification into this matcher if the checks pass.
+   *
+   * @param notification Notification to add
+   * @return true if the notification can be added, otherwise false.
+   */
   public boolean add(@Nonnull final Notification notification) {
     Preconditions.checkNotNull(notification);
     if (checkSize() && checkDuration(notification) && checkMatch(notification)

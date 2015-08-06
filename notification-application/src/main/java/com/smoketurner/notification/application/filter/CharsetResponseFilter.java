@@ -16,6 +16,7 @@ package com.smoketurner.notification.application.filter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -23,6 +24,10 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
+/**
+ * This class ensures that any HTTP response that includes a Content-Type response header, that it
+ * also includes the UTF-8 character set.
+ */
 @Provider
 public class CharsetResponseFilter implements ContainerResponseFilter {
 
