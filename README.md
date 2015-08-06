@@ -13,7 +13,7 @@ Notification is an implementation of an HTTP-based notification web service, bas
 
 Design
 ------
-Similar to Yammer's implementation, the Notification service relies on monitonically increasing identifiers (using [Snowizard](https://github.com/GeneralElectric/snowizard) which is an implementation of Twitter's [Snowflake](https://github.com/twitter/snowflake/releases/tag/snowflake-2010) ID generation service) that are used to resolving conflicts within Riak. The IDs are also used to provide a sorting order for the notifications so the newest notifications always appear at the top of a user's notification list. Every unique username can store up to 1000 notifications before the older notifications are aged out of the system.
+Similar to Yammer's implementation, the Notification service relies on monitonically increasing identifiers (using [Snowizard](https://github.com/GeneralElectric/snowizard) which is an implementation of Twitter's [Snowflake](https://github.com/twitter/snowflake/releases/tag/snowflake-2010) ID generation service) that are used to resolve conflicts within Riak. The IDs are also used to provide a sorting order for the notifications so the newest notifications always appear at the top of a user's notification list. Every unique username can store up to 1000 notifications before the older notifications are aged out of the system.
 
 Notifications are stored in the `notifications` bucket in Riak. The service also stores a cursor representing the most recent seen notification for that user. Cursors are stored in the `cursors` bucket in Riak. A cursor looks like:
 
@@ -45,6 +45,7 @@ This would mean, for the `new-follower` category, roll up to a maximum of 9 noti
 
 Installation
 ------------
+To build this code locally, clone the repository then use [Maven](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html) to build the jar:
 ```
 git clone https://github.com/smoketurner/notification.git
 cd notification
@@ -67,11 +68,11 @@ snowizard:
   workerId: 1
 ```
 
-To connect to Riak, you can put Riak behind a load-balancer, but to support the Notification service automatically retrying Riak requests to separate nodes in the cluster, it is recommended to configure each Riak node individual in the configuration file.
+To connect to Riak, [configure the cluster behind a load-balancer](http://docs.basho.com/riak/latest/ops/advanced/configs/load-balancing-proxy/) as generally recommended. In order to support the Notification service automatically retrying Riak requests to separate nodes in the cluster, it is recommended to list each Riak node individually in the configuration file.
 
 Usage
 -----
-The Notification service provides RESTful URL's when creating, retrieving and deleting notifications. All of the API paths are in the form of `/v1/notifications/<username>`. In the following examples, we'll be using `test` as the username.
+The Notification service provides RESTful URLs when creating, retrieving and deleting notifications. All of the API paths are in the form of `/v1/notifications/<username>`. In the following examples, we'll be using `test` as the username.
 
 ### Creating a notification
 
@@ -136,7 +137,7 @@ The service defaults to only returning the 20 most recent notifications at a tim
 curl -X GET -H "Range: id;max=100" http://localhost:8888/v1/notifications/test -i
 ```
 
-To paginate through results, if there are more notifications available, the service will include a `Next-Range` HTTP response header that you can specify in a `Range` header on a subsequent request. This will allow you to paginate through all of the results, up to a 1000 notifications.
+If there are more notifications available, the service will include a `Next-Range` HTTP response header that you can specify in a `Range` header on a subsequent request. This will allow you to paginate through all of the results, up to a 1000 notifications.
 
 ### Deleting individual notifications
 
@@ -179,4 +180,4 @@ Copyright (c) 2015 Justin Plock
 
 This library is licensed under the Apache License, Version 2.0.
 
-See http://www.apache.org/licenses/LICENSE-2.0.html or the LICENSE file in this repository for the full license text.
+See http://www.apache.org/licenses/LICENSE-2.0.html or the [LICENSE](LICENSE) file in this repository for the full license text.
