@@ -18,14 +18,18 @@ import io.dropwizard.jersey.caching.CacheControl;
 import javax.annotation.Nonnull;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/version")
+@Api("version")
 public class VersionResource {
 
   private final String version;
@@ -48,8 +52,9 @@ public class VersionResource {
   }
 
   @GET
-  @Produces(MediaType.TEXT_PLAIN)
   @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
+  @ApiOperation(value = "Get Version", notes = "Returns the service version")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Service Version")})
   public Response getVersion() {
     return Response.ok(version).type(MediaType.TEXT_PLAIN).build();
   }

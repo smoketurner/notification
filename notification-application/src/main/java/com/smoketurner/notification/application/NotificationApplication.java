@@ -18,6 +18,8 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerBundle;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.ConflictResolverFactory;
@@ -62,6 +64,14 @@ public class NotificationApplication extends Application<NotificationConfigurati
     // Enable variable substitution with environment variables
     bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(bootstrap
         .getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor()));
+
+    bootstrap.addBundle(new SwaggerBundle<NotificationConfiguration>() {
+      @Override
+      protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(
+          final NotificationConfiguration configuration) {
+        return configuration.getSwagger();
+      }
+    });
   }
 
   @Override

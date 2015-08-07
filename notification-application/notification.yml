@@ -4,6 +4,17 @@ snowizard:
   datacenterId: 1
   workerId: 1
 
+# Swagger-specific options.
+swagger:
+
+  resourcePackage: com.smoketurner.notification.application.resources
+  title: Notification API
+  version: v1
+  description: Notification service API
+  contact: jplock@smoketurner.com
+  license: Apache 2.0
+  licenseUrl: https://www.apache.org/licenses/LICENSE-2.0
+
 # Roll-up Rules
 rules:
 
@@ -51,6 +62,7 @@ logging:
   loggers:
     com.smoketurner.notification: DEBUG
     com.basho.riak: DEBUG
+    org.eclipse.jetty.servlets: DEBUG
   appenders:
     - type: console
       timeZone: UTC

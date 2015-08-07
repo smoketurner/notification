@@ -15,6 +15,7 @@ package com.smoketurner.notification.application.config;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 import java.util.EnumSet;
 import java.util.Map;
@@ -46,6 +47,11 @@ public class NotificationConfiguration extends Configuration {
   @Valid
   @NotNull
   @JsonProperty
+  public final SwaggerBundleConfiguration swagger = new SwaggerBundleConfiguration();
+
+  @Valid
+  @NotNull
+  @JsonProperty
   private final RiakConfiguration riak = new RiakConfiguration();
 
   @Valid
@@ -71,6 +77,11 @@ public class NotificationConfiguration extends Configuration {
   @JsonProperty
   public void setAllowedHeaders(@Nonnull final Set<String> allowedHeaders) {
     this.allowedHeaders = allowedHeaders;
+  }
+
+  @JsonProperty
+  public SwaggerBundleConfiguration getSwagger() {
+    return swagger;
   }
 
   @JsonProperty
