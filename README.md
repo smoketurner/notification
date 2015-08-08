@@ -70,6 +70,8 @@ snowizard:
 
 To connect to Riak, [configure the cluster behind a load-balancer](http://docs.basho.com/riak/latest/ops/advanced/configs/load-balancing-proxy/) as generally recommended. In order to support the Notification service automatically retrying Riak requests to separate nodes in the cluster, it is recommended to list each Riak node individually in the configuration file.
 
+*NOTE*: The notification service provides no authentication or authorization of requests. It is recommended to use a separate service such as [Kong](http://www.getkong.org) or the [Amazon API Gateway](https://aws.amazon.com/api-gateway/) to authenticate and authorize users.
+
 Usage
 -----
 The Notification service provides RESTful URLs when creating, retrieving and deleting notifications. All of the API paths are in the form of `/v1/notifications/<username>`. In the following examples, we'll be using `test` as the username.
