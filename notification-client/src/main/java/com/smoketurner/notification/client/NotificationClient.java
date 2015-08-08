@@ -30,9 +30,9 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.net.HostAndPort;
 import com.smoketurner.notification.api.Notification;
 
 public class NotificationClient implements Closeable {
@@ -40,8 +40,7 @@ public class NotificationClient implements Closeable {
   private static final Logger LOGGER = LoggerFactory.getLogger(NotificationClient.class);
   private static final String APPLICATION_JSON = "application/json";
   private final Client client;
-  private final HostAndPort destination;
-  private final boolean secure;
+  private final URI destination;
 
   /**
    * Constructor
@@ -49,22 +48,9 @@ public class NotificationClient implements Closeable {
    * @param client Jersey Client
    * @param destination API endpoint
    */
-  public NotificationClient(@Nonnull final Client client, @Nonnull final HostAndPort destination) {
-    this(client, destination, false);
-  }
-
-  /**
-   * Constructor
-   *
-   * @param client Jersey Client
-   * @param destination API endpoint
-   * @param secure Whether to use HTTPS or not
-   */
-  public NotificationClient(@Nonnull final Client client, @Nonnull final HostAndPort destination,
-      final boolean secure) {
+  public NotificationClient(@Nonnull final Client client, @Nonnull final URI destination) {
     this.client = Preconditions.checkNotNull(client);
     this.destination = Preconditions.checkNotNull(destination);
-    this.secure = secure;
   }
 
   /**
@@ -82,7 +68,7 @@ public class NotificationClient implements Closeable {
     String nextRange = null;
     boolean paginate = true;
     while (paginate) {
-      LOGGER.debug("GET {}", uri);
+      LOGGER.info("GET {}", uri);
       final Invocation.Builder builder = client.target(uri).request(APPLICATION_JSON);
       if (nextRange != null) {
         builder.header("Range", nextRange);
@@ -126,7 +112,8 @@ public class NotificationClient implements Closeable {
   public void delete(@Nonnull final String username, @Nonnull final Collection<Long> ids) {
     Preconditions.checkNotNull(ids);
     Preconditions.checkArgument(!ids.isEmpty(), "ids cannot be empty");
-    final URI uri = UriBuilder.fromUri(getTarget(username)).queryParam("ids", ids).build();
+    final URI uri =
+        UriBuilder.fromUri(getTarget(username)).queryParam("ids", Joiner.on(",").join(ids)).build();
     LOGGER.debug("DELETE {}", uri);
     client.target(uri).request().delete();
   }
@@ -142,14 +129,33 @@ public class NotificationClient implements Closeable {
     client.target(uri).request().delete();
   }
 
+  /**
+   * Return the ping response
+   *
+   * @return true if the ping response was successful, otherwise false
+   */
+  public boolean ping() {
+    final URI uri = UriBuilder.fromUri(destination).path("/ping").build();
+    LOGGER.debug("GET {}", uri);
+    final String response = client.target(uri).request().get(String.class);
+    return "pong".equals(response);
+  }
+
+  /**
+   * Return the service version
+   *
+   * @return service version
+   */
+  public String version() {
+    final URI uri = UriBuilder.fromUri(destination).path("/version").build();
+    LOGGER.debug("GET {}", uri);
+    return client.target(uri).request().get(String.class);
+  }
+
   private URI getTarget(@Nonnull final String username) {
-    final String uri;
-    if (secure) {
-      uri = String.format("https://%s/v1/notifications/%s", destination, username);
-    } else {
-      uri = String.format("http://%s/v1/notifications/%s", destination, username);
-    }
-    return UriBuilder.fromUri(uri).build();
+    Preconditions.checkNotNull(username);
+    Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
+    return UriBuilder.fromUri(destination).path("/v1/notifications/{username}").build(username);
   }
 
   @Override
