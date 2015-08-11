@@ -134,7 +134,7 @@ public class NotificationResource {
       try {
         to = Iterables.getLast(store.skip(notifications, from.getId(0L), true, limit));
       } catch (NoSuchElementException e) {
-        LOGGER.debug("List of notifications is empty, using oldest");
+        LOGGER.debug("List of notifications is empty, using oldest", e);
         to = oldest;
       }
     } else {
@@ -159,7 +159,7 @@ public class NotificationResource {
           to = Iterables.getLast(store.skip(notifications, from.getId(0L), true, limit));
         }
       } catch (NoSuchElementException e) {
-        LOGGER.debug("List of notifications is empty, using oldest");
+        LOGGER.debug("List of notifications is empty, using oldest", e);
         to = oldest;
       }
     }
