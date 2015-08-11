@@ -6,8 +6,11 @@ import java.util.Objects;
 import java.util.TreeSet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
@@ -16,13 +19,27 @@ import com.smoketurner.notification.api.Notification;
 
 public class Matcher implements Comparable<Matcher> {
 
+  @NotNull
   private final Notification notification;
+
+  @NotNull
   private final Rule rule;
+
   private final TreeSet<Notification> notifications = Sets.newTreeSet();
+
+  @Nullable
   private final Integer maxSize;
+
+  @Nullable
   private final Long firstMillis;
+
+  @Nullable
   private final Long maxDuration;
+
+  @Nullable
   private final String matchOn;
+
+  @Nullable
   private final String matchValue;
 
   /**
@@ -131,11 +148,37 @@ public class Matcher implements Comparable<Matcher> {
   }
 
   public Notification getNotification() {
-    if (notifications.size() < 1) {
+    if (notifications.isEmpty()) {
       return notification;
     }
     return Notification.builder().fromNotification(notification).withNotifications(notifications)
         .build();
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    final Matcher other = (Matcher) obj;
+    return Objects.equals(notification, other.notification);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(notification);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("notification", notification).add("rule", rule)
+        .add("notifications", notifications).add("maxSize", maxSize)
+        .add("firstMillis", firstMillis).add("maxDuration", maxDuration).add("matchOn", matchOn)
+        .add("matchValue", matchValue).toString();
   }
 
   @Override

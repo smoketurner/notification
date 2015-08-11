@@ -100,7 +100,7 @@ public class NotificationResource {
       list = store.fetch(username);
     } catch (NotificationStoreException e) {
       throw new NotificationException(Response.Status.INTERNAL_SERVER_ERROR,
-          "Unable to fetch notifications");
+          "Unable to fetch notifications", e);
     }
 
     if (!list.isPresent()) {
@@ -128,6 +128,7 @@ public class NotificationResource {
     int limit = DEFAULT_LIMIT;
     final ResponseBuilder builder;
 
+    // If no Range header is present on the request, return a 200 response
     if (rangeHeader == null) {
       builder = Response.ok();
       try {
@@ -137,6 +138,7 @@ public class NotificationResource {
         to = oldest;
       }
     } else {
+      // If a Range header is present, return a 206 response
       builder = Response.status(Response.Status.PARTIAL_CONTENT);
       final RangeHeader range = RangeHeader.parse(rangeHeader);
       limit = range.getMax().or(DEFAULT_LIMIT);
@@ -170,13 +172,13 @@ public class NotificationResource {
 
     final ImmutableSortedSet<Notification> subSet =
         notifications.subSet(from, fromInclusive, to, toInclusive);
-    if (subSet.size() > 0) {
+    if (!subSet.isEmpty()) {
       final long firstId = subSet.first().getId(0L);
       final long lastId = subSet.last().getId(0L);
 
       // Add the Content-Range and Next-Range response headers
       builder.header(CONTENT_RANGE_HEADER, String.format("%s %d..%d", RANGE_NAME, firstId, lastId));
-      if (subSet.last().compareTo(oldest) == -1) {
+      if (subSet.last().compareTo(oldest) < 0) {
         builder.header(NEXT_RANGE_HEADER,
             String.format("%s ]%d..; max=%d", RANGE_NAME, lastId, limit));
       }
@@ -203,7 +205,7 @@ public class NotificationResource {
       storedNotification = store.store(username, notification);
     } catch (NotificationStoreException e) {
       throw new NotificationException(Response.Status.INTERNAL_SERVER_ERROR,
-          "Unable to store notification");
+          "Unable to store notification", e);
     }
 
     return Response
@@ -227,14 +229,14 @@ public class NotificationResource {
         store.remove(username, idsParam.get());
       } catch (NotificationStoreException e) {
         throw new NotificationException(Response.Status.INTERNAL_SERVER_ERROR,
-            "Unable to delete notifications");
+            "Unable to delete notifications", e);
       }
     } else {
       try {
         store.removeAll(username);
       } catch (NotificationStoreException e) {
         throw new NotificationException(Response.Status.INTERNAL_SERVER_ERROR,
-            "Unable to delete all notifications");
+            "Unable to delete all notifications", e);
       }
     }
 

@@ -14,9 +14,12 @@
 package com.smoketurner.notification.application.riak;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import java.util.TreeSet;
+
+import java.util.SortedSet;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import com.google.common.collect.ImmutableList;
 import com.smoketurner.notification.api.Notification;
 
@@ -35,7 +38,7 @@ public class NotificationListObjectTest {
       list.addNotification(Notification.builder().withId(i).build());
     }
 
-    final TreeSet<Notification> actual = list.getNotifications();
+    final SortedSet<Notification> actual = list.getNotifications();
     assertThat(actual).hasSize(1000);
     assertThat(actual.first().getId().get()).isEqualTo(2000L);
     assertThat(actual.last().getId().get()).isEqualTo(1001L);
@@ -50,7 +53,7 @@ public class NotificationListObjectTest {
 
     list.addNotifications(builder.build());
 
-    final TreeSet<Notification> actual = list.getNotifications();
+    final SortedSet<Notification> actual = list.getNotifications();
     assertThat(actual).hasSize(1000);
     assertThat(actual.first().getId().get()).isEqualTo(2000L);
     assertThat(actual.last().getId().get()).isEqualTo(1001L);
@@ -62,7 +65,7 @@ public class NotificationListObjectTest {
       list.addNotification(Notification.builder().withId(1L).build());
     }
 
-    final TreeSet<Notification> actual = list.getNotifications();
+    final SortedSet<Notification> actual = list.getNotifications();
     assertThat(actual).hasSize(1);
     assertThat(actual.first().getId().get()).isEqualTo(1L);
   }

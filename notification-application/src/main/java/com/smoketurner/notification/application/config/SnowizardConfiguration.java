@@ -14,12 +14,15 @@
 package com.smoketurner.notification.application.config;
 
 import io.dropwizard.setup.Environment;
+
 import javax.annotation.Nonnull;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -85,7 +88,6 @@ public class SnowizardConfiguration {
 
     LOGGER.info("Worker ID: {}, Datacenter ID: {}", workerId, datacenterId);
 
-    final IdWorker snowizard = new IdWorker(workerId, datacenterId, 0, false, registry);
-    return snowizard;
+    return new IdWorker(workerId, datacenterId, 0, false, registry);
   }
 }

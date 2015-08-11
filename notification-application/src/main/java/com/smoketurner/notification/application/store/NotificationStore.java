@@ -16,7 +16,7 @@ package com.smoketurner.notification.application.store;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
-import java.util.TreeSet;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nonnull;
@@ -167,7 +167,7 @@ public class NotificationStore {
    * @throws NotificationStoreException if unable to update the cursor
    */
   public UserNotifications splitNotifications(@Nonnull final String username,
-      @Nonnull final TreeSet<Notification> notifications) throws NotificationStoreException {
+      @Nonnull final SortedSet<Notification> notifications) throws NotificationStoreException {
 
     Preconditions.checkNotNull(username);
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");

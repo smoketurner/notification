@@ -35,12 +35,10 @@ public class CharsetResponseFilter implements ContainerResponseFilter {
   public void filter(final ContainerRequestContext request, final ContainerResponseContext response)
       throws IOException {
     final MediaType type = response.getMediaType();
-    if (type != null) {
-      if (!type.getParameters().containsKey(MediaType.CHARSET_PARAMETER)) {
-        final MediaType typeWithCharset =
-            type.withCharset(StandardCharsets.UTF_8.displayName(Locale.ENGLISH));
-        response.getHeaders().putSingle(HttpHeaders.CONTENT_TYPE, typeWithCharset);
-      }
+    if (type != null && !type.getParameters().containsKey(MediaType.CHARSET_PARAMETER)) {
+      final MediaType typeWithCharset =
+          type.withCharset(StandardCharsets.UTF_8.displayName(Locale.ENGLISH));
+      response.getHeaders().putSingle(HttpHeaders.CONTENT_TYPE, typeWithCharset);
     }
   }
 }

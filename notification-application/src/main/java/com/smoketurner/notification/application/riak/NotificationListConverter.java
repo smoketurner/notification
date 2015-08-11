@@ -14,11 +14,14 @@
 package com.smoketurner.notification.application.riak;
 
 import io.dropwizard.jersey.protobuf.ProtocolBufferMediaType;
+
 import java.util.Map;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.basho.riak.client.api.convert.ConversionException;
 import com.basho.riak.client.api.convert.Converter;
 import com.basho.riak.client.core.util.BinaryValue;
@@ -38,9 +41,7 @@ public class NotificationListConverter extends Converter<NotificationListObject>
   }
 
   @Override
-  public NotificationListObject toDomain(final BinaryValue value, final String contentType)
-      throws ConversionException {
-
+  public NotificationListObject toDomain(final BinaryValue value, final String contentType) {
     if (!ProtocolBufferMediaType.APPLICATION_PROTOBUF.equals(contentType)) {
       LOGGER.error("Invalid Content-Type: {}", contentType);
       throw new ConversionException("Invalid Content-Type: " + contentType);
@@ -63,8 +64,7 @@ public class NotificationListConverter extends Converter<NotificationListObject>
   }
 
   @Override
-  public ContentAndType fromDomain(NotificationListObject domainObject) throws ConversionException {
-
+  public ContentAndType fromDomain(NotificationListObject domainObject) {
     final NotificationListPB.Builder builder =
         NotificationListPB.newBuilder().addAllDeletedId(domainObject.getDeletedIds());
     for (Notification notification : domainObject.getNotifications()) {

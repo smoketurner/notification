@@ -14,6 +14,7 @@
 package com.smoketurner.notification.application.riak;
 
 import java.util.Objects;
+
 import com.basho.riak.client.api.annotations.RiakBucketName;
 import com.basho.riak.client.api.annotations.RiakContentType;
 import com.basho.riak.client.api.annotations.RiakKey;
@@ -36,7 +37,7 @@ import com.google.common.collect.Ordering;
 public final class CursorObject implements Comparable<CursorObject> {
 
   @RiakBucketName
-  private final String bucket = "cursors";
+  private static final String bucket = "cursors";
 
   @RiakKey
   private String key;
@@ -61,7 +62,9 @@ public final class CursorObject implements Comparable<CursorObject> {
   /**
    * Constructor
    */
-  public CursorObject() {}
+  public CursorObject() {
+    // needed to handle tombstones
+  }
 
   /**
    * Constructor
@@ -100,8 +103,8 @@ public final class CursorObject implements Comparable<CursorObject> {
     }
 
     final CursorObject other = (CursorObject) obj;
-    return Objects.equals(bucket, other.bucket) && Objects.equals(key, other.key)
-        && Objects.equals(vclock, other.vclock) && Objects.equals(tombstone, other.tombstone)
+    return Objects.equals(key, other.key) && Objects.equals(vclock, other.vclock)
+        && Objects.equals(tombstone, other.tombstone)
         && Objects.equals(contentType, other.contentType)
         && Objects.equals(lastModified, other.lastModified) && Objects.equals(vtag, other.vtag)
         && Objects.equals(value, other.value);

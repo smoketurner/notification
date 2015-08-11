@@ -15,8 +15,11 @@ package com.smoketurner.notification.application.riak;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
+
 import javax.annotation.Nonnull;
+
 import com.basho.riak.client.api.annotations.RiakBucketName;
 import com.basho.riak.client.api.annotations.RiakContentType;
 import com.basho.riak.client.api.annotations.RiakKey;
@@ -36,7 +39,7 @@ public class NotificationListObject {
   private static final int MAX_NOTIFICATIONS = 1000;
 
   @RiakBucketName
-  private final String bucket = "notifications";
+  private static final String bucket = "notifications";
 
   @RiakKey
   private String key;
@@ -63,7 +66,9 @@ public class NotificationListObject {
   /**
    * Constructor
    */
-  public NotificationListObject() {}
+  public NotificationListObject() {
+    // needed to handle tombstones
+  }
 
   /**
    * Constructor
@@ -126,7 +131,7 @@ public class NotificationListObject {
     return key;
   }
 
-  public TreeSet<Notification> getNotifications() {
+  public SortedSet<Notification> getNotifications() {
     return notifications;
   }
 
@@ -144,8 +149,8 @@ public class NotificationListObject {
     }
 
     final NotificationListObject other = (NotificationListObject) obj;
-    return Objects.equal(bucket, other.bucket) && Objects.equal(key, other.key)
-        && Objects.equal(vclock, other.vclock) && Objects.equal(tombstone, other.tombstone)
+    return Objects.equal(key, other.key) && Objects.equal(vclock, other.vclock)
+        && Objects.equal(tombstone, other.tombstone)
         && Objects.equal(contentType, other.contentType)
         && Objects.equal(lastModified, other.lastModified) && Objects.equal(vtag, other.vtag)
         && Objects.equal(notifications, other.notifications)

@@ -64,7 +64,7 @@ public class Rollup {
       final Rule rule = rules.get(notification.getCategory());
 
       // If we don't have any matchers yet, add the first one
-      if (matchers.size() < 1) {
+      if (matchers.isEmpty()) {
         matchers.add(new Matcher(rule, notification));
         continue;
       }
