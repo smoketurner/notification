@@ -37,7 +37,7 @@ import com.google.common.collect.Ordering;
 public final class CursorObject implements Comparable<CursorObject> {
 
   @RiakBucketName
-  private static final String bucket = "cursors";
+  private static final String BUCKET_NAME = "cursors";
 
   @RiakKey
   private String key;
@@ -112,7 +112,7 @@ public final class CursorObject implements Comparable<CursorObject> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(bucket, key, vclock, tombstone, contentType, lastModified, vtag, value);
+    return Objects.hash(key, vclock, tombstone, contentType, lastModified, vtag, value);
   }
 
   @Override

@@ -39,7 +39,7 @@ public class NotificationListObject {
   private static final int MAX_NOTIFICATIONS = 1000;
 
   @RiakBucketName
-  private static final String bucket = "notifications";
+  private static final String BUCKET_NAME = "notifications";
 
   @RiakKey
   private String key;
@@ -159,14 +159,14 @@ public class NotificationListObject {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(bucket, key, vclock, tombstone, contentType, lastModified, vtag,
-        notifications, deletedIds);
+    return Objects.hashCode(key, vclock, tombstone, contentType, lastModified, vtag, notifications,
+        deletedIds);
   }
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("bucket", bucket).add("key", key)
-        .add("vclock", vclock).add("tombstone", tombstone).add("contentType", contentType)
+    return MoreObjects.toStringHelper(this).add("key", key).add("vclock", vclock)
+        .add("tombstone", tombstone).add("contentType", contentType)
         .add("lastModified", lastModified).add("vtag", vtag).add("notifications", notifications)
         .add("deletedIds", deletedIds).toString();
   }
