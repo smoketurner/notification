@@ -16,12 +16,16 @@ package com.smoketurner.notification.api;
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import io.dropwizard.jackson.Jackson;
+
 import java.util.TreeSet;
+
 import jersey.repackaged.com.google.common.collect.Sets;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -63,6 +67,32 @@ public class NotificationTest {
   }
 
   @Test
+  public void testGetId() throws Exception {
+    final Notification n1 = Notification.builder().build();
+    assertThat(n1.getId(5L)).isEqualTo(5L);
+    final Notification n2 = Notification.builder().withId(1000L).build();
+    assertThat(n2.getId(6L)).isEqualTo(1000L);
+  }
+
+  @Test
+  public void testToString() throws Exception {
+    final DateTime now = new DateTime("2015-08-14T21:25:19.533Z", DateTimeZone.UTC);
+    final Notification n1 =
+        Notification.builder().withId(1L).withCategory("test-category").withCreatedAt(now).build();
+    assertThat(n1.toString()).isEqualTo(
+        "Notification{id=1, idStr=1, category=test-category, message=null,"
+            + " createdAt=2015-08-14T21:25:19.533Z, unseen=null, properties={},"
+            + " notifications=null}");
+  }
+
+  @Test
+  public void testBuilder() throws Exception {
+    final Notification n1 = Notification.builder().withId(1L).build();
+    final Notification n2 = Notification.builder(n1).build();
+    assertThat(n1).isEqualTo(n2);
+  }
+
+  @Test
   public void testComparison() throws Exception {
     final Notification n1 = Notification.builder().withId(1L).build();
     final Notification n2 = Notification.builder().withId(2L).build();
@@ -82,5 +112,7 @@ public class NotificationTest {
     final Notification n1b = Notification.builder().withId(1L).withUnseen(true).build();
 
     assertThat(n1.compareTo(n1b) == 0).isEqualTo(n1.equals(n1b));
+    assertThat(n1.equals(null)).isFalse();
+    assertThat(n1.equals("")).isFalse();
   }
 }

@@ -20,10 +20,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import java.util.concurrent.ExecutionException;
+
 import org.junit.Ignore;
 import org.junit.Test;
+
 import com.basho.riak.client.api.RiakClient;
+import com.basho.riak.client.api.commands.buckets.StoreBucketProperties;
 import com.basho.riak.client.api.commands.kv.DeleteValue;
 import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.UpdateValue;
@@ -40,6 +44,12 @@ public class CursorStoreTest {
   private final CursorStore store = new CursorStore(registry, client);
 
   @Test
+  public void testInitialize() throws Exception {
+    store.initialize();
+    verify(client).execute(any(StoreBucketProperties.class));
+  }
+
+  @Test
   @Ignore
   public void testFetch() throws Exception {
     final FetchValue.Response response = mock(FetchValue.Response.class);
@@ -51,6 +61,46 @@ public class CursorStoreTest {
     final Optional<Long> actual = store.fetch(TEST_USER, CURSOR_NAME);
     verify(client).execute(any(FetchValue.class));
     assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  public void testFetchNullUsername() throws Exception {
+    try {
+      store.fetch(null, CURSOR_NAME);
+      failBecauseExceptionWasNotThrown(NullPointerException.class);
+    } catch (NullPointerException e) {
+    }
+    verify(client, never()).execute(any(FetchValue.class));
+  }
+
+  @Test
+  public void testFetchEmptyUsername() throws Exception {
+    try {
+      store.fetch("", CURSOR_NAME);
+      failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+    } catch (IllegalArgumentException e) {
+    }
+    verify(client, never()).execute(any(FetchValue.class));
+  }
+
+  @Test
+  public void testFetchNullCursor() throws Exception {
+    try {
+      store.fetch("test", null);
+      failBecauseExceptionWasNotThrown(NullPointerException.class);
+    } catch (NullPointerException e) {
+    }
+    verify(client, never()).execute(any(FetchValue.class));
+  }
+
+  @Test
+  public void testFetchEmptyCursor() throws Exception {
+    try {
+      store.fetch("test", "");
+      failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
+    } catch (IllegalArgumentException e) {
+    }
+    verify(client, never()).execute(any(FetchValue.class));
   }
 
   @Test

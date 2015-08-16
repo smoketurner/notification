@@ -14,13 +14,17 @@
 package com.smoketurner.notification.api;
 
 import io.dropwizard.jackson.JsonSnakeCase;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+
 import javax.annotation.concurrent.Immutable;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -86,6 +90,10 @@ public final class Notification implements Comparable<Notification> {
 
   public static Builder builder() {
     return new Builder();
+  }
+
+  public static Builder builder(final Notification other) {
+    return builder().fromNotification(other);
   }
 
   public static class Builder {
