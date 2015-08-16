@@ -51,7 +51,7 @@ git clone https://github.com/smoketurner/notification.git
 cd notification
 mvn package
 cd notification-application
-java -jar target/notification-application/notification-application-1.0.0-SNAPSHOT.jar server notification.yml
+java -jar target/notification-application/notification-application-1.0.1-SNAPSHOT.jar server notification.yml
 ```
 
 The Notification service should be listening on port `8080` for API requests, and Dropwizard's administrative interface is available on port `8180` (both of these ports can be changed in the `notification.yml` configuration file).
@@ -110,7 +110,7 @@ The service will generate a globally unique ID and return it in the response alo
 ### Retrieving notifications
 
 ```
-curl -X GET http://localhost:8888/v1/notifications/test -i
+curl -X GET http://localhost:8080/v1/notifications/test -i
 
 HTTP/1.1 200 OK
 Date: Sun, 26 Jul 2015 16:12:11 GMT
@@ -138,7 +138,7 @@ Content-Length: 190
 The service defaults to only returning the 20 most recent notifications at a time. To return more notifications, you can execute a request specifying the `Range` HTTP header:
 
 ```
-curl -X GET -H "Range: id;max=100" http://localhost:8888/v1/notifications/test -i
+curl -X GET -H "Range: id;max=100" http://localhost:8080/v1/notifications/test -i
 ```
 
 If there are more notifications available, the service will include a `Next-Range` HTTP response header that you can specify in a `Range` header on a subsequent request. This will allow you to paginate through all of the results, up to a 1000 notifications.
