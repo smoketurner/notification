@@ -63,7 +63,7 @@ public class NotificationApplication extends Application<NotificationConfigurati
   public void initialize(Bootstrap<NotificationConfiguration> bootstrap) {
     // Enable variable substitution with environment variables
     bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(bootstrap
-        .getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor()));
+        .getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
 
     bootstrap.addBundle(new SwaggerBundle<NotificationConfiguration>() {
       @Override

@@ -1,0 +1,77 @@
+# {{{project.name}}} - {{{project.description}}}
+# {{{project.artifactId}}} configuration
+
+# Snowizard-specific options.
+snowizard:
+
+  datacenterId: ${DW_DATACENTER_ID:-1}
+  workerId: ${DW_WORKER_ID:-1}
+
+# Swagger-specific options.
+swagger:
+
+  resourcePackage: com.smoketurner.notification.application.resources
+  title: Notification API
+  version: v1
+  description: Notification service API
+  contact: jplock@smoketurner.com
+  license: Apache 2.0
+  licenseUrl: https://www.apache.org/licenses/LICENSE-2.0
+
+# Roll-up Rules
+rules:
+
+  new-follower:
+    max-size: 9
+    max-duration: 12 hours
+  like:
+    max-duration: 3 hours
+    match-on: message_id
+
+# Riak-specific options.
+riak:
+
+  nodes:
+    - 127.0.0.1:8087
+
+# HTTP-specific options.
+server:
+
+  applicationConnectors:
+    - type: http
+      port: {{{dw.httpPort}}}
+  
+  adminConnectors:
+    - type: http
+      port: {{{dw.httpAdminPort}}}
+
+  requestLog:
+    appenders:
+      - type: console
+        timeZone: UTC
+        target: stdout
+      - type: file
+        currentLogFilename: "{{{path.logDirectory}}}/requests.log"
+        threshold: ALL
+        archive: true
+        archivedLogFilenamePattern: "{{{path.logDirectory}}}/requests-%d.log"
+        archivedFileCount: 5
+        timeZone: UTC
+
+logging:
+  level: INFO
+  loggers:
+    com.smoketurner.notification: DEBUG
+    com.basho.riak: DEBUG
+    org.eclipse.jetty.servlets: DEBUG
+  appenders:
+    - type: console
+      timeZone: UTC
+      target: stdout
+    - type: file
+      currentLogFilename: "{{{path.logDirectory}}}/app.log"
+      threshold: ALL
+      archive: true
+      archivedLogFilenamePattern: "{{{path.logDirectory}}}/app-%d.log"
+      archivedFileCount: 5
+      timeZone: UTC

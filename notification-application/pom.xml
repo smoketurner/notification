@@ -11,6 +11,10 @@
     <artifactId>notification-application</artifactId>
     <name>Notification Application</name>
 
+    <properties>
+        <package.name>notification</package.name>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -117,6 +121,46 @@
                                 </transformer>
                             </transformers>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.jamierf.dropwizard</groupId>
+                <artifactId>dropwizard-debpkg-maven-plugin</artifactId>
+                <version>0.9</version>
+                <configuration>
+                    <deb>
+                        <maintainer>apt@smoketurner.com</maintainer>
+                        <name>${package.name}</name>
+                    </deb>
+                    <jvm>
+                        <memory>2g</memory>
+                        <server>true</server>
+                    </jvm>
+                    <unix>
+                        <user>${package.name}</user>
+                        <respawn>true</respawn>
+                    </unix>
+                    <path>
+                        <jarFile>/usr/share/java/${package.name}.jar</jarFile>
+                        <startScript>/usr/bin/${package.name}</startScript>
+                        <configFile>/etc/${package.name}.yml</configFile>
+                        <jvmConfigFile>/etc/${package.name}.jvm.conf</jvmConfigFile>
+                        <logDirectory>/var/log/${package.name}</logDirectory>
+                    </path>
+                    <dropwizard>
+                        <httpPort>8080</httpPort>
+                        <httpAdminPort>8180</httpAdminPort>
+                    </dropwizard>
+                    <configTemplate>${basedir}/src/main/resources/notification.yml</configTemplate>
+                    <outputFile>${project.build.directory}/${package.name}-${project.version}.deb</outputFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>dwpackage</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
