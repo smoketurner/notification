@@ -37,7 +37,7 @@ import com.google.common.collect.Ordering;
 public final class CursorObject implements Comparable<CursorObject> {
 
   @RiakBucketName
-  private static final String BUCKET_NAME = "cursors";
+  private final String bucketName = "cursors";
 
   @RiakKey
   private String key;

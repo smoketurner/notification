@@ -39,7 +39,7 @@ public class NotificationListObject {
   private static final int MAX_NOTIFICATIONS = 1000;
 
   @RiakBucketName
-  private static final String BUCKET_NAME = "notifications";
+  private final String bucketName = "notifications";
 
   @RiakKey
   private String key;
