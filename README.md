@@ -51,7 +51,7 @@ git clone https://github.com/smoketurner/notification.git
 cd notification
 mvn package
 cd notification-application
-java -jar target/notification-application/notification-application-1.0.1-SNAPSHOT.jar server notification.yml
+java -jar target/notification-application/notification-application-1.0.2-SNAPSHOT.jar server notification.yml
 ```
 
 The Notification service should be listening on port `8080` for API requests, and Dropwizard's administrative interface is available on port `8180` (both of these ports can be changed in the `notification.yml` configuration file).
