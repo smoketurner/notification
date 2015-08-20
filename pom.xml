@@ -7,7 +7,7 @@
 
     <groupId>com.smoketurner.notification</groupId>
     <artifactId>notification-parent</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>notification</name>
@@ -212,7 +212,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
-                    <outputDirectory />
+                    <outputDirectory/>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
@@ -326,7 +326,7 @@
                         <id>enforce</id>
                         <configuration>
                             <rules>
-                                <DependencyConvergence />
+                                <DependencyConvergence/>
                             </rules>
                         </configuration>
                         <goals>
