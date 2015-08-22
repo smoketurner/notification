@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ssh -t -i ssh/insecure-deployer \
+"ubuntu@$(terraform output nat.ip)" \
+sudo docker run --volumes-from ovpn-data --rm kylemanna/openvpn ovpn_getclient "${1}" > "${1}-notification.ovpn"
