@@ -31,4 +31,4 @@ When you are finished, you can tear down all of the infrastructure by executing 
 
 Architecture
 ------------
-[!(aws_architecture.png)]
+![AWS Architecture](aws_architecture.png?raw=true)
