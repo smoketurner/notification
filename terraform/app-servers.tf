@@ -21,8 +21,8 @@ resource "aws_instance" "app" {
   }
   provisioner "remote-exec" {
     inline = [
-      "echo 'export DW_WORKER_ID=${count.index+1}' | sudo tee /etc/default/notification",
-      "echo 'export DW_DATACENTER_ID=1' | sudo tee -a /etc/default/notification"
+      "echo 'export DW_WORKER_ID=${count.index+1}' | sudo tee /etc/default/notification-application",
+      "echo 'export DW_DATACENTER_ID=1' | sudo tee -a /etc/default/notification-application"
     ]
   }
   tags {
