@@ -1,8 +1,8 @@
 # Snowizard-specific options.
 snowizard:
 
-  datacenterId: 1
-  workerId: 1
+  datacenterId: ${DW_DATACENTER_ID:-1}
+  workerId: ${DW_WORKER_ID:-1}
 
 # Swagger-specific options.
 swagger:
@@ -24,8 +24,6 @@ rules:
   like:
     max-duration: 3 hours
     match-on: message_id
-  test-category:
-    max-size: 2
 
 # Riak-specific options.
 riak:
@@ -49,13 +47,13 @@ server:
       - type: console
         timeZone: UTC
         target: stdout
-#     - type: file
-#       currentLogFilename: /var/log/notification/requests.log
-#       threshold: ALL
-#       archive: true
-#       archivedLogFilenamePattern: /var/log/notification/requests-%d.log
-#       archivedFileCount: 5
-#       timeZone: UTC
+#      - type: file
+#        currentLogFilename: /var/log/notification/requests.log
+#        threshold: ALL
+#        archive: true
+#        archivedLogFilenamePattern: /var/log/notification/requests-%d.log
+#        archivedFileCount: 5
+#        timeZone: UTC
 
 logging:
   level: INFO

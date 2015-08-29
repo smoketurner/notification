@@ -92,7 +92,7 @@
             <version>0.7.0</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -132,7 +132,7 @@
             <plugin>
                 <groupId>com.jamierf.dropwizard</groupId>
                 <artifactId>dropwizard-debpkg-maven-plugin</artifactId>
-                <version>0.10-SNAPSHOT</version>
+                <version>0.9</version>
                 <configuration>
                     <deb>
                         <maintainer>apt@smoketurner.com</maintainer>
