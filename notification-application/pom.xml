@@ -132,11 +132,12 @@
             <plugin>
                 <groupId>com.jamierf.dropwizard</groupId>
                 <artifactId>dropwizard-debpkg-maven-plugin</artifactId>
-                <version>0.9</version>
+                <version>0.10-SNAPSHOT</version>
                 <configuration>
                     <deb>
                         <maintainer>apt@smoketurner.com</maintainer>
                         <name>${package.name}</name>
+                        <version>${project.version}.${buildNumber}</version>
                     </deb>
                     <jvm>
                         <memory>2g</memory>
