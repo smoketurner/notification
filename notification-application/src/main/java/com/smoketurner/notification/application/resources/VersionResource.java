@@ -14,6 +14,10 @@
 package com.smoketurner.notification.application.resources;
 
 import io.dropwizard.jersey.caching.CacheControl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.GET;
@@ -23,10 +27,6 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/version")
 @Api("version")

@@ -15,6 +15,11 @@ package com.smoketurner.notification.application.resources;
 
 import io.dropwizard.jersey.caching.CacheControl;
 import io.dropwizard.jersey.errors.ErrorMessage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import java.util.Date;
 import java.util.NoSuchElementException;
@@ -51,14 +56,9 @@ import com.smoketurner.notification.application.core.UserNotifications;
 import com.smoketurner.notification.application.exceptions.NotificationException;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.store.NotificationStore;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 
 @Path("/v1/notifications")
-@Api(value = "notifications", description = "Operations about notifications")
+@Api(value = "notifications")
 public class NotificationResource {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NotificationResource.class);
