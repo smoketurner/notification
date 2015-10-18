@@ -119,8 +119,13 @@ public final class Notification implements Comparable<Notification> {
     }
 
     public Builder withId(final Long id) {
-      this.id = id;
-      this.idStr = String.valueOf(id);
+      if (id == null) {
+        this.id = null;
+        this.idStr = null;
+      } else {
+        this.id = id;
+        this.idStr = String.valueOf(id);
+      }
       return this;
     }
 
