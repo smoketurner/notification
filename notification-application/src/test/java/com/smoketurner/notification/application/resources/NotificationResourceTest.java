@@ -24,21 +24,24 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.errors.ErrorMessage;
+import io.dropwizard.jersey.validation.ValidationErrorMessage;
 import io.dropwizard.testing.junit.ResourceTestRule;
+
 import java.util.List;
 import java.util.Set;
-import javax.validation.ConstraintViolationException;
-import javax.ws.rs.ProcessingException;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -61,8 +64,8 @@ public class NotificationResourceTest {
       .addResource(new NotificationResource(store)).addProvider(new CharsetResponseFilter())
       .addProvider(new NotificationExceptionMapper()).build();
 
-  @Before
-  public void setUp() {
+  @After
+  public void tearDown() {
     reset(store);
   }
 
@@ -79,8 +82,7 @@ public class NotificationResourceTest {
     final List<Notification> actual = response.readEntity(new GenericType<List<Notification>>() {});
 
     verify(store).fetch("test");
-    verify(store);
-    store.skip(notifications.getNotifications(), 1L, true, 20);
+    verify(store).skip(notifications.getNotifications(), 1L, true, 20);
     assertThat(response.getStatus()).isEqualTo(200);
     assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(
         MediaType.APPLICATION_JSON + ";charset=UTF-8");
@@ -306,14 +308,15 @@ public class NotificationResourceTest {
   public void testStoreMissingCategory() throws Exception {
     final Notification notification = Notification.builder().withMessage("testing 1 2 3").build();
 
-    try {
-      resources.client().target("/v1/notifications/test").request(MediaType.APPLICATION_JSON)
-          .post(Entity.json(notification));
-    } catch (ProcessingException e) {
-      assertThat(e.getCause()).isInstanceOf(ConstraintViolationException.class);
-    }
+    final Response response =
+        resources.client().target("/v1/notifications/test").request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(notification));
 
     verify(store, never()).store(anyString(), any(Notification.class));
+    assertThat(response.getStatus()).isEqualTo(422);
+
+    final ValidationErrorMessage msg = response.readEntity(ValidationErrorMessage.class);
+    assertThat(msg.getErrors()).containsOnly("category may not be empty");
   }
 
   @Test
@@ -321,28 +324,30 @@ public class NotificationResourceTest {
     final Notification notification =
         Notification.builder().withCategory("").withMessage("testing 1 2 3").build();
 
-    try {
-      resources.client().target("/v1/notifications/test").request(MediaType.APPLICATION_JSON)
-          .post(Entity.json(notification));
-    } catch (ProcessingException e) {
-      assertThat(e.getCause()).isInstanceOf(ConstraintViolationException.class);
-    }
+    final Response response =
+        resources.client().target("/v1/notifications/test").request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(notification));
 
     verify(store, never()).store(anyString(), any(Notification.class));
+    assertThat(response.getStatus()).isEqualTo(422);
+
+    final ValidationErrorMessage msg = response.readEntity(ValidationErrorMessage.class);
+    assertThat(msg.getErrors()).containsOnly("category may not be empty");
   }
 
   @Test
   public void testStoreMissingMessage() throws Exception {
     final Notification notification = Notification.builder().withCategory("test-category").build();
 
-    try {
-      resources.client().target("/v1/notifications/test").request(MediaType.APPLICATION_JSON)
-          .post(Entity.json(notification));
-    } catch (ProcessingException e) {
-      assertThat(e.getCause()).isInstanceOf(ConstraintViolationException.class);
-    }
+    final Response response =
+        resources.client().target("/v1/notifications/test").request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(notification));
 
     verify(store, never()).store(anyString(), any(Notification.class));
+    assertThat(response.getStatus()).isEqualTo(422);
+
+    final ValidationErrorMessage msg = response.readEntity(ValidationErrorMessage.class);
+    assertThat(msg.getErrors()).containsOnly("message may not be empty");
   }
 
   @Test
@@ -350,14 +355,15 @@ public class NotificationResourceTest {
     final Notification notification =
         Notification.builder().withCategory("test-category").withMessage("").build();
 
-    try {
-      resources.client().target("/v1/notifications/test").request(MediaType.APPLICATION_JSON)
-          .post(Entity.json(notification));
-    } catch (ProcessingException e) {
-      assertThat(e.getCause()).isInstanceOf(ConstraintViolationException.class);
-    }
+    final Response response =
+        resources.client().target("/v1/notifications/test").request(MediaType.APPLICATION_JSON)
+            .post(Entity.json(notification));
 
     verify(store, never()).store(anyString(), any(Notification.class));
+    assertThat(response.getStatus()).isEqualTo(422);
+
+    final ValidationErrorMessage msg = response.readEntity(ValidationErrorMessage.class);
+    assertThat(msg.getErrors()).containsOnly("message may not be empty");
   }
 
   @Test
