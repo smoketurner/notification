@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -29,6 +31,7 @@ import javax.ws.rs.ext.Provider;
  * also includes the UTF-8 character set.
  */
 @Provider
+@Priority(Priorities.HEADER_DECORATOR)
 public class CharsetResponseFilter implements ContainerResponseFilter {
 
   @Override

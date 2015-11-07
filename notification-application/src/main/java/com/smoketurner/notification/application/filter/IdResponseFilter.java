@@ -16,6 +16,8 @@ package com.smoketurner.notification.application.filter;
 import java.io.IOException;
 import java.util.UUID;
 
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -29,6 +31,7 @@ import org.slf4j.LoggerFactory;
  * method, request path, request ID, response status, response bytes (or -1 if not known)
  */
 @Provider
+@Priority(Priorities.USER)
 public class IdResponseFilter implements ContainerResponseFilter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(IdResponseFilter.class);
