@@ -1,6 +1,7 @@
 package com.smoketurner.notification.application.filter;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -28,8 +29,8 @@ public class RuntimeFilter implements ContainerRequestFilter, ContainerResponseF
       throws IOException {
     final Long startTime = (Long) request.getProperty(RUNTIME_PROPERTY);
     if (startTime != null) {
-      final long delta = System.nanoTime() - startTime;
-      response.getHeaders().add(RUNTIME_HEADER, delta / 1000000000.0);
+      final double delta = (System.nanoTime() - startTime) / 1000000000.0;
+      response.getHeaders().add(RUNTIME_HEADER, new DecimalFormat("#.#####").format(delta));
     }
   }
 }
