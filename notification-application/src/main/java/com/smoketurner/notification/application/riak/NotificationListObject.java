@@ -1,25 +1,26 @@
 /**
  * Copyright 2015 Smoke Turner, LLC.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.smoketurner.notification.application.riak;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import javax.annotation.Nonnull;
-
 import com.basho.riak.client.api.annotations.RiakBucketName;
 import com.basho.riak.client.api.annotations.RiakContentType;
 import com.basho.riak.client.api.annotations.RiakKey;
@@ -29,145 +30,147 @@ import com.basho.riak.client.api.annotations.RiakVClock;
 import com.basho.riak.client.api.annotations.RiakVTag;
 import com.basho.riak.client.api.cap.VClock;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 
 public class NotificationListObject {
 
-  private static final int MAX_NOTIFICATIONS = 1000;
+    private static final int MAX_NOTIFICATIONS = 1000;
 
-  @RiakBucketName
-  private final String bucketName = "notifications";
+    @RiakBucketName
+    private final String bucketName = "notifications";
 
-  @RiakKey
-  private String key;
+    @RiakKey
+    private String key;
 
-  @RiakVClock
-  private VClock vclock;
+    @RiakVClock
+    private VClock vclock;
 
-  @RiakTombstone
-  private boolean tombstone;
+    @RiakTombstone
+    private boolean tombstone;
 
-  @RiakContentType
-  private String contentType;
+    @RiakContentType
+    private String contentType;
 
-  @RiakLastModified
-  private Long lastModified;
+    @RiakLastModified
+    private Long lastModified;
 
-  @RiakVTag
-  private String vtag;
+    @RiakVTag
+    private String vtag;
 
-  private final TreeSet<Notification> notifications = Sets.newTreeSet();
+    private final TreeSet<Notification> notifications = Sets.newTreeSet();
 
-  private final Set<Long> deletedIds = Sets.newHashSet();
+    private final Set<Long> deletedIds = Sets.newHashSet();
 
-  /**
-   * Constructor
-   */
-  public NotificationListObject() {
-    // needed to handle tombstones
-  }
-
-  /**
-   * Constructor
-   *
-   * @param key
-   */
-  public NotificationListObject(@Nonnull final String key) {
-    this.key = Preconditions.checkNotNull(key);
-  }
-
-  /**
-   * Constructor
-   * 
-   * @param other
-   */
-  public NotificationListObject(@Nonnull final NotificationListObject other) {
-    Preconditions.checkNotNull(other);
-    this.key = other.key;
-    this.vclock = other.vclock;
-    this.tombstone = other.tombstone;
-    this.contentType = other.contentType;
-    this.lastModified = other.lastModified;
-    this.vtag = other.vtag;
-    this.addNotifications(other.getNotifications());
-    this.deleteNotifications(other.getDeletedIds());
-  }
-
-  public void addNotification(final Notification notification) {
-    notifications.add(notification);
-    if (notifications.size() > MAX_NOTIFICATIONS) {
-      notifications.pollLast();
-    }
-  }
-
-  public void addNotifications(final Collection<Notification> notifications) {
-    this.notifications.addAll(notifications);
-    while (this.notifications.size() > MAX_NOTIFICATIONS) {
-      this.notifications.pollLast();
-    }
-  }
-
-  public void setNotifications(final Collection<Notification> notifications) {
-    this.notifications.clear();
-    addNotifications(notifications);
-  }
-
-  public void deleteNotification(final long id) {
-    deletedIds.add(id);
-  }
-
-  public void deleteNotifications(final Collection<Long> deletedIds) {
-    this.deletedIds.addAll(deletedIds);
-  }
-
-  public void clearDeletedIds() {
-    deletedIds.clear();
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public SortedSet<Notification> getNotifications() {
-    return notifications;
-  }
-
-  public Set<Long> getDeletedIds() {
-    return deletedIds;
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
+    /**
+     * Constructor
+     */
+    public NotificationListObject() {
+        // needed to handle tombstones
     }
 
-    final NotificationListObject other = (NotificationListObject) obj;
-    return Objects.equal(key, other.key) && Objects.equal(vclock, other.vclock)
-        && Objects.equal(tombstone, other.tombstone)
-        && Objects.equal(contentType, other.contentType)
-        && Objects.equal(lastModified, other.lastModified) && Objects.equal(vtag, other.vtag)
-        && Objects.equal(notifications, other.notifications)
-        && Objects.equal(deletedIds, other.deletedIds);
-  }
+    /**
+     * Constructor
+     *
+     * @param key
+     */
+    public NotificationListObject(@Nonnull final String key) {
+        this.key = Objects.requireNonNull(key);
+    }
 
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(key, vclock, tombstone, contentType, lastModified, vtag, notifications,
-        deletedIds);
-  }
+    /**
+     * Constructor
+     * 
+     * @param other
+     */
+    public NotificationListObject(@Nonnull final NotificationListObject other) {
+        Objects.requireNonNull(other);
+        this.key = other.key;
+        this.vclock = other.vclock;
+        this.tombstone = other.tombstone;
+        this.contentType = other.contentType;
+        this.lastModified = other.lastModified;
+        this.vtag = other.vtag;
+        this.addNotifications(other.getNotifications());
+        this.deleteNotifications(other.getDeletedIds());
+    }
 
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this).add("key", key).add("vclock", vclock)
-        .add("tombstone", tombstone).add("contentType", contentType)
-        .add("lastModified", lastModified).add("vtag", vtag).add("notifications", notifications)
-        .add("deletedIds", deletedIds).toString();
-  }
+    public void addNotification(final Notification notification) {
+        notifications.add(notification);
+        if (notifications.size() > MAX_NOTIFICATIONS) {
+            notifications.pollLast();
+        }
+    }
+
+    public void addNotifications(final Collection<Notification> notifications) {
+        this.notifications.addAll(notifications);
+        while (this.notifications.size() > MAX_NOTIFICATIONS) {
+            this.notifications.pollLast();
+        }
+    }
+
+    public void setNotifications(final Collection<Notification> notifications) {
+        this.notifications.clear();
+        addNotifications(notifications);
+    }
+
+    public void deleteNotification(final long id) {
+        deletedIds.add(id);
+    }
+
+    public void deleteNotifications(final Collection<Long> deletedIds) {
+        this.deletedIds.addAll(deletedIds);
+    }
+
+    public void clearDeletedIds() {
+        deletedIds.clear();
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public SortedSet<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public Set<Long> getDeletedIds() {
+        return deletedIds;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || (getClass() != obj.getClass())) {
+            return false;
+        }
+
+        final NotificationListObject other = (NotificationListObject) obj;
+        return Objects.equals(key, other.key)
+                && Objects.equals(vclock, other.vclock)
+                && Objects.equals(tombstone, other.tombstone)
+                && Objects.equals(contentType, other.contentType)
+                && Objects.equals(lastModified, other.lastModified)
+                && Objects.equals(vtag, other.vtag)
+                && Objects.equals(notifications, other.notifications)
+                && Objects.equals(deletedIds, other.deletedIds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, vclock, tombstone, contentType, lastModified,
+                vtag, notifications, deletedIds);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("key", key)
+                .add("vclock", vclock).add("tombstone", tombstone)
+                .add("contentType", contentType)
+                .add("lastModified", lastModified).add("vtag", vtag)
+                .add("notifications", notifications)
+                .add("deletedIds", deletedIds).toString();
+    }
 }
