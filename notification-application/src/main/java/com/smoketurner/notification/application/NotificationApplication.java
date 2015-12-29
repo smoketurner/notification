@@ -93,8 +93,6 @@ public class NotificationApplication
         environment.jersey().register(IdResponseFilter.class);
         // adds a X-Runtime response header
         environment.jersey().register(RuntimeFilter.class);
-        // adds CORS support
-        configuration.registerCrossOriginFilter(environment);
 
         // snowizard
         final IdWorker snowizard = configuration.getSnowizard()

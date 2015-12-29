@@ -60,7 +60,6 @@ logging:
   loggers:
     com.smoketurner.notification: DEBUG
     com.basho.riak: DEBUG
-    org.eclipse.jetty.servlets: DEBUG
   appenders:
     - type: console
       timeZone: UTC

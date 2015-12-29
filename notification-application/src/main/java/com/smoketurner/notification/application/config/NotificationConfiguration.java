@@ -15,32 +15,20 @@
  */
 package com.smoketurner.notification.application.config;
 
-import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Nonnull;
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.smoketurner.notification.application.core.Rule;
 import io.dropwizard.Configuration;
-import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 public class NotificationConfiguration extends Configuration {
 
     @NotNull
     private Map<String, Rule> rules = Maps.newHashMap();
-
-    @NotNull
-    private Set<String> allowedHeaders = ImmutableSet.of("X-Requested-With",
-            "Content-Type", "Accept", "Origin", "Range");
 
     @Valid
     @NotNull
@@ -68,16 +56,6 @@ public class NotificationConfiguration extends Configuration {
     }
 
     @JsonProperty
-    public Set<String> getAllowedHeaders() {
-        return allowedHeaders;
-    }
-
-    @JsonProperty
-    public void setAllowedHeaders(@Nonnull final Set<String> allowedHeaders) {
-        this.allowedHeaders = allowedHeaders;
-    }
-
-    @JsonProperty
     public SwaggerBundleConfiguration getSwagger() {
         return swagger;
     }
@@ -90,21 +68,5 @@ public class NotificationConfiguration extends Configuration {
     @JsonProperty
     public SnowizardConfiguration getSnowizard() {
         return snowizard;
-    }
-
-    /**
-     * Registers the Jetty CrossOriginFilter to support CORS requests.
-     *
-     * @param environment
-     *            Environment object
-     */
-    public void registerCrossOriginFilter(
-            @Nonnull final Environment environment) {
-        final FilterRegistration.Dynamic filter = environment.servlets()
-                .addFilter("CrossOriginFilter", CrossOriginFilter.class);
-        filter.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST),
-                true, "/*");
-        filter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM,
-                Joiner.on(',').join(allowedHeaders));
     }
 }

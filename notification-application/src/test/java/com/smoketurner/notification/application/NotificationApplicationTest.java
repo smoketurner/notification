@@ -43,12 +43,7 @@ public class NotificationApplicationTest {
     private final HealthCheckRegistry healthChecks = mock(
             HealthCheckRegistry.class);
     private final NotificationApplication application = new NotificationApplication();
-    private final NotificationConfiguration config = new NotificationConfiguration() {
-        @Override
-        public void registerCrossOriginFilter(Environment environment) {
-            return;
-        }
-    };
+    private final NotificationConfiguration config = new NotificationConfiguration();
 
     @Before
     public void setup() throws Exception {
