@@ -96,8 +96,8 @@ public class NotificationListResolver
             final Collection<Long> ids) {
 
         return StreamSupport.stream(notifications.spliterator(), false)
-                .filter(notification -> !notification.getId().isPresent())
-                .filter(notification -> ids
+                .filter(notification -> notification.getId().isPresent())
+                .filter(notification -> !ids
                         .contains(notification.getId().get()))
                 .collect(Collectors.toList());
     }
