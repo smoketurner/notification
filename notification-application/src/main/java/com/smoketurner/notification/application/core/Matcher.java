@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
@@ -65,8 +64,8 @@ public class Matcher implements Comparable<Matcher> {
      */
     public Matcher(@Nonnull final Rule rule,
             @Nonnull final Notification notification) {
-        this.rule = Preconditions.checkNotNull(rule);
-        this.notification = Preconditions.checkNotNull(notification);
+        this.rule = Objects.requireNonNull(rule);
+        this.notification = Objects.requireNonNull(notification);
 
         this.matchOn = rule.getMatchOn().orNull();
         this.maxSize = rule.getMaxSize().orNull();
@@ -93,7 +92,6 @@ public class Matcher implements Comparable<Matcher> {
      * @return true if the notification matches, otherwise false
      */
     public boolean checkMatch(@Nonnull final Notification notification) {
-        Preconditions.checkNotNull(notification);
         if (!rule.getMatchOn().isPresent()) {
             return true;
         }
@@ -102,6 +100,7 @@ public class Matcher implements Comparable<Matcher> {
             return false;
         }
 
+        Objects.requireNonNull(notification);
         final Map<String, String> properties = notification.getProperties();
         return properties.containsKey(matchOn)
                 && Objects.equals(properties.get(matchOn), matchValue);
@@ -130,12 +129,12 @@ public class Matcher implements Comparable<Matcher> {
      *         otherwise false.
      */
     public boolean checkDuration(@Nonnull final Notification notification) {
-        Preconditions.checkNotNull(notification);
         if (!rule.getMaxDuration().isPresent()) {
             return true;
         }
 
         if (maxDuration != null && firstMillis != null) {
+            Objects.requireNonNull(notification);
             final long timestamp = notification.getCreatedAt().getMillis();
             final long delta = firstMillis - timestamp;
             if (delta >= 0 && delta <= maxDuration) {
@@ -153,7 +152,7 @@ public class Matcher implements Comparable<Matcher> {
      * @return true if the notification can be added, otherwise false.
      */
     public boolean add(@Nonnull final Notification notification) {
-        Preconditions.checkNotNull(notification);
+        Objects.requireNonNull(notification);
         if (checkSize() && checkDuration(notification)
                 && checkMatch(notification)
                 && !this.notification.equals(notification)) {

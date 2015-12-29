@@ -16,9 +16,9 @@
 package com.smoketurner.notification.application.core;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
@@ -35,7 +35,7 @@ public class Rollup {
      *            Map of rules
      */
     public Rollup(@Nonnull final Map<String, Rule> rules) {
-        this.rules = Preconditions.checkNotNull(rules);
+        this.rules = Objects.requireNonNull(rules);
     }
 
     /**
@@ -48,7 +48,7 @@ public class Rollup {
      */
     public Iterable<Notification> rollup(
             @Nonnull final Iterable<Notification> notifications) {
-        Preconditions.checkNotNull(notifications);
+        Objects.requireNonNull(notifications);
 
         if (rules.isEmpty()) {
             return notifications;
@@ -57,15 +57,14 @@ public class Rollup {
         final TreeSet<Notification> rollups = Sets.newTreeSet();
 
         for (final Notification notification : notifications) {
+            final Rule rule = rules.get(notification.getCategory());
+
             // If the notification category doesn't match any rule categories,
-            // add the notification as-is
-            // to the list of rollups.
-            if (!rules.containsKey(notification.getCategory())) {
+            // add the notification as-is to the list of rollups.
+            if (rule == null) {
                 rollups.add(notification);
                 continue;
             }
-
-            final Rule rule = rules.get(notification.getCategory());
 
             // If we don't have any matchers yet, add the first one
             if (matchers.isEmpty()) {
@@ -74,8 +73,7 @@ public class Rollup {
             }
 
             // Loop through the existing matchers to see if this notification
-            // falls into any previous
-            // rollups
+            // falls into any previous rollups
             boolean matched = false;
             for (final Matcher match : matchers) {
                 if (match.add(notification)) {

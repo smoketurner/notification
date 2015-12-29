@@ -15,11 +15,11 @@
  */
 package com.smoketurner.notification.application.core;
 
+import java.util.Collections;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
@@ -51,16 +51,16 @@ public final class UserNotifications {
      *            Unseen notifications
      */
     public UserNotifications(@Nonnull final Iterable<Notification> unseen) {
-        this.unseen = Preconditions.checkNotNull(unseen);
-        this.seen = ImmutableSortedSet.of();
+        this.unseen = Objects.requireNonNull(unseen);
+        this.seen = Collections.emptySortedSet();
     }
 
     /**
      * Constructor
      */
     public UserNotifications() {
-        this.unseen = ImmutableSortedSet.of();
-        this.seen = ImmutableSortedSet.of();
+        this.unseen = Collections.emptySortedSet();
+        this.seen = Collections.emptySortedSet();
     }
 
     public boolean isEmpty() {

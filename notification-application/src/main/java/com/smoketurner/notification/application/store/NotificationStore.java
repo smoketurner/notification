@@ -17,6 +17,7 @@ package com.smoketurner.notification.application.store;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
@@ -44,7 +45,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.core.Rollup;
@@ -140,7 +140,7 @@ public class NotificationStore {
     public Optional<UserNotifications> fetch(@Nonnull final String username)
             throws NotificationStoreException {
 
-        Preconditions.checkNotNull(username);
+        Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
 
@@ -192,10 +192,10 @@ public class NotificationStore {
             @Nonnull final SortedSet<Notification> notifications)
                     throws NotificationStoreException {
 
-        Preconditions.checkNotNull(username);
+        Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Preconditions.checkNotNull(notifications);
+        Objects.requireNonNull(notifications);
 
         // if there are no notifications, just return
         if (notifications.isEmpty()) {
@@ -273,10 +273,10 @@ public class NotificationStore {
             @Nonnull final Notification notification)
                     throws NotificationStoreException {
 
-        Preconditions.checkNotNull(username);
+        Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Preconditions.checkNotNull(notification);
+        Objects.requireNonNull(notification);
 
         final long id;
         try {
@@ -327,7 +327,7 @@ public class NotificationStore {
     public void removeAll(@Nonnull final String username)
             throws NotificationStoreException {
 
-        Preconditions.checkNotNull(username);
+        Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
 
@@ -367,7 +367,7 @@ public class NotificationStore {
             @Nonnull final Collection<Long> ids)
                     throws NotificationStoreException {
 
-        Preconditions.checkNotNull(username);
+        Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
         Preconditions.checkNotNull(ids);
@@ -412,7 +412,8 @@ public class NotificationStore {
     public Iterable<Notification> setUnseenState(
             @Nonnull final Iterable<Notification> notifications,
             final boolean unseen) {
-        Preconditions.checkNotNull(notifications);
+        Objects.requireNonNull(notifications);
+
         return Iterables.transform(notifications,
                 new Function<Notification, Notification>() {
                     @Override
@@ -437,7 +438,7 @@ public class NotificationStore {
     public Optional<Notification> tryFind(
             @Nonnull final Iterable<Notification> notifications,
             final long id) {
-        Preconditions.checkNotNull(notifications);
+        Objects.requireNonNull(notifications);
         return Iterables.tryFind(notifications, new Predicate<Notification>() {
             @Override
             public boolean apply(final Notification notification) {
@@ -452,8 +453,7 @@ public class NotificationStore {
                 // then check to see if the notification is included in any
                 // rolled up notifications
                 final Collection<Notification> children = notification
-                        .getNotifications()
-                        .or(ImmutableList.<Notification> of());
+                        .getNotifications().or(Collections.emptyList());
                 if (children.isEmpty()) {
                     return false;
                 }
@@ -474,7 +474,7 @@ public class NotificationStore {
      */
     public int indexOf(@Nonnull final Iterable<Notification> notifications,
             final long id) {
-        Preconditions.checkNotNull(notifications);
+        Objects.requireNonNull(notifications);
         return Iterables.indexOf(notifications, new Predicate<Notification>() {
             @Override
             public boolean apply(final Notification notification) {
@@ -489,8 +489,7 @@ public class NotificationStore {
                 // then check to see if the notification is included in any
                 // rolled up notifications
                 final Collection<Notification> children = notification
-                        .getNotifications()
-                        .or(ImmutableList.<Notification> of());
+                        .getNotifications().or(Collections.emptyList());
                 if (children.isEmpty()) {
                     return false;
                 }
@@ -517,7 +516,7 @@ public class NotificationStore {
     public Iterable<Notification> skip(
             @Nonnull final Iterable<Notification> notifications,
             final long startId, final boolean inclusive, final int limitSize) {
-        Preconditions.checkNotNull(notifications);
+        Objects.requireNonNull(notifications);
         final int position = indexOf(notifications, startId);
         if (position == -1) {
             return Iterables.limit(notifications, limitSize);
