@@ -16,9 +16,10 @@
 package com.smoketurner.notification.application.riak;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
-import com.google.common.collect.ImmutableList;
 
 public class CursorResolverTest {
 
@@ -26,7 +27,7 @@ public class CursorResolverTest {
 
     @Test
     public void testNoSiblings() throws Exception {
-        final List<CursorObject> siblings = ImmutableList.of();
+        final List<CursorObject> siblings = Collections.emptyList();
         final CursorObject actual = resolver.resolve(siblings);
         assertThat(actual).isNull();
     }
@@ -34,7 +35,7 @@ public class CursorResolverTest {
     @Test
     public void testSingleSibling() throws Exception {
         final CursorObject list = new CursorObject("test", 1L);
-        final List<CursorObject> siblings = ImmutableList.of(list);
+        final List<CursorObject> siblings = Collections.singletonList(list);
         final CursorObject actual = resolver.resolve(siblings);
         assertThat(actual).isEqualTo(list);
     }
@@ -48,7 +49,7 @@ public class CursorResolverTest {
         final CursorObject cursor5 = new CursorObject("test", 5L);
         final CursorObject cursor6 = new CursorObject("test", 6L);
 
-        final List<CursorObject> siblings = ImmutableList.of(cursor1, cursor2,
+        final List<CursorObject> siblings = Arrays.asList(cursor1, cursor2,
                 cursor3, cursor4, cursor5, cursor6);
 
         final CursorObject actual = resolver.resolve(siblings);

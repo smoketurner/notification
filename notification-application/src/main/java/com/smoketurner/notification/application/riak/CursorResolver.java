@@ -15,12 +15,12 @@
  */
 package com.smoketurner.notification.application.riak;
 
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.cap.ConflictResolver;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
-import com.google.common.collect.ImmutableSortedSet;
 
 public class CursorResolver implements ConflictResolver<CursorObject> {
 
@@ -32,11 +32,10 @@ public class CursorResolver implements ConflictResolver<CursorObject> {
             throws UnresolvedConflictException {
         LOGGER.debug("Found {} siblings", siblings.size());
         if (siblings.size() > 1) {
-            final ImmutableSortedSet<CursorObject> cursors = ImmutableSortedSet
-                    .copyOf(siblings);
-            return cursors.first();
+            Collections.sort(siblings);
+            return siblings.get(0);
         } else if (siblings.size() == 1) {
-            return siblings.iterator().next();
+            return siblings.get(0);
         } else {
             return null;
         }

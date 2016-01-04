@@ -39,6 +39,7 @@ public class NotificationListResolver
                     throws UnresolvedConflictException {
         LOGGER.debug("Found {} siblings", siblings.size());
         if (siblings.size() > 1) {
+
             final Iterator<NotificationListObject> iterator = siblings
                     .iterator();
             final NotificationListObject resolved = new NotificationListObject(
