@@ -20,6 +20,8 @@ import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,9 +83,9 @@ public class NotificationStoreTest {
                 .fromNotification(n6).withUnseen(true).build();
 
         final TreeSet<Notification> notifications = Sets
-                .newTreeSet(ImmutableList.of(n6, n5, n4, n3, n2, n1));
+                .newTreeSet(Arrays.asList(n6, n5, n4, n3, n2, n1));
 
-        final List<Notification> expected = ImmutableList.of(n6Unseen, n5Unseen,
+        final List<Notification> expected = Arrays.asList(n6Unseen, n5Unseen,
                 n4Seen, n3Seen, n2Seen, n1Seen);
 
         final UserNotifications actual = store.splitNotifications(TEST_USER,
@@ -122,9 +124,9 @@ public class NotificationStoreTest {
                 .withUnseen(true).build();
 
         final TreeSet<Notification> notifications = Sets
-                .newTreeSet(ImmutableList.of(n6, n5, n4, n3, n2, n1));
+                .newTreeSet(Arrays.asList(n6, n5, n4, n3, n2, n1));
 
-        final List<Notification> expected = ImmutableList.of(n6Seen, n5Seen,
+        final List<Notification> expected = Arrays.asList(n6Seen, n5Seen,
                 n4Seen, n3Seen, n2Seen, n1Seen);
 
         final UserNotifications actual = store.splitNotifications(TEST_USER,
@@ -149,8 +151,8 @@ public class NotificationStoreTest {
                 .fromNotification(n1).withUnseen(true).build();
 
         final TreeSet<Notification> notifications = Sets
-                .newTreeSet(ImmutableList.of(n1));
-        final List<Notification> expected = ImmutableList.of(n1Unseen);
+                .newTreeSet(Collections.singletonList(n1));
+        final List<Notification> expected = Collections.singletonList(n1Unseen);
 
         final UserNotifications actual = store.splitNotifications(TEST_USER,
                 notifications);
@@ -189,7 +191,7 @@ public class NotificationStoreTest {
 
     @Test
     public void testSplitNotificationsNotificationsEmpty() throws Exception {
-        final Set<Notification> expected = ImmutableSortedSet.of();
+        final Set<Notification> expected = Collections.emptySortedSet();
         final UserNotifications actual = store.splitNotifications(TEST_USER,
                 Sets.<Notification> newTreeSet());
         assertThat(actual.getNotifications()).isEqualTo(expected);
@@ -225,13 +227,13 @@ public class NotificationStoreTest {
 
     @Test
     public void testFindNotification() throws Exception {
-        final Notification n100 = Notification.builder()
-                .withId(100L).withNotifications(ImmutableList
-                        .of(createNotification(101L), createNotification(102L)))
+        final Notification n100 = Notification.builder().withId(100L)
+                .withNotifications(Arrays.asList(createNotification(101L),
+                        createNotification(102L)))
                 .build();
 
         final Notification n150 = Notification.builder().withId(150L)
-                .withNotifications(ImmutableList.<Notification> of()).build();
+                .withNotifications(Collections.emptyList()).build();
 
         final ImmutableList.Builder<Notification> builder = ImmutableList
                 .builder();

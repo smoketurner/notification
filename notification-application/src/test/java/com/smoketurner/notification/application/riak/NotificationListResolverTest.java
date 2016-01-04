@@ -16,6 +16,8 @@
 package com.smoketurner.notification.application.riak;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import com.google.common.collect.ImmutableList;
@@ -27,7 +29,7 @@ public class NotificationListResolverTest {
 
     @Test
     public void testNoSiblings() throws Exception {
-        final List<NotificationListObject> siblings = ImmutableList.of();
+        final List<NotificationListObject> siblings = Collections.emptyList();
         final NotificationListObject actual = resolver.resolve(siblings);
         assertThat(actual).isNull();
     }
@@ -35,7 +37,8 @@ public class NotificationListResolverTest {
     @Test
     public void testSingleSibling() throws Exception {
         final NotificationListObject list = new NotificationListObject("test");
-        final List<NotificationListObject> siblings = ImmutableList.of(list);
+        final List<NotificationListObject> siblings = Collections
+                .singletonList(list);
         final NotificationListObject actual = resolver.resolve(siblings);
         assertThat(actual).isEqualTo(list);
     }
@@ -45,7 +48,8 @@ public class NotificationListResolverTest {
         final NotificationListObject list = new NotificationListObject("test");
         list.addNotification(createNotification(1L));
         list.deleteNotification(1L);
-        final List<NotificationListObject> siblings = ImmutableList.of(list);
+        final List<NotificationListObject> siblings = Collections
+                .singletonList(list);
         final NotificationListObject actual = resolver.resolve(siblings);
         assertThat(actual.getDeletedIds()).isEmpty();
         assertThat(actual.getNotifications()).isEmpty();
@@ -76,7 +80,7 @@ public class NotificationListResolverTest {
         list3.addNotification(n2);
         list3.addNotification(n5);
 
-        final List<NotificationListObject> siblings = ImmutableList.of(list1,
+        final List<NotificationListObject> siblings = Arrays.asList(list1,
                 list2, list3);
 
         final NotificationListObject expected = new NotificationListObject(
@@ -121,9 +125,9 @@ public class NotificationListResolverTest {
         list3.addNotification(n6);
         list3.addNotification(n2);
         list3.addNotification(n5);
-        list3.deleteNotifications(ImmutableList.of(3L, 6L));
+        list3.deleteNotifications(Arrays.asList(3L, 6L));
 
-        final List<NotificationListObject> siblings = ImmutableList.of(list1,
+        final List<NotificationListObject> siblings = Arrays.asList(list1,
                 list2, list3);
 
         final NotificationListObject expected = new NotificationListObject(
@@ -144,26 +148,27 @@ public class NotificationListResolverTest {
                 createNotification(1L), createNotification(2L),
                 createNotification(3L), Notification.builder().build());
 
-        final List<Notification> expected = ImmutableList
-                .of(createNotification(2L), createNotification(3L));
+        final List<Notification> expected = Arrays
+                .asList(createNotification(2L), createNotification(3L));
 
         final List<Notification> actual = NotificationListResolver
-                .removeNotifications(notifications, ImmutableList.of(1L));
+                .removeNotifications(notifications,
+                        Collections.singletonList(1L));
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
     @Test
     public void testRemoveNotificationsEmpty() throws Exception {
-        final List<Notification> notifications = ImmutableList.of(
+        final List<Notification> notifications = Arrays.asList(
                 createNotification(1L), createNotification(2L),
                 createNotification(3L), Notification.builder().build());
 
-        final List<Notification> expected = ImmutableList.of(
+        final List<Notification> expected = Arrays.asList(
                 createNotification(1L), createNotification(2L),
                 createNotification(3L));
 
         final List<Notification> actual = NotificationListResolver
-                .removeNotifications(notifications, ImmutableList.<Long> of());
+                .removeNotifications(notifications, Collections.emptyList());
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 

@@ -20,13 +20,12 @@ import java.util.Objects;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 
 public class Rollup {
 
     private final Map<String, Rule> rules;
-    private final TreeSet<Matcher> matchers = Sets.newTreeSet();
+    private final TreeSet<Matcher> matchers = new TreeSet<>();
 
     /**
      * Constructor
@@ -54,7 +53,7 @@ public class Rollup {
             return notifications;
         }
 
-        final TreeSet<Notification> rollups = Sets.newTreeSet();
+        final TreeSet<Notification> rollups = new TreeSet<>();
 
         for (final Notification notification : notifications) {
             final Rule rule = rules.get(notification.getCategory());
