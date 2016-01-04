@@ -18,6 +18,8 @@ package com.smoketurner.notification.application.config;
 import java.net.UnknownHostException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
@@ -30,7 +32,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.net.HostAndPort;
 import com.smoketurner.notification.application.managed.RiakClusterManager;
 import io.dropwizard.setup.Environment;
@@ -42,7 +43,7 @@ public class RiakConfiguration {
     private static final int DEFAULT_RIAK_PORT = 8087;
 
     @NotEmpty
-    private List<HostAndPort> nodes = Lists.newArrayList();
+    private List<HostAndPort> nodes = Collections.emptyList();
 
     private String username;
 
@@ -180,7 +181,7 @@ public class RiakConfiguration {
             builder.withAuth(username, password, keystore);
         }
 
-        final List<RiakNode> nodes = Lists.newArrayList();
+        final List<RiakNode> nodes = new ArrayList<>();
         for (HostAndPort address : this.nodes) {
             final RiakNode node = builder
                     .withRemoteAddress(address.getHostText())

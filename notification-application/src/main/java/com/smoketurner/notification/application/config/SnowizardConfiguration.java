@@ -15,6 +15,7 @@
  */
 package com.smoketurner.notification.application.config;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -26,7 +27,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ge.snowizard.core.IdWorker;
-import com.google.common.base.Preconditions;
 import com.smoketurner.notification.application.NotificationApplication;
 import io.dropwizard.setup.Environment;
 
@@ -67,7 +67,7 @@ public class SnowizardConfiguration {
 
     @JsonIgnore
     public IdWorker build(@Nonnull final Environment environment) {
-        Preconditions.checkNotNull(environment);
+        Objects.requireNonNull(environment);
         final MetricRegistry registry = environment.metrics();
 
         registry.register(

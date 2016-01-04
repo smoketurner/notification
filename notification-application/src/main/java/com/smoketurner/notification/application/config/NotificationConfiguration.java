@@ -15,12 +15,12 @@
  */
 package com.smoketurner.notification.application.config;
 
+import java.util.Collections;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Maps;
 import com.smoketurner.notification.application.core.Rule;
 import io.dropwizard.Configuration;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
@@ -28,7 +28,7 @@ import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 public class NotificationConfiguration extends Configuration {
 
     @NotNull
-    private Map<String, Rule> rules = Maps.newHashMap();
+    private Map<String, Rule> rules = Collections.emptyMap();
 
     @Valid
     @NotNull
