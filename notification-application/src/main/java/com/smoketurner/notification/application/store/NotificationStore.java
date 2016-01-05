@@ -195,10 +195,9 @@ public class NotificationStore {
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Objects.requireNonNull(notifications);
 
         // if there are no notifications, just return
-        if (notifications.isEmpty()) {
+        if (notifications == null || notifications.isEmpty()) {
             return new UserNotifications();
         }
 
@@ -227,8 +226,8 @@ public class NotificationStore {
         LOGGER.debug("Last seen notification ID: {}", lastSeenId);
 
         // if the latest seen notification ID is less than the newest
-        // notification ID, then update the
-        // cursor to the newest notification ID.
+        // notification ID, then update the cursor to the newest notification
+        // ID.
         if (lastSeenId < newestId) {
             LOGGER.debug("Updating cursor to {}", newestId);
             cursors.store(username, CURSOR_NAME, newestId);
@@ -435,7 +434,7 @@ public class NotificationStore {
      *            Notification ID to find
      * @return the notification
      */
-    public Optional<Notification> tryFind(
+    public static Optional<Notification> tryFind(
             @Nonnull final Iterable<Notification> notifications,
             final long id) {
         Objects.requireNonNull(notifications);
@@ -472,7 +471,8 @@ public class NotificationStore {
      *            Notification ID to find
      * @return the position of the notification or -1 if not found
      */
-    public int indexOf(@Nonnull final Iterable<Notification> notifications,
+    public static int indexOf(
+            @Nonnull final Iterable<Notification> notifications,
             final long id) {
         Objects.requireNonNull(notifications);
         return Iterables.indexOf(notifications, new Predicate<Notification>() {

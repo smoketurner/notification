@@ -182,11 +182,10 @@ public class NotificationStoreTest {
 
     @Test
     public void testSplitNotificationsNotificationsNull() throws Exception {
-        try {
-            store.splitNotifications(TEST_USER, null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
+        final Set<Notification> expected = Collections.emptySortedSet();
+        final UserNotifications actual = store.splitNotifications(TEST_USER,
+                null);
+        assertThat(actual.getNotifications()).isEqualTo(expected);
     }
 
     @Test
