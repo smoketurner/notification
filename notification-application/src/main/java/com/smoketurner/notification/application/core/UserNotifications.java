@@ -17,6 +17,9 @@ package com.smoketurner.notification.application.core;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import com.google.common.base.MoreObjects;
@@ -49,9 +52,38 @@ public final class UserNotifications {
      *
      * @param unseen
      *            Unseen notifications
+     * @param seen
+     *            Seen notifications
+     */
+    public UserNotifications(@Nonnull final Stream<Notification> unseen,
+            @Nonnull final Stream<Notification> seen) {
+        Objects.requireNonNull(unseen);
+        Objects.requireNonNull(seen);
+
+        this.unseen = unseen.collect(Collectors.toCollection(TreeSet::new));
+        this.seen = seen.collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    /**
+     * Constructor
+     *
+     * @param unseen
+     *            Unseen notifications
      */
     public UserNotifications(@Nonnull final Iterable<Notification> unseen) {
         this.unseen = Objects.requireNonNull(unseen);
+        this.seen = Collections.emptySortedSet();
+    }
+
+    /**
+     * Constructor
+     *
+     * @param unseen
+     *            Unseen notifications
+     */
+    public UserNotifications(@Nonnull final Stream<Notification> unseen) {
+        Objects.requireNonNull(unseen);
+        this.unseen = unseen.collect(Collectors.toCollection(TreeSet::new));
         this.seen = Collections.emptySortedSet();
     }
 

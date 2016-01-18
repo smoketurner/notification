@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -41,7 +43,6 @@ import com.codahale.metrics.Timer;
 import com.ge.snowizard.core.IdWorker;
 import com.ge.snowizard.exceptions.InvalidSystemClock;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -244,11 +245,11 @@ public class NotificationStore {
         }
 
         // Set the head of the list as being unseen
-        final Iterable<Notification> unseen = setUnseenState(
+        final Stream<Notification> unseen = setUnseenState(
                 notifications.headSet(lastNotification.get()), true);
 
         // Set the tail of the list as being seen
-        final Iterable<Notification> seen = setUnseenState(
+        final Stream<Notification> seen = setUnseenState(
                 notifications.tailSet(lastNotification.get()), false);
 
         final Rollup seenRollup = new Rollup(rules);
@@ -408,20 +409,25 @@ public class NotificationStore {
      *            whether the notifications have been seen or not
      * @return the updated notifications
      */
-    public Iterable<Notification> setUnseenState(
+    public static Stream<Notification> setUnseenState(
             @Nonnull final Iterable<Notification> notifications,
             final boolean unseen) {
         Objects.requireNonNull(notifications);
 
-        return Iterables.transform(notifications,
-                new Function<Notification, Notification>() {
-                    @Override
-                    public Notification apply(final Notification notification) {
-                        return Notification.builder()
-                                .fromNotification(notification)
-                                .withUnseen(unseen).build();
-                    }
+        return StreamSupport.stream(notifications.spliterator(), true)
+                .map(notification -> {
+                    return Notification.builder().fromNotification(notification)
+                            .withUnseen(unseen).build();
                 });
+
+        /*
+         * return Iterables.transform(notifications, new Function<Notification,
+         * Notification>() {
+         * 
+         * @Override public Notification apply(final Notification notification)
+         * { return Notification.builder() .fromNotification(notification)
+         * .withUnseen(unseen).build(); } });
+         */
     }
 
     /**

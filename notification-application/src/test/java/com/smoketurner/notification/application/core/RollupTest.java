@@ -18,6 +18,7 @@ package com.smoketurner.notification.application.core;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
@@ -72,8 +73,9 @@ public class RollupTest {
         final List<Notification> expected = Arrays.asList(rollup1, n8, n6, n4,
                 n3, n2);
 
-        final Iterable<Notification> actual = rollup.rollup(notifications);
-        assertThat(actual).containsExactlyElementsOf(expected);
+        final Stream<Notification> actual = rollup
+                .rollup(notifications.stream());
+        assertThat(actual.iterator()).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -125,8 +127,9 @@ public class RollupTest {
 
         final List<Notification> expected = Arrays.asList(rollup1, rollup2, n1);
 
-        final Iterable<Notification> actual = rollup.rollup(notifications);
-        assertThat(actual).containsExactlyElementsOf(expected);
+        final Stream<Notification> actual = rollup
+                .rollup(notifications.stream());
+        assertThat(actual.iterator()).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -162,8 +165,9 @@ public class RollupTest {
         final List<Notification> expected = Arrays.asList(rollup1, rollup2,
                 rollup3);
 
-        final Iterable<Notification> actual = rollup.rollup(notifications);
-        assertThat(actual).containsExactlyElementsOf(expected);
+        final Stream<Notification> actual = rollup
+                .rollup(notifications.stream());
+        assertThat(actual.iterator()).containsExactlyElementsOf(expected);
     }
 
     private Notification createNotification(final long id) {

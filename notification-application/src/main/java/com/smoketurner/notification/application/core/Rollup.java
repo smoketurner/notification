@@ -18,8 +18,8 @@ package com.smoketurner.notification.application.core;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
-import com.google.common.collect.FluentIterable;
 import com.smoketurner.notification.api.Notification;
 
 public class Rollup {
@@ -45,8 +45,8 @@ public class Rollup {
      *            Notifications to roll up
      * @return Rolled up notifications
      */
-    public Iterable<Notification> rollup(
-            @Nonnull final Iterable<Notification> notifications) {
+    public Stream<Notification> rollup(
+            @Nonnull final Stream<Notification> notifications) {
         Objects.requireNonNull(notifications);
 
         if (rules.isEmpty()) {
@@ -55,44 +55,40 @@ public class Rollup {
 
         final TreeSet<Notification> rollups = new TreeSet<>();
 
-        for (final Notification notification : notifications) {
+        notifications.forEach(notification -> {
             final Rule rule = rules.get(notification.getCategory());
 
             // If the notification category doesn't match any rule categories,
             // add the notification as-is to the list of rollups.
             if (rule == null) {
                 rollups.add(notification);
-                continue;
-            }
-
-            // If we don't have any matchers yet, add the first one
-            if (matchers.isEmpty()) {
+            } else if (matchers.isEmpty()) {
+                // If we don't have any matchers yet, add the first one
                 matchers.add(new Matcher(rule, notification));
-                continue;
-            }
+            } else {
+                // Loop through the existing matchers to see if this
+                // notification falls into any previous rollups
+                boolean matched = false;
+                for (final Matcher match : matchers) {
+                    if (match.add(notification)) {
+                        matched = true;
+                        break;
+                    }
+                }
 
-            // Loop through the existing matchers to see if this notification
-            // falls into any previous rollups
-            boolean matched = false;
-            for (final Matcher match : matchers) {
-                if (match.add(notification)) {
-                    matched = true;
-                    break;
+                // If the notification didn't match any existing rollups, add it
+                // as a new matcher
+                if (!matched) {
+                    matchers.add(new Matcher(rule, notification));
                 }
             }
-
-            // If the notification didn't match any existing rollups, add it as
-            // a new matcher
-            if (!matched) {
-                matchers.add(new Matcher(rule, notification));
-            }
-        }
+        });
 
         // Pull out the rolled up notifications out of the matchers
         for (final Matcher match : matchers) {
             rollups.add(match.getNotification());
         }
 
-        return FluentIterable.from(rollups);
+        return rollups.stream();
     }
 }
