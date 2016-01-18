@@ -98,6 +98,7 @@ public class NotificationResource {
                       required = false) @HeaderParam("Range") final String rangeHeader,
             @ApiParam(value = "username",
                       required = true) @PathParam("username") final String username) {
+
         final Optional<UserNotifications> list;
         try {
             list = store.fetch(username);
