@@ -16,6 +16,7 @@
 package com.smoketurner.notification.application.store;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class CursorStore {
      */
     public CursorStore(@Nonnull final MetricRegistry registry,
             @Nonnull final RiakClient client) {
-        Preconditions.checkNotNull(registry);
+        Objects.requireNonNull(registry);
         this.fetchTimer = registry
                 .timer(MetricRegistry.name(CursorStore.class, "fetch"));
         this.storeTimer = registry
@@ -68,7 +69,7 @@ public class CursorStore {
         this.deleteTimer = registry
                 .timer(MetricRegistry.name(CursorStore.class, "delete"));
 
-        this.client = Preconditions.checkNotNull(client);
+        this.client = Objects.requireNonNull(client);
     }
 
     /**
@@ -110,10 +111,10 @@ public class CursorStore {
             @Nonnull final String cursorName)
                     throws NotificationStoreException {
 
-        Preconditions.checkNotNull(username);
+        Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Preconditions.checkNotNull(cursorName);
+        Objects.requireNonNull(cursorName);
         Preconditions.checkArgument(!cursorName.isEmpty(),
                 "cursorName cannot be empty");
 
@@ -164,10 +165,10 @@ public class CursorStore {
             @Nonnull final String cursorName, final long value)
                     throws NotificationStoreException {
 
-        Preconditions.checkNotNull(username);
+        Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Preconditions.checkNotNull(cursorName);
+        Objects.requireNonNull(cursorName);
         Preconditions.checkArgument(!cursorName.isEmpty(),
                 "cursorName cannot be empty");
 
@@ -208,10 +209,11 @@ public class CursorStore {
     public void delete(@Nonnull final String username,
             @Nonnull final String cursorName)
                     throws NotificationStoreException {
-        Preconditions.checkNotNull(username);
+
+        Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Preconditions.checkNotNull(cursorName);
+        Objects.requireNonNull(cursorName);
         Preconditions.checkArgument(!cursorName.isEmpty(),
                 "cursorName cannot be empty");
 
@@ -247,7 +249,6 @@ public class CursorStore {
      */
     public String getCursorKey(@Nonnull final String username,
             @Nonnull final String cursorName) {
-        return String.format("%s-%s", Preconditions.checkNotNull(username),
-                Preconditions.checkNotNull(cursorName));
+        return String.format("%s-%s", username, cursorName);
     }
 }
