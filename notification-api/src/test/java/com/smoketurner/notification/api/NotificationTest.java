@@ -120,4 +120,18 @@ public class NotificationTest {
         assertThat(n1.equals(null)).isFalse();
         assertThat(n1.equals("")).isFalse();
     }
+
+    @Test
+    public void testNaturalOrdering() {
+        final Notification n1 = Notification.builder().withId(1L)
+                .withCategory("test").build();
+        final Notification n2 = Notification.builder().withId(2L)
+                .withCategory("test").build();
+        final Notification n3 = Notification.builder().withId(1L)
+                .withCategory("other").build();
+        assertThat(n1.equals(n2)).isEqualTo(n1.compareTo(n2) == 0);
+        assertThat(n2.equals(n2)).isEqualTo(n2.compareTo(n2) == 0);
+        assertThat(n2.equals(n3)).isEqualTo(n2.compareTo(n3) == 0);
+        assertThat(n1.equals(n3)).isEqualTo(n1.compareTo(n3) == 0);
+    }
 }

@@ -104,19 +104,12 @@ public final class CursorObject implements Comparable<CursorObject> {
         }
 
         final CursorObject other = (CursorObject) obj;
-        return Objects.equals(key, other.key)
-                && Objects.equals(vclock, other.vclock)
-                && Objects.equals(tombstone, other.tombstone)
-                && Objects.equals(contentType, other.contentType)
-                && Objects.equals(lastModified, other.lastModified)
-                && Objects.equals(vtag, other.vtag)
-                && Objects.equals(value, other.value);
+        return Objects.equals(value, other.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, vclock, tombstone, contentType, lastModified,
-                vtag, value);
+        return Objects.hash(value);
     }
 
     @Override
