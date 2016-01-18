@@ -65,7 +65,7 @@ public class NotificationListResolver
             return resolved;
         } else if (siblings.size() == 1) {
 
-            final NotificationListObject resolved = siblings.iterator().next();
+            final NotificationListObject resolved = siblings.get(0);
 
             // remove deleted notifications
             if (!resolved.getDeletedIds().isEmpty()) {

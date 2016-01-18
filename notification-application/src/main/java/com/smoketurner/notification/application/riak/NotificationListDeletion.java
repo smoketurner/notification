@@ -16,11 +16,12 @@
 package com.smoketurner.notification.application.riak;
 
 import java.util.Collection;
+import java.util.Objects;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.commands.kv.UpdateValue;
-import com.google.common.base.Preconditions;
 
 public class NotificationListDeletion
         extends UpdateValue.Update<NotificationListObject> {
@@ -36,11 +37,12 @@ public class NotificationListDeletion
      *            Notification IDs to delete
      */
     public NotificationListDeletion(@Nonnull final Collection<Long> ids) {
-        this.ids = Preconditions.checkNotNull(ids);
+        this.ids = Objects.requireNonNull(ids);
     }
 
     @Override
-    public NotificationListObject apply(NotificationListObject original) {
+    public NotificationListObject apply(
+            @Nullable NotificationListObject original) {
         if (original == null) {
             LOGGER.debug("original is null, creating new notification list");
             original = new NotificationListObject();
