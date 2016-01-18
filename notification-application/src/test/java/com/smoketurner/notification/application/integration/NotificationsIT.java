@@ -23,8 +23,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import com.google.common.collect.ImmutableList;
@@ -45,16 +45,16 @@ public class NotificationsIT {
             NotificationApplication.class,
             ResourceHelpers.resourceFilePath("notification-test.yml"));
 
-    private Client client;
+    private static Client client;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         client = new JerseyClientBuilder(RULE.getEnvironment())
                 .build("test client");
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void tearDown() throws Exception {
         client.close();
     }
 
