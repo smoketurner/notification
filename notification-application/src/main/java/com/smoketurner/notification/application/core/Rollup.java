@@ -55,7 +55,7 @@ public class Rollup {
 
         final TreeSet<Notification> rollups = new TreeSet<>();
 
-        notifications.forEach(notification -> {
+        notifications.forEachOrdered(notification -> {
             final Rule rule = rules.get(notification.getCategory());
 
             // If the notification category doesn't match any rule categories,

@@ -112,4 +112,23 @@ public class MatcherTest {
         assertThat(matcher.checkDuration(past)).isTrue();
         assertThat(matcher.checkDuration(past2)).isFalse();
     }
+
+    @Test
+    public void testNaturalOrdering() {
+        final Rule rule1 = new Rule(Optional.<Integer> absent(),
+                Optional.<Duration> absent(), Optional.of("first_name"));
+        final Rule rule2 = new Rule(Optional.<Integer> absent(),
+                Optional.<Duration> absent(), Optional.of("last_name"));
+
+        final Notification n1 = Notification.builder().withId(1L).build();
+        final Notification n2 = Notification.builder().withId(2L).build();
+
+        final Matcher m1 = new Matcher(rule1, n1);
+        final Matcher m2 = new Matcher(rule1, n2);
+        final Matcher m3 = new Matcher(rule2, n1);
+        assertThat(m1.equals(m2)).isEqualTo(m1.compareTo(m2) == 0);
+        assertThat(m2.equals(m2)).isEqualTo(m2.compareTo(m2) == 0);
+        assertThat(m2.equals(m3)).isEqualTo(m2.compareTo(m3) == 0);
+        assertThat(m1.equals(m3)).isEqualTo(m1.compareTo(m3) == 0);
+    }
 }

@@ -26,7 +26,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 
 public class Matcher implements Comparable<Matcher> {
@@ -37,7 +36,7 @@ public class Matcher implements Comparable<Matcher> {
     @NotNull
     private final Rule rule;
 
-    private final TreeSet<Notification> notifications = Sets.newTreeSet();
+    private final TreeSet<Notification> notifications = new TreeSet<>();
 
     @Nullable
     private final Integer maxSize;
