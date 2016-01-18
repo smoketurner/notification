@@ -16,11 +16,12 @@
 package com.smoketurner.notification.application.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Arrays;
+import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.smoketurner.notification.api.Notification;
@@ -66,10 +67,10 @@ public class RollupTest {
         final Rollup rollup = new Rollup(ImmutableMap.of("new-follower", rule));
 
         final Notification rollup1 = Notification.builder().fromNotification(n9)
-                .withNotifications(ImmutableList.of(n7, n5, n1)).build();
+                .withNotifications(Arrays.asList(n7, n5, n1)).build();
 
-        final ImmutableList<Notification> expected = ImmutableList.of(rollup1,
-                n8, n6, n4, n3, n2);
+        final List<Notification> expected = Arrays.asList(rollup1, n8, n6, n4,
+                n3, n2);
 
         final Iterable<Notification> actual = rollup.rollup(notifications);
         assertThat(actual).containsExactlyElementsOf(expected);
@@ -117,13 +118,12 @@ public class RollupTest {
         final Rollup rollup = new Rollup(ImmutableMap.of("new-follower", rule));
 
         final Notification rollup1 = Notification.builder().fromNotification(n9)
-                .withNotifications(ImmutableList.of(n8, n7, n6)).build();
+                .withNotifications(Arrays.asList(n8, n7, n6)).build();
 
         final Notification rollup2 = Notification.builder().fromNotification(n5)
-                .withNotifications(ImmutableList.of(n4, n3, n2)).build();
+                .withNotifications(Arrays.asList(n4, n3, n2)).build();
 
-        final ImmutableList<Notification> expected = ImmutableList.of(rollup1,
-                rollup2, n1);
+        final List<Notification> expected = Arrays.asList(rollup1, rollup2, n1);
 
         final Iterable<Notification> actual = rollup.rollup(notifications);
         assertThat(actual).containsExactlyElementsOf(expected);
@@ -151,16 +151,16 @@ public class RollupTest {
         final Rollup rollup = new Rollup(ImmutableMap.of("new-follower", rule));
 
         final Notification rollup1 = Notification.builder().fromNotification(n9)
-                .withNotifications(ImmutableList.of(n8, n7)).build();
+                .withNotifications(Arrays.asList(n8, n7)).build();
 
         final Notification rollup2 = Notification.builder().fromNotification(n6)
-                .withNotifications(ImmutableList.of(n5, n4)).build();
+                .withNotifications(Arrays.asList(n5, n4)).build();
 
         final Notification rollup3 = Notification.builder().fromNotification(n3)
-                .withNotifications(ImmutableList.of(n2, n2)).build();
+                .withNotifications(Arrays.asList(n2, n2)).build();
 
-        final ImmutableList<Notification> expected = ImmutableList.of(rollup1,
-                rollup2, rollup3);
+        final List<Notification> expected = Arrays.asList(rollup1, rollup2,
+                rollup3);
 
         final Iterable<Notification> actual = rollup.rollup(notifications);
         assertThat(actual).containsExactlyElementsOf(expected);
