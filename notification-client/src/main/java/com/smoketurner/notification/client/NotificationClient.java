@@ -15,12 +15,14 @@
  */
 package com.smoketurner.notification.client;
 
+import static com.codahale.metrics.MetricRegistry.name;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -30,6 +32,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
@@ -41,20 +45,45 @@ public class NotificationClient implements Closeable {
             .getLogger(NotificationClient.class);
     private static final String APPLICATION_JSON = "application/json";
     private final Client client;
-    private final URI destination;
+    private final Timer fetchTimer;
+    private final Timer storeTimer;
+    private final Timer deleteTimer;
+    private final URI rootUri;
 
     /**
      * Constructor
      *
      * @param client
      *            Jersey Client
-     * @param destination
+     * @param uri
      *            API endpoint
      */
+    @Deprecated
     public NotificationClient(@Nonnull final Client client,
-            @Nonnull final URI destination) {
+            @Nonnull final URI uri) {
+        this(new MetricRegistry(), client, uri);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param registry
+     *            Metric Registry
+     * @param client
+     *            Jersey Client
+     * @param uri
+     *            API endpoint
+     */
+    public NotificationClient(@Nonnull final MetricRegistry registry,
+            @Nonnull final Client client, @Nonnull final URI uri) {
         this.client = Objects.requireNonNull(client);
-        this.destination = Objects.requireNonNull(destination);
+        this.fetchTimer = registry
+                .timer(name(NotificationClient.class, "fetch"));
+        this.storeTimer = registry
+                .timer(name(NotificationClient.class, "store"));
+        this.deleteTimer = registry
+                .timer(name(NotificationClient.class, "delete"));
+        this.rootUri = uri;
     }
 
     /**
@@ -65,37 +94,44 @@ public class NotificationClient implements Closeable {
      *            User to fetch notifications
      * @return Sorted set of all notifications for the user
      */
-    public ImmutableSortedSet<Notification> fetch(
+    public Optional<ImmutableSortedSet<Notification>> fetch(
             @Nonnull final String username) {
-        final URI uri = getTarget(username);
 
+        final URI uri = getTarget(username);
         final ImmutableSortedSet.Builder<Notification> results = ImmutableSortedSet
                 .naturalOrder();
-
         String nextRange = null;
         boolean paginate = true;
-        while (paginate) {
-            LOGGER.info("GET {}", uri);
-            final Invocation.Builder builder = client.target(uri)
-                    .request(APPLICATION_JSON);
-            if (nextRange != null) {
-                builder.header("Range", nextRange);
-            }
 
-            final Response response = builder.get();
-            nextRange = response.getHeaderString("Next-Range");
-            if (nextRange == null) {
-                paginate = false;
-            }
+        try (Timer.Context context = fetchTimer.time()) {
+            while (paginate) {
+                LOGGER.info("GET {}", uri);
+                final Invocation.Builder builder = client.target(uri)
+                        .request(APPLICATION_JSON);
+                if (nextRange != null) {
+                    builder.header("Range", nextRange);
+                }
 
-            if (response.getStatus() == 200 || response.getStatus() == 206) {
-                results.addAll(response
-                        .readEntity(new GenericType<List<Notification>>() {
-                        }));
+                final Response response = builder.get();
+                nextRange = response.getHeaderString("Next-Range");
+                if (nextRange == null) {
+                    paginate = false;
+                }
+
+                if (response.getStatus() == 200
+                        || response.getStatus() == 206) {
+                    results.addAll(response
+                            .readEntity(new GenericType<List<Notification>>() {
+                            }));
+                }
+                response.close();
             }
-            response.close();
+            return Optional.of(results.build());
+
+        } catch (Exception e) {
+            LOGGER.warn("Unable to fetch notification for {}", username, e);
         }
-        return results.build();
+        return Optional.empty();
     }
 
     /**
@@ -107,13 +143,19 @@ public class NotificationClient implements Closeable {
      *            Notification to store
      * @return the newly stored notification
      */
-    public Notification store(@Nonnull final String username,
+    public Optional<Notification> store(@Nonnull final String username,
             @Nonnull final Notification notification) {
         Objects.requireNonNull(notification);
         final URI uri = getTarget(username);
         LOGGER.debug("POST {}", uri);
-        return client.target(uri).request(APPLICATION_JSON)
-                .post(Entity.json(notification), Notification.class);
+
+        try (Timer.Context context = storeTimer.time()) {
+            return Optional.of(client.target(uri).request(APPLICATION_JSON)
+                    .post(Entity.json(notification), Notification.class));
+        } catch (Exception e) {
+            LOGGER.warn("Unable to store notification for {}", username, e);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -131,7 +173,12 @@ public class NotificationClient implements Closeable {
         final URI uri = UriBuilder.fromUri(getTarget(username))
                 .queryParam("ids", Joiner.on(",").join(ids)).build();
         LOGGER.debug("DELETE {}", uri);
-        client.target(uri).request().delete();
+
+        try (Timer.Context context = deleteTimer.time()) {
+            client.target(uri).request().delete();
+        } catch (Exception e) {
+            LOGGER.warn("Unable to delete notifications for {}", username, e);
+        }
     }
 
     /**
@@ -143,7 +190,12 @@ public class NotificationClient implements Closeable {
     public void delete(@Nonnull final String username) {
         final URI uri = getTarget(username);
         LOGGER.debug("DELETE {}", uri);
-        client.target(uri).request().delete();
+
+        try (Timer.Context context = deleteTimer.time()) {
+            client.target(uri).request().delete();
+        } catch (Exception e) {
+            LOGGER.warn("Unable to delete notifications for {}", username, e);
+        }
     }
 
     /**
@@ -152,7 +204,7 @@ public class NotificationClient implements Closeable {
      * @return true if the ping response was successful, otherwise false
      */
     public boolean ping() {
-        final URI uri = UriBuilder.fromUri(destination).path("/ping").build();
+        final URI uri = UriBuilder.fromUri(rootUri).path("/ping").build();
         LOGGER.debug("GET {}", uri);
         final String response = client.target(uri).request().get(String.class);
         return "pong".equals(response);
@@ -164,18 +216,24 @@ public class NotificationClient implements Closeable {
      * @return service version
      */
     public String version() {
-        final URI uri = UriBuilder.fromUri(destination).path("/version")
-                .build();
+        final URI uri = UriBuilder.fromUri(rootUri).path("/version").build();
         LOGGER.debug("GET {}", uri);
         return client.target(uri).request().get(String.class);
     }
 
+    /**
+     * Builds a target URL
+     *
+     * @param username
+     *            Username
+     * @return target URL
+     */
     private URI getTarget(@Nonnull final String username) {
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        return UriBuilder.fromUri(destination)
-                .path("/v1/notifications/{username}").build(username);
+        return UriBuilder.fromUri(rootUri).path("/v1/notifications/{username}")
+                .build(username);
     }
 
     @Override

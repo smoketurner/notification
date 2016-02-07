@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -28,7 +29,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.smoketurner.notification.api.Notification;
 
-public class Matcher implements Comparable<Matcher> {
+public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
     @NotNull
     private final Notification notification;
@@ -99,7 +100,6 @@ public class Matcher implements Comparable<Matcher> {
             return false;
         }
 
-        Objects.requireNonNull(notification);
         final Map<String, String> properties = notification.getProperties();
         return properties.containsKey(matchOn)
                 && Objects.equals(properties.get(matchOn), matchValue);
@@ -133,7 +133,6 @@ public class Matcher implements Comparable<Matcher> {
         }
 
         if (maxDuration != null && firstMillis != null) {
-            Objects.requireNonNull(notification);
             final long timestamp = notification.getCreatedAt().getMillis();
             final long delta = firstMillis - timestamp;
             if (delta >= 0 && delta <= maxDuration) {
@@ -150,8 +149,8 @@ public class Matcher implements Comparable<Matcher> {
      *            Notification to add
      * @return true if the notification can be added, otherwise false.
      */
-    public boolean add(@Nonnull final Notification notification) {
-        Objects.requireNonNull(notification);
+    @Override
+    public boolean test(@Nonnull final Notification notification) {
         if (checkSize() && checkDuration(notification)
                 && checkMatch(notification)
                 && !this.notification.equals(notification)) {

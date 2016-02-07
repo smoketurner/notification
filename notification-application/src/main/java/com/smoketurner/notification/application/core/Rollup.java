@@ -70,7 +70,7 @@ public class Rollup {
                 // notification falls into any previous rollups
                 boolean matched = false;
                 for (final Matcher match : matchers) {
-                    if (match.add(notification)) {
+                    if (match.test(notification)) {
                         matched = true;
                         break;
                     }

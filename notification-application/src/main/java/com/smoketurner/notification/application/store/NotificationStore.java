@@ -549,5 +549,4 @@ public class NotificationStore {
     public DateTime now() {
         return DateTime.now(DateTimeZone.UTC);
     }
-
 }

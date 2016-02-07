@@ -2,10 +2,8 @@ package com.smoketurner.notification.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import io.dropwizard.jackson.Jackson;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import io.dropwizard.testing.junit.DropwizardClientRule;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.Consumes;
@@ -24,10 +22,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import com.smoketurner.notification.api.Notification;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.testing.junit.DropwizardClientRule;
 
 public class NotificationClientTest {
 
@@ -80,14 +82,15 @@ public class NotificationClientTest {
             new NotificationResource(), new PingResource(),
             new VersionResource());
 
+    private final MetricRegistry registry = new MetricRegistry();
     private NotificationClient client;
 
     @Before
     public void setUp() {
         final ClientConfig config = new ClientConfig();
         config.register(new JacksonMessageBodyProvider(MAPPER, VALIDATOR));
-        client = new NotificationClient(ClientBuilder.newClient(config),
-                resources.baseUri());
+        client = new NotificationClient(registry,
+                ClientBuilder.newClient(config), resources.baseUri());
     }
 
     @After
@@ -97,9 +100,12 @@ public class NotificationClientTest {
 
     @Test
     public void testFetch() throws Exception {
-        final ImmutableSortedSet<Notification> actual = client.fetch("test");
-        assertThat(actual.size()).isEqualTo(1);
-        assertThat(actual.first().getId().isPresent()).isTrue();
+        final Optional<ImmutableSortedSet<Notification>> actual = client
+                .fetch("test");
+        assertThat(actual.isPresent()).isTrue();
+        final ImmutableSortedSet<Notification> notifications = actual.get();
+        assertThat(notifications.size()).isEqualTo(1);
+        assertThat(notifications.first().getId().isPresent()).isTrue();
     }
 
     @Test
@@ -123,8 +129,9 @@ public class NotificationClientTest {
     @Test
     public void testStore() throws Exception {
         final Notification expected = Notification.builder().withId(1L).build();
-        final Notification actual = client.store("test", expected);
-        assertThat(actual).isEqualTo(expected);
+        final Optional<Notification> actual = client.store("test", expected);
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get()).isEqualTo(expected);
     }
 
     @Test
