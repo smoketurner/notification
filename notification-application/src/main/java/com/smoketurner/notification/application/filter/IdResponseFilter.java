@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class adds a "Request-Id" HTTP response header and logs the following
+ * This class adds a "X-Request-Id" HTTP response header and logs the following
  * information: request method, request path, request ID, response status,
  * response bytes (or -1 if not known)
  */
@@ -37,7 +37,7 @@ public class IdResponseFilter implements ContainerResponseFilter {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(IdResponseFilter.class);
-    private static final String REQUEST_ID = "Request-Id";
+    private static final String REQUEST_ID = "X-Request-Id";
 
     @Override
     public void filter(final ContainerRequestContext request,
