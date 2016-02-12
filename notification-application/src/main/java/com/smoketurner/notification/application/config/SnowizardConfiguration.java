@@ -37,14 +37,16 @@ public class SnowizardConfiguration {
 
     @Min(1)
     @Max(31)
-    private int datacenterId;
+    @NotNull
+    private Integer datacenterId;
 
     @Min(1)
     @Max(31)
-    private int workerId;
+    @NotNull
+    private Integer workerId;
 
     @NotNull
-    private boolean enabled = true;
+    private Boolean enabled = Boolean.FALSE;
 
     @JsonProperty
     public Integer getDatacenterId() {

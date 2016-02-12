@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
@@ -41,13 +40,12 @@ import com.basho.riak.client.core.query.Location;
 import com.basho.riak.client.core.query.Namespace;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.ge.snowizard.core.IdWorker;
-import com.ge.snowizard.exceptions.InvalidSystemClock;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.IdGenerator;
 import com.smoketurner.notification.application.core.Rollup;
 import com.smoketurner.notification.application.core.Rule;
 import com.smoketurner.notification.application.core.UserNotifications;
@@ -63,10 +61,8 @@ public class NotificationStore {
     public static final String CURSOR_NAME = "notifications";
     private static final Namespace NAMESPACE = new Namespace("notifications",
             StandardCharsets.UTF_8);
-    private static final boolean DISTRIBUTED_ID = false;
-    private final AtomicLong nextId = new AtomicLong(0L);
     private final RiakClient client;
-    private final IdWorker snowizard;
+    private final IdGenerator idGenerator;
     private final CursorStore cursors;
     private final Map<String, Rule> rules;
 
@@ -82,7 +78,7 @@ public class NotificationStore {
      *            Metric registry
      * @param client
      *            Riak client
-     * @param snowizard
+     * @param idGenerator
      *            ID Generator
      * @param cursors
      *            Cursor data store
@@ -90,9 +86,11 @@ public class NotificationStore {
      *            Rollup rules
      */
     public NotificationStore(@Nonnull final MetricRegistry registry,
-            @Nonnull final RiakClient client, @Nonnull final IdWorker snowizard,
+            @Nonnull final RiakClient client,
+            @Nonnull final IdGenerator idGenerator,
             @Nonnull final CursorStore cursors,
             @Nonnull final Map<String, Rule> rules) {
+
         Objects.requireNonNull(registry);
         this.fetchTimer = registry
                 .timer(MetricRegistry.name(NotificationStore.class, "fetch"));
@@ -102,7 +100,7 @@ public class NotificationStore {
                 .timer(MetricRegistry.name(NotificationStore.class, "delete"));
 
         this.client = Objects.requireNonNull(client);
-        this.snowizard = Objects.requireNonNull(snowizard);
+        this.idGenerator = Objects.requireNonNull(idGenerator);
         this.cursors = Objects.requireNonNull(cursors);
         this.rules = Objects.requireNonNull(rules);
     }
@@ -132,28 +130,6 @@ public class NotificationStore {
     }
 
     /**
-     * Generate a new notification ID
-     *
-     * @return the new notification ID
-     * @throws NotificationStoreException
-     *             if unable to generate an ID
-     */
-    public long generateId() throws NotificationStoreException {
-        final long id;
-        if (DISTRIBUTED_ID) {
-            try {
-                id = snowizard.nextId();
-            } catch (InvalidSystemClock e) {
-                LOGGER.error("Clock is moving backward to generate IDs", e);
-                throw new NotificationStoreException(e);
-            }
-        } else {
-            id = nextId.getAndIncrement();
-        }
-        return id;
-    }
-
-    /**
      * Fetch a list of notifications for a given user
      *
      * @param username
@@ -175,8 +151,7 @@ public class NotificationStore {
 
         final NotificationListObject list;
         final FetchValue fv = new FetchValue.Builder(location).build();
-        final Timer.Context context = fetchTimer.time();
-        try {
+        try (Timer.Context context = fetchTimer.time()) {
             final FetchValue.Response response = client.execute(fv);
             list = response.getValue(NotificationListObject.class);
         } catch (UnresolvedConflictException e) {
@@ -189,8 +164,6 @@ public class NotificationStore {
             LOGGER.warn("Interrupted fetching key: " + location, e);
             Thread.currentThread().interrupt();
             throw new NotificationStoreException(e);
-        } finally {
-            context.stop();
         }
 
         if (list == null) {
@@ -302,11 +275,9 @@ public class NotificationStore {
                 "username cannot be empty");
         Objects.requireNonNull(notification);
 
-        final long id = generateId();
-
-        final Notification updatedNotification = Notification.builder()
-                .fromNotification(notification).withId(id).withCreatedAt(now())
-                .build();
+        final Notification updatedNotification = Notification
+                .builder(notification).withId(idGenerator.nextId())
+                .withCreatedAt(now()).build();
 
         final NotificationListAddition update = new NotificationListAddition(
                 updatedNotification);
@@ -318,8 +289,7 @@ public class NotificationStore {
 
         LOGGER.debug("Updating key: {}", location);
 
-        final Timer.Context context = updateTimer.time();
-        try {
+        try (Timer.Context context = updateTimer.time()) {
             client.execute(updateValue);
         } catch (ExecutionException e) {
             LOGGER.error("Unable to update key: " + location, e);
@@ -328,8 +298,6 @@ public class NotificationStore {
             LOGGER.warn("Update request was interrupted", e);
             Thread.currentThread().interrupt();
             throw new NotificationStoreException(e);
-        } finally {
-            context.stop();
         }
         return updatedNotification;
     }
@@ -354,8 +322,7 @@ public class NotificationStore {
                 .build();
 
         LOGGER.debug("Deleting key: {}", location);
-        final Timer.Context context = deleteTimer.time();
-        try {
+        try (Timer.Context context = deleteTimer.time()) {
             client.execute(deleteValue);
         } catch (ExecutionException e) {
             LOGGER.error("Unable to delete key: " + location, e);
@@ -364,8 +331,6 @@ public class NotificationStore {
             LOGGER.warn("Delete request was interrupted", e);
             Thread.currentThread().interrupt();
             throw new NotificationStoreException(e);
-        } finally {
-            context.stop();
         }
 
         cursors.delete(username, CURSOR_NAME);
@@ -403,8 +368,7 @@ public class NotificationStore {
                 .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
 
         LOGGER.debug("Updating key: {}", location);
-        final Timer.Context context = updateTimer.time();
-        try {
+        try (Timer.Context context = updateTimer.time()) {
             client.execute(updateValue);
         } catch (ExecutionException e) {
             LOGGER.error("Unable to update key: " + location, e);
@@ -413,8 +377,6 @@ public class NotificationStore {
             LOGGER.warn("Update request was interrupted", e);
             Thread.currentThread().interrupt();
             throw new NotificationStoreException(e);
-        } finally {
-            context.stop();
         }
     }
 
@@ -433,9 +395,8 @@ public class NotificationStore {
         Objects.requireNonNull(notifications);
 
         return StreamSupport.stream(notifications.spliterator(), false)
-                .map(notification -> Notification.builder()
-                        .fromNotification(notification).withUnseen(unseen)
-                        .build());
+                .map(notification -> Notification.builder(notification)
+                        .withUnseen(unseen).build());
     }
 
     /**

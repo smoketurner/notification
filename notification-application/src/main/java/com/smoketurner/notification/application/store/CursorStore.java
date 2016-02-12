@@ -125,8 +125,7 @@ public class CursorStore {
 
         final CursorObject cursor;
         final FetchValue fv = new FetchValue.Builder(location).build();
-        final Timer.Context context = fetchTimer.time();
-        try {
+        try (Timer.Context context = fetchTimer.time()) {
             final FetchValue.Response response = client.execute(fv);
             cursor = response.getValue(CursorObject.class);
         } catch (UnresolvedConflictException e) {
@@ -139,8 +138,6 @@ public class CursorStore {
             LOGGER.warn("Interrupted fetching key: " + location, e);
             Thread.currentThread().interrupt();
             throw new NotificationStoreException(e);
-        } finally {
-            context.stop();
         }
 
         if (cursor == null) {
@@ -181,8 +178,7 @@ public class CursorStore {
                 .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
 
         LOGGER.debug("Updating key ({}) to value: {}", location, value);
-        final Timer.Context context = storeTimer.time();
-        try {
+        try (Timer.Context context = storeTimer.time()) {
             client.execute(updateValue);
         } catch (ExecutionException e) {
             LOGGER.error("Unable to update key: " + location, e);
@@ -191,8 +187,6 @@ public class CursorStore {
             LOGGER.warn("Update request was interrupted", e);
             Thread.currentThread().interrupt();
             throw new NotificationStoreException(e);
-        } finally {
-            context.stop();
         }
     }
 
@@ -223,8 +217,7 @@ public class CursorStore {
                 .build();
 
         LOGGER.debug("Deleting key: {}", location);
-        final Timer.Context context = deleteTimer.time();
-        try {
+        try (Timer.Context context = deleteTimer.time()) {
             client.execute(deleteValue);
         } catch (ExecutionException e) {
             LOGGER.error("Unable to delete key: " + location, e);
@@ -233,8 +226,6 @@ public class CursorStore {
             LOGGER.warn("Delete request was interrupted", e);
             Thread.currentThread().interrupt();
             throw new NotificationStoreException(e);
-        } finally {
-            context.stop();
         }
     }
 

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ge.snowizard.core.IdWorker;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
 import com.smoketurner.notification.application.config.RiakConfiguration;
+import com.smoketurner.notification.application.core.IdGenerator;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.filter.CharsetResponseFilter;
 import com.smoketurner.notification.application.filter.IdResponseFilter;
@@ -97,6 +98,8 @@ public class NotificationApplication
         // snowizard
         final IdWorker snowizard = configuration.getSnowizard()
                 .build(environment);
+        final IdGenerator idGenerator = new IdGenerator(snowizard,
+                configuration.getSnowizard().isEnabled());
 
         // riak
         final RiakConfiguration riakConfig = configuration.getRiak();
@@ -116,7 +119,7 @@ public class NotificationApplication
         // data stores
         final CursorStore cursorStore = new CursorStore(registry, client);
         final NotificationStore store = new NotificationStore(registry, client,
-                snowizard, cursorStore, configuration.getRules());
+                idGenerator, cursorStore, configuration.getRules());
         environment.lifecycle().manage(new CursorStoreManager(cursorStore));
         environment.lifecycle().manage(new NotificationStoreManager(store));
 

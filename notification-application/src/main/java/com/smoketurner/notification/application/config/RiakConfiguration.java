@@ -21,6 +21,7 @@ import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.validation.constraints.Min;
@@ -30,17 +31,15 @@ import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
+import com.google.common.primitives.Ints;
 import com.smoketurner.notification.application.managed.RiakClusterManager;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 
 public class RiakConfiguration {
-
-    private static final int DEFAULT_RIAK_PORT = 8087;
 
     @NotEmpty
     private List<HostAndPort> nodes = Collections.emptyList();
@@ -53,15 +52,15 @@ public class RiakConfiguration {
 
     @Min(1)
     @NotNull
-    private Integer minConnections = 1;
+    private Integer minConnections = RiakNode.Builder.DEFAULT_MIN_CONNECTIONS;
 
     @Min(0)
     @NotNull
-    private Integer maxConnections = 0;
+    private Integer maxConnections = RiakNode.Builder.DEFAULT_MAX_CONNECTIONS;
 
     @Min(0)
     @NotNull
-    private Integer executionAttempts = 3;
+    private Integer executionAttempts = RiakCluster.Builder.DEFAULT_EXECUTION_ATTEMPTS;
 
     @NotNull
     @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
@@ -164,12 +163,13 @@ public class RiakConfiguration {
     @JsonIgnore
     public RiakCluster build(@Nonnull final Environment environment)
             throws UnknownHostException, KeyStoreException {
-        Preconditions.checkNotNull(environment);
+        Objects.requireNonNull(environment);
 
         final RiakNode.Builder builder = new RiakNode.Builder()
                 .withMinConnections(minConnections)
-                .withConnectionTimeout((int) connectionTimeout.toMilliseconds())
-                .withIdleTimeout((int) idleTimeout.toMilliseconds())
+                .withConnectionTimeout(
+                        Ints.checkedCast(connectionTimeout.toMilliseconds()))
+                .withIdleTimeout(Ints.checkedCast(idleTimeout.toMilliseconds()))
                 .withBlockOnMaxConnections(false);
         if (maxConnections > 0) {
             builder.withMaxConnections(maxConnections);
@@ -185,7 +185,8 @@ public class RiakConfiguration {
         for (HostAndPort address : this.nodes) {
             final RiakNode node = builder
                     .withRemoteAddress(address.getHostText())
-                    .withRemotePort(address.getPortOrDefault(DEFAULT_RIAK_PORT))
+                    .withRemotePort(address.getPortOrDefault(
+                            RiakNode.Builder.DEFAULT_REMOTE_PORT))
                     .build();
             nodes.add(node);
         }

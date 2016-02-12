@@ -173,7 +173,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
         if (notifications.isEmpty()) {
             return notification;
         }
-        return Notification.builder().fromNotification(notification)
+        return Notification.builder(notification)
                 .withNotifications(notifications).build();
     }
 

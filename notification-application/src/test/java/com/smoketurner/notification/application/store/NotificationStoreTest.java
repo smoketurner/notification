@@ -30,13 +30,13 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import com.basho.riak.client.api.RiakClient;
 import com.codahale.metrics.MetricRegistry;
-import com.ge.snowizard.core.IdWorker;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.IdGenerator;
 import com.smoketurner.notification.application.core.Rule;
 import com.smoketurner.notification.application.core.UserNotifications;
 
@@ -47,10 +47,10 @@ public class NotificationStoreTest {
     private final MetricRegistry registry = new MetricRegistry();
     private final RiakClient client = mock(RiakClient.class);
     private final CursorStore cursors = mock(CursorStore.class);
-    private final IdWorker snowizard = mock(IdWorker.class);
+    private final IdGenerator idGenerator = mock(IdGenerator.class);
     private final Map<String, Rule> rules = ImmutableMap.of();
     private final NotificationStore store = new NotificationStore(registry,
-            client, snowizard, cursors, rules) {
+            client, idGenerator, cursors, rules) {
         @Override
         public DateTime now() {
             return NOW;

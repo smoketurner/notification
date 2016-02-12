@@ -72,7 +72,7 @@ public final class UserNotifications {
      */
     public UserNotifications(@Nonnull final Iterable<Notification> unseen) {
         this.unseen = Objects.requireNonNull(unseen);
-        this.seen = Collections.emptySortedSet();
+        this.seen = Collections.<Notification> emptySortedSet();
     }
 
     /**
@@ -84,15 +84,15 @@ public final class UserNotifications {
     public UserNotifications(@Nonnull final Stream<Notification> unseen) {
         Objects.requireNonNull(unseen);
         this.unseen = unseen.collect(Collectors.toCollection(TreeSet::new));
-        this.seen = Collections.emptySortedSet();
+        this.seen = Collections.<Notification> emptySortedSet();
     }
 
     /**
      * Constructor
      */
     public UserNotifications() {
-        this.unseen = Collections.emptySortedSet();
-        this.seen = Collections.emptySortedSet();
+        this.unseen = Collections.<Notification> emptySortedSet();
+        this.seen = Collections.<Notification> emptySortedSet();
     }
 
     public boolean isEmpty() {
