@@ -183,6 +183,8 @@ public final class Notification implements Comparable<Notification> {
      * This is a helper method to return the notification ID if its set,
      * otherwise return the default value given.
      * 
+     * TODO - figure out a way to remove this method
+     * 
      * @param value
      *            Value to return if no notification ID is set
      * @return Notification ID or zero if not set

@@ -37,13 +37,14 @@ public class SnowizardConfiguration {
 
     @Min(1)
     @Max(31)
-    @NotNull
-    private Integer datacenterId;
+    private int datacenterId;
 
     @Min(1)
     @Max(31)
+    private int workerId;
+
     @NotNull
-    private Integer workerId;
+    private boolean enabled = true;
 
     @JsonProperty
     public Integer getDatacenterId() {
@@ -63,6 +64,16 @@ public class SnowizardConfiguration {
     @JsonProperty
     public void setWorkerId(final int workerId) {
         this.workerId = workerId;
+    }
+
+    @JsonProperty
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @JsonProperty
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
     }
 
     @JsonIgnore

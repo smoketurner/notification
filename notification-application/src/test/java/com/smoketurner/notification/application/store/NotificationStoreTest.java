@@ -218,10 +218,10 @@ public class NotificationStoreTest {
         }
         final List<Notification> expectedSeen = builder.build();
 
-        assertThat(store.setUnseenState(notifications, true))
-                .containsExactlyElementsOf(expectedUnseen);
-        assertThat(store.setUnseenState(notifications, false))
-                .containsExactlyElementsOf(expectedSeen);
+        assertThat(NotificationStore.setUnseenState(notifications, true)
+                .iterator()).containsExactlyElementsOf(expectedUnseen);
+        assertThat(NotificationStore.setUnseenState(notifications, false)
+                .iterator()).containsExactlyElementsOf(expectedSeen);
     }
 
     @Test
@@ -245,23 +245,23 @@ public class NotificationStoreTest {
 
         final List<Notification> notifications = builder.build();
 
-        assertThat(store.tryFind(notifications, 1))
+        assertThat(NotificationStore.tryFind(notifications, 1))
                 .isEqualTo(Optional.of(createNotification(1)));
-        assertThat(store.tryFind(notifications, 5))
+        assertThat(NotificationStore.tryFind(notifications, 5))
                 .isEqualTo(Optional.of(createNotification(5)));
-        assertThat(store.tryFind(notifications, 10))
+        assertThat(NotificationStore.tryFind(notifications, 10))
                 .isEqualTo(Optional.of(createNotification(10)));
-        assertThat(store.tryFind(notifications, 12))
+        assertThat(NotificationStore.tryFind(notifications, 12))
                 .isEqualTo(Optional.<Notification> absent());
-        assertThat(store.tryFind(notifications, 100))
+        assertThat(NotificationStore.tryFind(notifications, 100))
                 .isEqualTo(Optional.of(n100));
-        assertThat(store.tryFind(notifications, 101))
+        assertThat(NotificationStore.tryFind(notifications, 101))
                 .isEqualTo(Optional.of(n100));
-        assertThat(store.tryFind(notifications, 102))
+        assertThat(NotificationStore.tryFind(notifications, 102))
                 .isEqualTo(Optional.of(n100));
-        assertThat(store.tryFind(notifications, 103))
+        assertThat(NotificationStore.tryFind(notifications, 103))
                 .isEqualTo(Optional.<Notification> absent());
-        assertThat(store.tryFind(notifications, 150))
+        assertThat(NotificationStore.tryFind(notifications, 150))
                 .isEqualTo(Optional.of(n150));
     }
 

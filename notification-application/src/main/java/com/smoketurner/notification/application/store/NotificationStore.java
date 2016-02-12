@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -41,10 +44,8 @@ import com.codahale.metrics.Timer;
 import com.ge.snowizard.core.IdWorker;
 import com.ge.snowizard.exceptions.InvalidSystemClock;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.core.Rollup;
@@ -62,6 +63,8 @@ public class NotificationStore {
     public static final String CURSOR_NAME = "notifications";
     private static final Namespace NAMESPACE = new Namespace("notifications",
             StandardCharsets.UTF_8);
+    private static final boolean DISTRIBUTED_ID = false;
+    private final AtomicLong nextId = new AtomicLong(0L);
     private final RiakClient client;
     private final IdWorker snowizard;
     private final CursorStore cursors;
@@ -126,6 +129,28 @@ public class NotificationStore {
                     "Unable to set allow_multi=%s for namespace=%s", allowMulti,
                     NAMESPACE), e);
         }
+    }
+
+    /**
+     * Generate a new notification ID
+     *
+     * @return the new notification ID
+     * @throws NotificationStoreException
+     *             if unable to generate an ID
+     */
+    public long generateId() throws NotificationStoreException {
+        final long id;
+        if (DISTRIBUTED_ID) {
+            try {
+                id = snowizard.nextId();
+            } catch (InvalidSystemClock e) {
+                LOGGER.error("Clock is moving backward to generate IDs", e);
+                throw new NotificationStoreException(e);
+            }
+        } else {
+            id = nextId.getAndIncrement();
+        }
+        return id;
     }
 
     /**
@@ -244,11 +269,11 @@ public class NotificationStore {
         }
 
         // Set the head of the list as being unseen
-        final Iterable<Notification> unseen = setUnseenState(
+        final Stream<Notification> unseen = setUnseenState(
                 notifications.headSet(lastNotification.get()), true);
 
         // Set the tail of the list as being seen
-        final Iterable<Notification> seen = setUnseenState(
+        final Stream<Notification> seen = setUnseenState(
                 notifications.tailSet(lastNotification.get()), false);
 
         final Rollup seenRollup = new Rollup(rules);
@@ -277,13 +302,7 @@ public class NotificationStore {
                 "username cannot be empty");
         Objects.requireNonNull(notification);
 
-        final long id;
-        try {
-            id = snowizard.nextId();
-        } catch (InvalidSystemClock e) {
-            LOGGER.error("Clock is moving backward to generate IDs", e);
-            throw new NotificationStoreException(e);
-        }
+        final long id = generateId();
 
         final Notification updatedNotification = Notification.builder()
                 .fromNotification(notification).withId(id).withCreatedAt(now())
@@ -369,7 +388,7 @@ public class NotificationStore {
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Preconditions.checkNotNull(ids);
+        Objects.requireNonNull(ids);
 
         // if nothing to remove, return early
         if (ids.isEmpty()) {
@@ -408,19 +427,15 @@ public class NotificationStore {
      *            whether the notifications have been seen or not
      * @return the updated notifications
      */
-    public Iterable<Notification> setUnseenState(
+    public static Stream<Notification> setUnseenState(
             @Nonnull final Iterable<Notification> notifications,
             final boolean unseen) {
         Objects.requireNonNull(notifications);
 
-        return Iterables.transform(notifications,
-                new Function<Notification, Notification>() {
-                    @Override
-                    public Notification apply(final Notification notification) {
-                        return Notification.builder()
-                                .fromNotification(notification)
-                                .withUnseen(unseen).build();
-                    }
+        return StreamSupport.stream(notifications.spliterator(), false)
+                .map(notification -> {
+                    return Notification.builder().fromNotification(notification)
+                            .withUnseen(unseen).build();
                 });
     }
 
@@ -437,27 +452,25 @@ public class NotificationStore {
     public static Optional<Notification> tryFind(
             @Nonnull final Iterable<Notification> notifications,
             final long id) {
-        Objects.requireNonNull(notifications);
-        return Iterables.tryFind(notifications, new Predicate<Notification>() {
-            @Override
-            public boolean apply(final Notification notification) {
-                // first check that the ID matches
-                final Optional<Long> notificationId = notification.getId();
-                if (!notificationId.isPresent()) {
-                    return false;
-                } else if (notificationId.get() == id) {
-                    return true;
-                }
 
-                // then check to see if the notification is included in any
-                // rolled up notifications
-                final Collection<Notification> children = notification
-                        .getNotifications().or(Collections.emptyList());
-                if (children.isEmpty()) {
-                    return false;
-                }
-                return (tryFind(children, id)).isPresent();
+        Objects.requireNonNull(notifications);
+        return Iterables.tryFind(notifications, notification -> {
+            // first check that the ID matches
+            final Optional<Long> notificationId = notification.getId();
+            if (!notificationId.isPresent()) {
+                return false;
+            } else if (notificationId.get() == id) {
+                return true;
             }
+
+            // then check to see if the notification is included in any rolled
+            // up notifications
+            final Collection<Notification> children = notification
+                    .getNotifications().or(Collections.emptyList());
+            if (children.isEmpty()) {
+                return false;
+            }
+            return (tryFind(children, id)).isPresent();
         });
     }
 
@@ -474,27 +487,25 @@ public class NotificationStore {
     public static int indexOf(
             @Nonnull final Iterable<Notification> notifications,
             final long id) {
-        Objects.requireNonNull(notifications);
-        return Iterables.indexOf(notifications, new Predicate<Notification>() {
-            @Override
-            public boolean apply(final Notification notification) {
-                // first check that the ID matches
-                final Optional<Long> notificationId = notification.getId();
-                if (!notificationId.isPresent()) {
-                    return false;
-                } else if (notificationId.get() == id) {
-                    return true;
-                }
 
-                // then check to see if the notification is included in any
-                // rolled up notifications
-                final Collection<Notification> children = notification
-                        .getNotifications().or(Collections.emptyList());
-                if (children.isEmpty()) {
-                    return false;
-                }
-                return indexOf(children, id) != -1;
+        Objects.requireNonNull(notifications);
+        return Iterables.indexOf(notifications, notification -> {
+            // first check that the ID matches
+            final Optional<Long> notificationId = notification.getId();
+            if (!notificationId.isPresent()) {
+                return false;
+            } else if (notificationId.get() == id) {
+                return true;
             }
+
+            // then check to see if the notification is included in any rolled
+            // up notifications
+            final Collection<Notification> children = notification
+                    .getNotifications().or(Collections.emptyList());
+            if (children.isEmpty()) {
+                return false;
+            }
+            return indexOf(children, id) != -1;
         });
     }
 

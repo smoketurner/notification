@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
-import com.google.common.collect.ImmutableList;
 import com.smoketurner.notification.api.Notification;
 
 public class NotificationListResolverTest {
@@ -144,7 +143,7 @@ public class NotificationListResolverTest {
 
     @Test
     public void testRemoveNotifications() throws Exception {
-        final List<Notification> notifications = ImmutableList.of(
+        final List<Notification> notifications = Arrays.asList(
                 createNotification(1L), createNotification(2L),
                 createNotification(3L), Notification.builder().build());
 
