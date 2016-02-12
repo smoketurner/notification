@@ -124,8 +124,7 @@ public class NotificationResource {
         }
 
         // The newest notification is always the first notification in the list
-        // and is used to set the
-        // Last-Modified response header below.
+        // and is used to set the Last-Modified response header below.
         final Notification newest = notifications.first();
         final Notification oldest = notifications.last();
 

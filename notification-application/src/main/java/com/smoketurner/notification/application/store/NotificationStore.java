@@ -433,10 +433,9 @@ public class NotificationStore {
         Objects.requireNonNull(notifications);
 
         return StreamSupport.stream(notifications.spliterator(), false)
-                .map(notification -> {
-                    return Notification.builder().fromNotification(notification)
-                            .withUnseen(unseen).build();
-                });
+                .map(notification -> Notification.builder()
+                        .fromNotification(notification).withUnseen(unseen)
+                        .build());
     }
 
     /**

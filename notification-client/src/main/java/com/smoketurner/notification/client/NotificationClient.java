@@ -51,12 +51,7 @@ public class NotificationClient implements Closeable {
     private final URI rootUri;
 
     /**
-     * Constructor
-     *
-     * @param client
-     *            Jersey Client
-     * @param uri
-     *            API endpoint
+     * @deprecated Using an internal {@link MetricRegistry}
      */
     @Deprecated
     public NotificationClient(@Nonnull final Client client,
