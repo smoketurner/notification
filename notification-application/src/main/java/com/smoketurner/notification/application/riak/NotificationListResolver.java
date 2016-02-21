@@ -19,8 +19,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.cap.ConflictResolver;
@@ -42,9 +40,7 @@ public class NotificationListResolver
 
             final Iterator<NotificationListObject> iterator = siblings
                     .iterator();
-            final NotificationListObject resolved = new NotificationListObject(
-                    iterator.next());
-
+            final NotificationListObject resolved = iterator.next();
             final Set<Long> deletedIds = resolved.getDeletedIds();
 
             // add all notifications
@@ -57,9 +53,7 @@ public class NotificationListResolver
             // remove deleted notifications
             if (!deletedIds.isEmpty()) {
                 LOGGER.debug("IDs to delete: {}", deletedIds);
-                resolved.setNotifications(removeNotifications(
-                        resolved.getNotifications(), deletedIds));
-                resolved.clearDeletedIds();
+                removeNotifications(resolved.getNotifications(), deletedIds);
             }
 
             return resolved;
@@ -70,9 +64,8 @@ public class NotificationListResolver
             // remove deleted notifications
             if (!resolved.getDeletedIds().isEmpty()) {
                 LOGGER.debug("IDs to delete: {}", resolved.getDeletedIds());
-                resolved.setNotifications(removeNotifications(
-                        resolved.getNotifications(), resolved.getDeletedIds()));
-                resolved.clearDeletedIds();
+                removeNotifications(resolved.getNotifications(),
+                        resolved.getDeletedIds());
             }
 
             return resolved;
@@ -82,24 +75,24 @@ public class NotificationListResolver
     }
 
     /**
-     * Remove the given notification IDs from the list of notifications. We have
-     * to copy the iterable into a list to avoid modifying the original
-     * reference within the {@link NotificationListObject} .
+     * Remove the given notification IDs from the list of notifications.
      * 
      * @param notifications
      *            Notifications to delete from
      * @param ids
      *            Notification IDs to delete
-     * @return list of notifications with deleted notifications removed
      */
-    public static List<Notification> removeNotifications(
-            final Iterable<Notification> notifications,
+    public static void removeNotifications(
+            final Collection<Notification> notifications,
             final Collection<Long> ids) {
 
-        return StreamSupport.stream(notifications.spliterator(), false)
-                .filter(notification -> notification.getId().isPresent())
-                .filter(notification -> !ids
-                        .contains(notification.getId().get()))
-                .collect(Collectors.toList());
+        notifications.removeIf(notification -> {
+            if (!notification.getId().isPresent()) {
+                return true;
+            }
+            return ids.contains(notification.getId().get());
+        });
+        // clear out the original set of IDs to delete
+        ids.clear();
     }
 }

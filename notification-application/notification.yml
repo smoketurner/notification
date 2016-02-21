@@ -59,7 +59,7 @@ logging:
   level: INFO
   loggers:
     com.smoketurner.notification: DEBUG
-    com.basho.riak: DEBUG
+    com.basho.riak: INFO
   appenders:
     - type: console
       timeZone: UTC

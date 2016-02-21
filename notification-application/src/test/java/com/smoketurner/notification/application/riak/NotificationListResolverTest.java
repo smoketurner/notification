@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
+import com.google.common.collect.Lists;
 import com.smoketurner.notification.api.Notification;
 
 public class NotificationListResolverTest {
@@ -143,22 +144,21 @@ public class NotificationListResolverTest {
 
     @Test
     public void testRemoveNotifications() throws Exception {
-        final List<Notification> notifications = Arrays.asList(
+        final List<Notification> notifications = Lists.newArrayList(
                 createNotification(1L), createNotification(2L),
                 createNotification(3L), Notification.builder().build());
 
         final List<Notification> expected = Arrays
                 .asList(createNotification(2L), createNotification(3L));
 
-        final List<Notification> actual = NotificationListResolver
-                .removeNotifications(notifications,
-                        Collections.singletonList(1L));
-        assertThat(actual).containsExactlyElementsOf(expected);
+        NotificationListResolver.removeNotifications(notifications,
+                Lists.newArrayList(1L));
+        assertThat(notifications).containsExactlyElementsOf(expected);
     }
 
     @Test
     public void testRemoveNotificationsEmpty() throws Exception {
-        final List<Notification> notifications = Arrays.asList(
+        final List<Notification> notifications = Lists.newArrayList(
                 createNotification(1L), createNotification(2L),
                 createNotification(3L), Notification.builder().build());
 
@@ -166,9 +166,9 @@ public class NotificationListResolverTest {
                 createNotification(1L), createNotification(2L),
                 createNotification(3L));
 
-        final List<Notification> actual = NotificationListResolver
-                .removeNotifications(notifications, Collections.emptyList());
-        assertThat(actual).containsExactlyElementsOf(expected);
+        NotificationListResolver.removeNotifications(notifications,
+                Collections.emptyList());
+        assertThat(notifications).containsExactlyElementsOf(expected);
     }
 
     private Notification createNotification(final long id) {

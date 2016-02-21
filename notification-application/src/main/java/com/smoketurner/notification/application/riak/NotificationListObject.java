@@ -16,9 +16,9 @@
 package com.smoketurner.notification.application.riak;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
 import com.basho.riak.client.api.annotations.RiakBucketName;
@@ -30,7 +30,6 @@ import com.basho.riak.client.api.annotations.RiakVClock;
 import com.basho.riak.client.api.annotations.RiakVTag;
 import com.basho.riak.client.api.cap.VClock;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 
 public class NotificationListObject {
@@ -58,9 +57,8 @@ public class NotificationListObject {
     @RiakVTag
     private String vtag;
 
-    private final TreeSet<Notification> notifications = Sets.newTreeSet();
-
-    private final Set<Long> deletedIds = Sets.newHashSet();
+    private final TreeSet<Notification> notifications = new TreeSet<>();
+    private final Set<Long> deletedIds = new HashSet<>();
 
     /**
      * Constructor
@@ -78,23 +76,6 @@ public class NotificationListObject {
         this.key = Objects.requireNonNull(key);
     }
 
-    /**
-     * Constructor
-     * 
-     * @param other
-     */
-    public NotificationListObject(@Nonnull final NotificationListObject other) {
-        Objects.requireNonNull(other);
-        this.key = other.key;
-        this.vclock = other.vclock;
-        this.tombstone = other.tombstone;
-        this.contentType = other.contentType;
-        this.lastModified = other.lastModified;
-        this.vtag = other.vtag;
-        this.addNotifications(other.getNotifications());
-        this.deleteNotifications(other.getDeletedIds());
-    }
-
     public void addNotification(final Notification notification) {
         notifications.add(notification);
         if (notifications.size() > MAX_NOTIFICATIONS) {
@@ -109,11 +90,6 @@ public class NotificationListObject {
         }
     }
 
-    public void setNotifications(final Collection<Notification> notifications) {
-        this.notifications.clear();
-        addNotifications(notifications);
-    }
-
     public void deleteNotification(final long id) {
         deletedIds.add(id);
     }
@@ -122,15 +98,11 @@ public class NotificationListObject {
         this.deletedIds.addAll(deletedIds);
     }
 
-    public void clearDeletedIds() {
-        deletedIds.clear();
-    }
-
     public String getKey() {
         return key;
     }
 
-    public SortedSet<Notification> getNotifications() {
+    public TreeSet<Notification> getNotifications() {
         return notifications;
     }
 

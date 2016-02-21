@@ -392,7 +392,6 @@ public class NotificationStore {
     public static Stream<Notification> setUnseenState(
             @Nonnull final Iterable<Notification> notifications,
             final boolean unseen) {
-        Objects.requireNonNull(notifications);
 
         return StreamSupport.stream(notifications.spliterator(), false)
                 .map(notification -> Notification.builder(notification)
@@ -413,7 +412,6 @@ public class NotificationStore {
             @Nonnull final Iterable<Notification> notifications,
             final long id) {
 
-        Objects.requireNonNull(notifications);
         return Iterables.tryFind(notifications, notification -> {
             // first check that the ID matches
             final Optional<Long> notificationId = notification.getId();
@@ -448,7 +446,6 @@ public class NotificationStore {
             @Nonnull final Iterable<Notification> notifications,
             final long id) {
 
-        Objects.requireNonNull(notifications);
         return Iterables.indexOf(notifications, notification -> {
             // first check that the ID matches
             final Optional<Long> notificationId = notification.getId();
