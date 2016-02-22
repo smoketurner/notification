@@ -25,8 +25,6 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Ordering;
 import com.smoketurner.notification.api.Notification;
 
 public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
@@ -165,10 +163,6 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
         return this.notifications.addAll(notifications);
     }
 
-    public long getId() {
-        return notification.getId(0L);
-    }
-
     public Notification getNotification() {
         if (notifications.isEmpty()) {
             return notification;
@@ -192,7 +186,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(notification);
+        return notification.hashCode();
     }
 
     @Override
@@ -207,7 +201,6 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
     @Override
     public int compareTo(final Matcher that) {
-        return ComparisonChain.start().compare(this.getId(), that.getId(),
-                Ordering.natural().reverse()).result();
+        return notification.compareTo(that.notification);
     }
 }
