@@ -30,7 +30,6 @@ import com.basho.riak.client.api.commands.buckets.StoreBucketProperties;
 import com.basho.riak.client.api.commands.kv.DeleteValue;
 import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.UpdateValue;
-import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 
@@ -38,9 +37,8 @@ public class CursorStoreTest {
 
     private static final String TEST_USER = "test";
     private static final String CURSOR_NAME = "notifications";
-    private final MetricRegistry registry = new MetricRegistry();
     private final RiakClient client = mock(RiakClient.class);
-    private final CursorStore store = new CursorStore(registry, client);
+    private final CursorStore store = new CursorStore(client);
 
     @Test
     public void testInitialize() throws Exception {

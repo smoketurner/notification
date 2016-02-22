@@ -20,6 +20,7 @@ import com.basho.riak.client.api.cap.ConflictResolverFactory;
 import com.basho.riak.client.api.convert.ConverterFactory;
 import com.basho.riak.client.core.RiakCluster;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.SharedMetricRegistries;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ge.snowizard.core.IdWorker;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
@@ -83,6 +84,7 @@ public class NotificationApplication
             final Environment environment) throws Exception {
 
         final MetricRegistry registry = environment.metrics();
+        SharedMetricRegistries.add("default", registry);
 
         // returns all DateTime objects as ISO8601 strings
         environment.getObjectMapper().configure(
@@ -117,8 +119,8 @@ public class NotificationApplication
                 new RiakHealthCheck(client));
 
         // data stores
-        final CursorStore cursorStore = new CursorStore(registry, client);
-        final NotificationStore store = new NotificationStore(registry, client,
+        final CursorStore cursorStore = new CursorStore(client);
+        final NotificationStore store = new NotificationStore(client,
                 idGenerator, cursorStore, configuration.getRules());
         environment.lifecycle().manage(new CursorStoreManager(cursorStore));
         environment.lifecycle().manage(new NotificationStoreManager(store));

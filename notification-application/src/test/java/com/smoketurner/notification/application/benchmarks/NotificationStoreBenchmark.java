@@ -3,6 +3,7 @@ package com.smoketurner.notification.application.benchmarks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -28,6 +29,11 @@ public class NotificationStoreBenchmark {
         for (long i = 0; i < 1000000; i++) {
             notifications.add(createNotification(i));
         }
+    }
+
+    @Benchmark
+    public Stream<Notification> setUnseenState() {
+        return NotificationStore.setUnseenState(notifications, true);
     }
 
     @Benchmark

@@ -29,7 +29,6 @@ import java.util.TreeSet;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import com.basho.riak.client.api.RiakClient;
-import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -44,13 +43,12 @@ public class NotificationStoreTest {
 
     private static final String TEST_USER = "test";
     private static final DateTime NOW = new DateTime("2015-07-17T17:43:25Z");
-    private final MetricRegistry registry = new MetricRegistry();
     private final RiakClient client = mock(RiakClient.class);
     private final CursorStore cursors = mock(CursorStore.class);
     private final IdGenerator idGenerator = mock(IdGenerator.class);
     private final Map<String, Rule> rules = ImmutableMap.of();
-    private final NotificationStore store = new NotificationStore(registry,
-            client, idGenerator, cursors, rules) {
+    private final NotificationStore store = new NotificationStore(client,
+            idGenerator, cursors, rules) {
         @Override
         public DateTime now() {
             return NOW;

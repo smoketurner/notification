@@ -39,6 +39,7 @@ import com.basho.riak.client.api.commands.kv.UpdateValue;
 import com.basho.riak.client.core.query.Location;
 import com.basho.riak.client.core.query.Namespace;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -74,8 +75,6 @@ public class NotificationStore {
     /**
      * Constructor
      *
-     * @param registry
-     *            Metric registry
      * @param client
      *            Riak client
      * @param idGenerator
@@ -85,13 +84,13 @@ public class NotificationStore {
      * @param rules
      *            Rollup rules
      */
-    public NotificationStore(@Nonnull final MetricRegistry registry,
-            @Nonnull final RiakClient client,
+    public NotificationStore(@Nonnull final RiakClient client,
             @Nonnull final IdGenerator idGenerator,
             @Nonnull final CursorStore cursors,
             @Nonnull final Map<String, Rule> rules) {
 
-        Objects.requireNonNull(registry);
+        final MetricRegistry registry = SharedMetricRegistries
+                .getOrCreate("default");
         this.fetchTimer = registry
                 .timer(MetricRegistry.name(NotificationStore.class, "fetch"));
         this.updateTimer = registry

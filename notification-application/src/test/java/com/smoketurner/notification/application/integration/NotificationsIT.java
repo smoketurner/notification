@@ -85,8 +85,8 @@ public class NotificationsIT {
             final Notification response = client.target(getUrl()).request()
                     .post(Entity.json(createNotification()),
                             Notification.class);
-            expected.add(Notification.builder().fromNotification(response)
-                    .withUnseen(true).build());
+            expected.add(
+                    Notification.builder(response).withUnseen(true).build());
         }
 
         int requests = 0;

@@ -31,6 +31,7 @@ import com.basho.riak.client.api.commands.kv.UpdateValue;
 import com.basho.riak.client.core.query.Location;
 import com.basho.riak.client.core.query.Namespace;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -54,14 +55,12 @@ public class CursorStore {
     /**
      * Constructor
      *
-     * @param registry
-     *            Metric registry
      * @param client
      *            Riak client
      */
-    public CursorStore(@Nonnull final MetricRegistry registry,
-            @Nonnull final RiakClient client) {
-        Objects.requireNonNull(registry);
+    public CursorStore(@Nonnull final RiakClient client) {
+        final MetricRegistry registry = SharedMetricRegistries
+                .getOrCreate("default");
         this.fetchTimer = registry
                 .timer(MetricRegistry.name(CursorStore.class, "fetch"));
         this.storeTimer = registry

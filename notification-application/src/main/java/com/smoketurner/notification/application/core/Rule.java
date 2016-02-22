@@ -18,12 +18,14 @@ package com.smoketurner.notification.application.core;
 import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import io.dropwizard.util.Duration;
 
 @Immutable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class Rule {
 
     private final Integer maxSize;
