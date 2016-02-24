@@ -33,6 +33,33 @@ public class MatcherTest {
             .withCreatedAt(new DateTime("2015-07-31T23:21:35Z")).build();
 
     @Test
+    public void testMatch() {
+        final Rule rule = new Rule(Optional.<Integer> absent(),
+                Optional.<Duration> absent(), Optional.of("first_name"));
+
+        final Matcher matcher = new Matcher(rule, notification);
+
+        final Notification n1 = Notification.builder().withId(2L)
+                .withCategory("new-follower")
+                .withProperties(ImmutableMap.of("first_name", "Bob")).build();
+        final Notification n2 = Notification.builder().withId(3L)
+                .withCategory("new-follower")
+                .withProperties(ImmutableMap.of("first_name", "Ted")).build();
+        final Notification n3 = Notification.builder().withId(4L)
+                .withCategory("new-follower")
+                .withProperties(ImmutableMap.of("last_name", "Smith")).build();
+        final Notification n4 = Notification.builder().build();
+        final Notification n5 = Notification.builder().withId(5L)
+                .withCategory("like").build();
+
+        assertThat(matcher.test(n1)).isTrue();
+        assertThat(matcher.test(n2)).isFalse();
+        assertThat(matcher.test(n3)).isFalse();
+        assertThat(matcher.test(n4)).isFalse();
+        assertThat(matcher.test(n5)).isFalse();
+    }
+
+    @Test
     public void testCheckMatch() {
         final Rule rule = new Rule(Optional.<Integer> absent(),
                 Optional.<Duration> absent(), Optional.of("first_name"));
@@ -46,11 +73,14 @@ public class MatcherTest {
         final Notification n3 = Notification.builder()
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
         final Notification n4 = Notification.builder().build();
+        final Notification n5 = Notification.builder().withCategory("like")
+                .build();
 
         assertThat(matcher.checkMatch(n1)).isTrue();
         assertThat(matcher.checkMatch(n2)).isFalse();
         assertThat(matcher.checkMatch(n3)).isFalse();
         assertThat(matcher.checkMatch(n4)).isFalse();
+        assertThat(matcher.checkMatch(n5)).isFalse();
     }
 
     @Test
@@ -68,11 +98,14 @@ public class MatcherTest {
         final Notification n3 = Notification.builder()
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
         final Notification n4 = Notification.builder().build();
+        final Notification n5 = Notification.builder().withCategory("like")
+                .build();
 
         assertThat(matcher.checkMatch(n1)).isFalse();
         assertThat(matcher.checkMatch(n2)).isFalse();
         assertThat(matcher.checkMatch(n3)).isFalse();
         assertThat(matcher.checkMatch(n4)).isFalse();
+        assertThat(matcher.checkMatch(n5)).isFalse();
     }
 
     @Test

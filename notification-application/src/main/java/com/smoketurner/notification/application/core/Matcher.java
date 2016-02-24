@@ -117,6 +117,19 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
     }
 
     /**
+     * Check whether the given notification matches the same category as the
+     * original notification.
+     *
+     * @param notification
+     *            Notification to check
+     * @return true if the notification category matches, otherwise false
+     */
+    public boolean checkCategory(@Nonnull final Notification notification) {
+        return Objects.equals(this.notification.getCategory(),
+                notification.getCategory());
+    }
+
+    /**
      * Check whether the given notification is within the "max-duration" for
      * this matcher or not.
      *
@@ -149,9 +162,9 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
      */
     @Override
     public boolean test(@Nonnull final Notification notification) {
-        if (checkSize() && checkDuration(notification)
-                && checkMatch(notification)
-                && !this.notification.equals(notification)) {
+        if (notification != null && notification.getId().isPresent()
+                && checkCategory(notification) && checkSize()
+                && checkDuration(notification) && checkMatch(notification)) {
             return notifications.add(notification);
         }
         return false;

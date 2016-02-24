@@ -24,6 +24,11 @@ rules:
   like:
     max-duration: 3 hours
     match-on: message_id
+  mention:
+    max-size: 6
+    match-on: message_id
+  test-category:
+    max-size: 3
 
 # Riak-specific options.
 riak:
