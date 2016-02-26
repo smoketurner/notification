@@ -117,9 +117,9 @@ public class MatcherTest {
         final Notification n3 = Notification.builder().withId(3L).build();
 
         final Matcher matcher = new Matcher(rule, notification);
-        assertThat(matcher.checkSize()).isTrue();
+        assertThat(matcher.isFull()).isFalse();
         matcher.add(ImmutableList.of(n2, n3));
-        assertThat(matcher.checkSize()).isFalse();
+        assertThat(matcher.isFull()).isTrue();
     }
 
     @Test

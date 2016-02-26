@@ -69,9 +69,17 @@ public class Rollup {
                 // Loop through the existing matchers to see if this
                 // notification falls into any previous rollups
                 boolean matched = false;
-                for (final Matcher match : matchers) {
-                    if (match.test(notification)) {
+                for (final Matcher matcher : matchers) {
+                    if (matcher.test(notification)) {
                         matched = true;
+
+                        // if the matcher is now full, add it to the rollups and
+                        // remove it from the available matchers which still
+                        // have empty space.
+                        if (matcher.isFull()) {
+                            matchers.remove(matcher);
+                            rollups.add(matcher.getNotification());
+                        }
                         break;
                     }
                 }

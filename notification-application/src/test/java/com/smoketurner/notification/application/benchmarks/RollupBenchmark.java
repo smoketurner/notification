@@ -26,11 +26,11 @@ public class RollupBenchmark {
 
     private final Rule sizeRule = new Rule(Optional.of(3), Optional.absent(),
             Optional.absent());
-    private final List<Notification> notifications = new ArrayList<>(10000);
+    private final List<Notification> notifications = new ArrayList<>(1000);
 
     @Setup
     public void setUp() {
-        for (long i = 0; i < 10000; i++) {
+        for (long i = 0; i < 1000; i++) {
             notifications.add(createNotification(i));
         }
     }

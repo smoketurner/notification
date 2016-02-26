@@ -22,29 +22,18 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.smoketurner.notification.api.Notification;
 
 public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
-    @NotNull
-    private final Notification notification;
-
-    @NotNull
-    private final Rule rule;
-
     private final TreeSet<Notification> notifications = new TreeSet<>();
-
-    @Nullable
-    private final Integer maxSize;
-
-    @Nullable
-    private final Long firstMillis;
-
-    @Nullable
-    private final Long maxDuration;
+    private final Notification notification;
+    private final Rule rule;
+    private final int maxSize;
+    private final long firstMillis;
+    private final long maxDuration;
 
     @Nullable
     private final String matchOn;
@@ -65,8 +54,8 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
         this.rule = Objects.requireNonNull(rule);
         this.notification = Objects.requireNonNull(notification);
 
+        this.maxSize = rule.getMaxSize().or(0);
         this.matchOn = rule.getMatchOn().orNull();
-        this.maxSize = rule.getMaxSize().orNull();
         if (matchOn != null) {
             this.matchValue = notification.getProperties().get(matchOn);
         } else {
@@ -76,8 +65,8 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
             this.maxDuration = rule.getMaxDuration().get().toMilliseconds();
             this.firstMillis = notification.getCreatedAt().getMillis();
         } else {
-            this.maxDuration = null;
-            this.firstMillis = null;
+            this.maxDuration = 0;
+            this.firstMillis = 0;
         }
     }
 
@@ -106,14 +95,13 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
     /**
      * Check whether this matcher has reached "max-size" or not.
      *
-     * @return true if we can put more notifications in this matcher, otherwise
-     *         false.
+     * @return true if the matcher is full, otherwise false
      */
-    public boolean checkSize() {
-        if (maxSize != null && notifications.size() >= maxSize) {
-            return false;
+    public boolean isFull() {
+        if (maxSize > 0 && notifications.size() >= maxSize) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -143,9 +131,9 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
             return true;
         }
 
-        if (maxDuration != null && firstMillis != null) {
-            final long timestamp = notification.getCreatedAt().getMillis();
-            final long delta = firstMillis - timestamp;
+        if (maxDuration > 0 && firstMillis > 0) {
+            final long delta = firstMillis
+                    - notification.getCreatedAt().getMillis();
             if (delta >= 0 && delta <= maxDuration) {
                 return true;
             }
@@ -163,7 +151,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
     @Override
     public boolean test(@Nonnull final Notification notification) {
         if (notification != null && notification.getId().isPresent()
-                && checkCategory(notification) && checkSize()
+                && checkCategory(notification) && !isFull()
                 && checkDuration(notification) && checkMatch(notification)) {
             return notifications.add(notification);
         }
