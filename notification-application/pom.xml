@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.smoketurner.notification</groupId>
         <artifactId>notification-parent</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>notification-application</artifactId>
