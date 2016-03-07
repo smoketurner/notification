@@ -16,6 +16,7 @@
 package com.smoketurner.notification.application.config;
 
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.ArrayList;
@@ -27,13 +28,16 @@ import javax.annotation.Nonnull;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
+import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.core.RiakCluster;
 import com.basho.riak.client.core.RiakNode;
+import com.basho.riak.client.core.util.DefaultCharset;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import com.google.common.primitives.Ints;
+import com.smoketurner.notification.application.health.RiakHealthCheck;
 import com.smoketurner.notification.application.managed.RiakClusterManager;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
@@ -161,7 +165,7 @@ public class RiakConfiguration {
     }
 
     @JsonIgnore
-    public RiakCluster build(@Nonnull final Environment environment)
+    public RiakClient build(@Nonnull final Environment environment)
             throws UnknownHostException, KeyStoreException {
         Objects.requireNonNull(environment);
 
@@ -194,6 +198,12 @@ public class RiakConfiguration {
         final RiakCluster cluster = RiakCluster.builder(nodes)
                 .withExecutionAttempts(executionAttempts).build();
         environment.lifecycle().manage(new RiakClusterManager(cluster));
-        return cluster;
+
+        DefaultCharset.set(StandardCharsets.UTF_8);
+
+        final RiakClient client = new RiakClient(cluster);
+        environment.healthChecks().register("riak",
+                new RiakHealthCheck(client));
+        return client;
     }
 }

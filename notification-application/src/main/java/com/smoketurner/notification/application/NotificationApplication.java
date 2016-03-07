@@ -18,7 +18,6 @@ package com.smoketurner.notification.application;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.ConflictResolverFactory;
 import com.basho.riak.client.api.convert.ConverterFactory;
-import com.basho.riak.client.core.RiakCluster;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -30,7 +29,6 @@ import com.smoketurner.notification.application.exceptions.NotificationException
 import com.smoketurner.notification.application.filter.CharsetResponseFilter;
 import com.smoketurner.notification.application.filter.IdResponseFilter;
 import com.smoketurner.notification.application.filter.RuntimeFilter;
-import com.smoketurner.notification.application.health.RiakHealthCheck;
 import com.smoketurner.notification.application.managed.CursorStoreManager;
 import com.smoketurner.notification.application.managed.NotificationStoreManager;
 import com.smoketurner.notification.application.resources.NotificationResource;
@@ -92,7 +90,7 @@ public class NotificationApplication
         environment.jersey().register(NotificationExceptionMapper.class);
         // adds charset=UTF-8 to the response headers
         environment.jersey().register(CharsetResponseFilter.class);
-        // adds a Request-Id response header
+        // adds a X-Request-Id response header
         environment.jersey().register(IdResponseFilter.class);
         // adds a X-Runtime response header
         environment.jersey().register(RuntimeFilter.class);
@@ -105,8 +103,7 @@ public class NotificationApplication
 
         // riak
         final RiakConfiguration riakConfig = configuration.getRiak();
-        final RiakCluster cluster = riakConfig.build(environment);
-        final RiakClient client = new RiakClient(cluster);
+        final RiakClient client = riakConfig.build(environment);
 
         ConflictResolverFactory.INSTANCE.registerConflictResolver(
                 NotificationListObject.class, new NotificationListResolver());
@@ -114,9 +111,6 @@ public class NotificationApplication
                 CursorObject.class, new CursorResolver());
         ConverterFactory.INSTANCE.registerConverterForClass(
                 NotificationListObject.class, new NotificationListConverter());
-
-        environment.healthChecks().register("riak",
-                new RiakHealthCheck(client));
 
         // data stores
         final CursorStore cursorStore = new CursorStore(client);
