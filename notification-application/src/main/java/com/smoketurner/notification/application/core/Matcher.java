@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.api.Rule;
 
 public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 

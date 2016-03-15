@@ -15,20 +15,20 @@
  */
 package com.smoketurner.notification.application.config;
 
-import java.util.Collections;
-import java.util.Map;
-import javax.annotation.Nonnull;
+import java.util.concurrent.TimeUnit;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.smoketurner.notification.application.core.Rule;
 import io.dropwizard.Configuration;
+import io.dropwizard.util.Duration;
+import io.dropwizard.validation.MinDuration;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 public class NotificationConfiguration extends Configuration {
 
     @NotNull
-    private Map<String, Rule> rules = Collections.emptyMap();
+    @MinDuration(value = 1, unit = TimeUnit.SECONDS)
+    private Duration ruleCacheTimeout = Duration.seconds(30);
 
     @Valid
     @NotNull
@@ -46,13 +46,13 @@ public class NotificationConfiguration extends Configuration {
     private final SnowizardConfiguration snowizard = new SnowizardConfiguration();
 
     @JsonProperty
-    public Map<String, Rule> getRules() {
-        return rules;
+    public Duration getRuleCacheTimeout() {
+        return ruleCacheTimeout;
     }
 
     @JsonProperty
-    public void setRules(@Nonnull final Map<String, Rule> rules) {
-        this.rules = rules;
+    public void setRuleCacheTimeout(final Duration timeout) {
+        this.ruleCacheTimeout = timeout;
     }
 
     @JsonProperty

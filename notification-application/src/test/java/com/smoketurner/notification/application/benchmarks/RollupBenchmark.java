@@ -13,19 +13,17 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.api.Rule;
 import com.smoketurner.notification.application.core.Rollup;
-import com.smoketurner.notification.application.core.Rule;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
 public class RollupBenchmark {
 
-    private final Rule sizeRule = new Rule(Optional.of(3), Optional.absent(),
-            Optional.absent());
+    private final Rule sizeRule = Rule.builder().withMaxSize(3).build();
     private final List<Notification> notifications = new ArrayList<>(1000);
 
     @Setup

@@ -15,7 +15,6 @@
  */
 package com.smoketurner.notification.application.store;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -46,9 +45,9 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.api.Rule;
 import com.smoketurner.notification.application.core.IdGenerator;
 import com.smoketurner.notification.application.core.Rollup;
-import com.smoketurner.notification.application.core.Rule;
 import com.smoketurner.notification.application.core.UserNotifications;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.riak.NotificationListAddition;
@@ -60,12 +59,12 @@ public class NotificationStore {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(NotificationStore.class);
     public static final String CURSOR_NAME = "notifications";
-    private static final Namespace NAMESPACE = new Namespace("notifications",
-            StandardCharsets.UTF_8);
+    private static final Namespace NAMESPACE = new Namespace("notifications");
+    private static final int RIAK_TIMEOUT_MILLIS = 1000;
     private final RiakClient client;
     private final IdGenerator idGenerator;
     private final CursorStore cursors;
-    private final Map<String, Rule> rules;
+    private final RuleStore ruleStore;
 
     // timers
     private final Timer fetchTimer;
@@ -82,12 +81,12 @@ public class NotificationStore {
      * @param cursors
      *            Cursor data store
      * @param rules
-     *            Rollup rules
+     *            Rule data store
      */
     public NotificationStore(@Nonnull final RiakClient client,
             @Nonnull final IdGenerator idGenerator,
             @Nonnull final CursorStore cursors,
-            @Nonnull final Map<String, Rule> rules) {
+            @Nonnull final RuleStore ruleStore) {
 
         final MetricRegistry registry = SharedMetricRegistries
                 .getOrCreate("default");
@@ -101,7 +100,7 @@ public class NotificationStore {
         this.client = Objects.requireNonNull(client);
         this.idGenerator = Objects.requireNonNull(idGenerator);
         this.cursors = Objects.requireNonNull(cursors);
-        this.rules = Objects.requireNonNull(rules);
+        this.ruleStore = Objects.requireNonNull(ruleStore);
     }
 
     /**
@@ -187,7 +186,7 @@ public class NotificationStore {
      */
     public UserNotifications splitNotifications(@Nonnull final String username,
             @Nonnull final SortedSet<Notification> notifications)
-                    throws NotificationStoreException {
+            throws NotificationStoreException {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -202,6 +201,9 @@ public class NotificationStore {
         // zero)
         final long newestId = notifications.first().getId(0L);
         LOGGER.debug("Newest notification ID: {}", newestId);
+
+        // fetch rules from cache
+        final Map<String, Rule> rules = ruleStore.fetchCached();
 
         final Rollup unseenRollup = new Rollup(rules);
 
@@ -255,7 +257,7 @@ public class NotificationStore {
     }
 
     /**
-     * Store a new notification for a user
+     * Asynchronously store a new notification for a user
      *
      * @param username
      *            User to store the notification
@@ -267,7 +269,7 @@ public class NotificationStore {
      */
     public Notification store(@Nonnull final String username,
             @Nonnull final Notification notification)
-                    throws NotificationStoreException {
+            throws NotificationStoreException {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -284,33 +286,24 @@ public class NotificationStore {
         final Location location = new Location(NAMESPACE, username);
         final UpdateValue updateValue = new UpdateValue.Builder(location)
                 .withUpdate(update)
-                .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
+                .withStoreOption(StoreValue.Option.RETURN_BODY, false)
+                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
 
-        LOGGER.debug("Updating key: {}", location);
+        LOGGER.debug("Updating key (async): {}", location);
 
         try (Timer.Context context = updateTimer.time()) {
-            client.execute(updateValue);
-        } catch (ExecutionException e) {
-            LOGGER.error("Unable to update key: " + location, e);
-            throw new NotificationStoreException(e);
-        } catch (InterruptedException e) {
-            LOGGER.warn("Update request was interrupted", e);
-            Thread.currentThread().interrupt();
-            throw new NotificationStoreException(e);
+            client.executeAsync(updateValue);
         }
         return updatedNotification;
     }
 
     /**
-     * Delete all of the notifications for a given user
+     * Asynchronously delete all of the notifications for a given user
      * 
      * @param username
      *            User to delete all the notifications
-     * @throws NotificationStoreException
-     *             if unable to delete all the notifications
      */
-    public void removeAll(@Nonnull final String username)
-            throws NotificationStoreException {
+    public void removeAll(@Nonnull final String username) {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -318,36 +311,26 @@ public class NotificationStore {
 
         final Location location = new Location(NAMESPACE, username);
         final DeleteValue deleteValue = new DeleteValue.Builder(location)
-                .build();
+                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
 
-        LOGGER.debug("Deleting key: {}", location);
+        LOGGER.debug("Deleting key (async): {}", location);
         try (Timer.Context context = deleteTimer.time()) {
-            client.execute(deleteValue);
-        } catch (ExecutionException e) {
-            LOGGER.error("Unable to delete key: " + location, e);
-            throw new NotificationStoreException(e);
-        } catch (InterruptedException e) {
-            LOGGER.warn("Delete request was interrupted", e);
-            Thread.currentThread().interrupt();
-            throw new NotificationStoreException(e);
+            client.executeAsync(deleteValue);
         }
 
         cursors.delete(username, CURSOR_NAME);
     }
 
     /**
-     * Remove individual notifications for a given user
+     * Asynchronously remove individual notifications for a given user
      *
      * @param username
      *            User to remove notifications from
      * @param ids
      *            Notification IDs to remove
-     * @throws NotificationStoreException
-     *             if unable to remove the notifications
      */
     public void remove(@Nonnull final String username,
-            @Nonnull final Collection<Long> ids)
-                    throws NotificationStoreException {
+            @Nonnull final Collection<Long> ids) {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -364,18 +347,12 @@ public class NotificationStore {
                 ids);
         final UpdateValue updateValue = new UpdateValue.Builder(location)
                 .withUpdate(delete)
-                .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
+                .withStoreOption(StoreValue.Option.RETURN_BODY, false)
+                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
 
-        LOGGER.debug("Updating key: {}", location);
+        LOGGER.debug("Updating key (async): {}", location);
         try (Timer.Context context = updateTimer.time()) {
-            client.execute(updateValue);
-        } catch (ExecutionException e) {
-            LOGGER.error("Unable to update key: " + location, e);
-            throw new NotificationStoreException(e);
-        } catch (InterruptedException e) {
-            LOGGER.warn("Update request was interrupted", e);
-            Thread.currentThread().interrupt();
-            throw new NotificationStoreException(e);
+            client.executeAsync(updateValue);
         }
     }
 

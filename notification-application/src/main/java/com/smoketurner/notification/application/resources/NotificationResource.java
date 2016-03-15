@@ -246,21 +246,10 @@ public class NotificationResource {
                       required = false) @QueryParam("ids") final LongSetParam idsParam) {
 
         if (idsParam != null) {
-            try {
-                store.remove(username, idsParam.get());
-            } catch (NotificationStoreException e) {
-                throw new NotificationException(
-                        Response.Status.INTERNAL_SERVER_ERROR,
-                        "Unable to delete notifications", e);
-            }
+            store.remove(username, idsParam.get());
         } else {
-            try {
-                store.removeAll(username);
-            } catch (NotificationStoreException e) {
-                throw new NotificationException(
-                        Response.Status.INTERNAL_SERVER_ERROR,
-                        "Unable to delete all notifications", e);
-            }
+            store.removeAll(username);
+
         }
 
         return Response.noContent().build();

@@ -33,6 +33,7 @@ import com.smoketurner.notification.application.managed.CursorStoreManager;
 import com.smoketurner.notification.application.managed.NotificationStoreManager;
 import com.smoketurner.notification.application.resources.NotificationResource;
 import com.smoketurner.notification.application.resources.PingResource;
+import com.smoketurner.notification.application.resources.RuleResource;
 import com.smoketurner.notification.application.resources.VersionResource;
 import com.smoketurner.notification.application.riak.CursorObject;
 import com.smoketurner.notification.application.riak.CursorResolver;
@@ -41,6 +42,7 @@ import com.smoketurner.notification.application.riak.NotificationListObject;
 import com.smoketurner.notification.application.riak.NotificationListResolver;
 import com.smoketurner.notification.application.store.CursorStore;
 import com.smoketurner.notification.application.store.NotificationStore;
+import com.smoketurner.notification.application.store.RuleStore;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -53,6 +55,7 @@ public class NotificationApplication
         extends Application<NotificationConfiguration> {
 
     public static void main(final String[] args) throws Exception {
+        java.security.Security.setProperty("networkaddress.cache.ttl", "60");
         new NotificationApplication().run(args);
     }
 
@@ -113,14 +116,17 @@ public class NotificationApplication
                 NotificationListObject.class, new NotificationListConverter());
 
         // data stores
+        final RuleStore ruleStore = new RuleStore(client,
+                configuration.getRuleCacheTimeout());
         final CursorStore cursorStore = new CursorStore(client);
         final NotificationStore store = new NotificationStore(client,
-                idGenerator, cursorStore, configuration.getRules());
+                idGenerator, cursorStore, ruleStore);
         environment.lifecycle().manage(new CursorStoreManager(cursorStore));
         environment.lifecycle().manage(new NotificationStoreManager(store));
 
         // resources
         environment.jersey().register(new NotificationResource(store));
+        environment.jersey().register(new RuleResource(ruleStore));
         environment.jersey().register(new PingResource());
         environment.jersey().register(new VersionResource());
     }

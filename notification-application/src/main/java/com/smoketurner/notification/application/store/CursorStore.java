@@ -15,7 +15,6 @@
  */
 package com.smoketurner.notification.application.store;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
@@ -43,8 +42,8 @@ public class CursorStore {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CursorStore.class);
-    private static final Namespace NAMESPACE = new Namespace("cursors",
-            StandardCharsets.UTF_8);
+    private static final Namespace NAMESPACE = new Namespace("cursors");
+    private static final int RIAK_TIMEOUT_MILLIS = 1000;
     private final RiakClient client;
 
     // timers
@@ -108,7 +107,7 @@ public class CursorStore {
      */
     public Optional<Long> fetch(@Nonnull final String username,
             @Nonnull final String cursorName)
-                    throws NotificationStoreException {
+            throws NotificationStoreException {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -123,7 +122,8 @@ public class CursorStore {
         LOGGER.debug("Fetching key: {}", location);
 
         final CursorObject cursor;
-        final FetchValue fv = new FetchValue.Builder(location).build();
+        final FetchValue fv = new FetchValue.Builder(location)
+                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
         try (Timer.Context context = fetchTimer.time()) {
             final FetchValue.Response response = client.execute(fv);
             cursor = response.getValue(CursorObject.class);
@@ -146,7 +146,7 @@ public class CursorStore {
     }
 
     /**
-     * Update a given cursor with the specified value.
+     * Asynchronously update a given cursor with the specified value.
      *
      * @param username
      *            Username to update the cursor for
@@ -154,12 +154,9 @@ public class CursorStore {
      *            Name of the cursor to store
      * @param value
      *            Value to set
-     * @throws NotificationStoreException
-     *             if unable to set the cursor
      */
     public void store(@Nonnull final String username,
-            @Nonnull final String cursorName, final long value)
-                    throws NotificationStoreException {
+            @Nonnull final String cursorName, final long value) {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -174,34 +171,25 @@ public class CursorStore {
         final Location location = new Location(NAMESPACE, key);
         final UpdateValue updateValue = new UpdateValue.Builder(location)
                 .withUpdate(update)
-                .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
+                .withStoreOption(StoreValue.Option.RETURN_BODY, false)
+                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
 
-        LOGGER.debug("Updating key ({}) to value: {}", location, value);
+        LOGGER.debug("Updating key ({}) to value (async): {}", location, value);
         try (Timer.Context context = storeTimer.time()) {
-            client.execute(updateValue);
-        } catch (ExecutionException e) {
-            LOGGER.error("Unable to update key: " + location, e);
-            throw new NotificationStoreException(e);
-        } catch (InterruptedException e) {
-            LOGGER.warn("Update request was interrupted", e);
-            Thread.currentThread().interrupt();
-            throw new NotificationStoreException(e);
+            client.executeAsync(updateValue);
         }
     }
 
     /**
-     * Delete the cursor for a given user
+     * Asynchronously delete the cursor for a given user
      * 
      * @param username
      *            User delete their cursor
      * @param cursorName
      *            Name of the cursor
-     * @throws NotificationStoreException
-     *             if unable to delete the cursor
      */
     public void delete(@Nonnull final String username,
-            @Nonnull final String cursorName)
-                    throws NotificationStoreException {
+            @Nonnull final String cursorName) {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -213,18 +201,11 @@ public class CursorStore {
         final String key = getCursorKey(username, cursorName);
         final Location location = new Location(NAMESPACE, key);
         final DeleteValue deleteValue = new DeleteValue.Builder(location)
-                .build();
+                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
 
-        LOGGER.debug("Deleting key: {}", location);
+        LOGGER.debug("Deleting key (async): {}", location);
         try (Timer.Context context = deleteTimer.time()) {
-            client.execute(deleteValue);
-        } catch (ExecutionException e) {
-            LOGGER.error("Unable to delete key: " + location, e);
-            throw new NotificationStoreException(e);
-        } catch (InterruptedException e) {
-            LOGGER.warn("Delete request was interrupted", e);
-            Thread.currentThread().interrupt();
-            throw new NotificationStoreException(e);
+            client.executeAsync(deleteValue);
         }
     }
 

@@ -18,7 +18,6 @@ package com.smoketurner.notification.application.resources;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -431,18 +430,6 @@ public class NotificationResourceTest {
     }
 
     @Test
-    public void testRemoveException() throws Exception {
-        doThrow(new NotificationStoreException()).when(store).removeAll("test");
-        final Response response = resources.client()
-                .target("/v1/notifications/test").request().delete();
-        final ErrorMessage actual = response.readEntity(ErrorMessage.class);
-
-        verify(store).removeAll("test");
-        assertThat(response.getStatus()).isEqualTo(500);
-        assertThat(actual.getCode()).isEqualTo(500);
-    }
-
-    @Test
     public void testRemoveIds() throws Exception {
         final Response response = resources.client()
                 .target("/v1/notifications/test?ids=1,2,asdf,3").request()
@@ -451,21 +438,6 @@ public class NotificationResourceTest {
         verify(store).remove("test", ImmutableSet.of(1L, 2L, 3L));
         verify(store, never()).removeAll(anyString());
         assertThat(response.getStatus()).isEqualTo(204);
-    }
-
-    @Test
-    public void testRemoveIdsException() throws Exception {
-        final Set<Long> ids = ImmutableSet.of(1L, 2L, 3L);
-        doThrow(new NotificationStoreException()).when(store).remove("test",
-                ids);
-        final Response response = resources.client()
-                .target("/v1/notifications/test?ids=1,2,asdf,3").request()
-                .delete();
-        final ErrorMessage actual = response.readEntity(ErrorMessage.class);
-
-        verify(store).remove("test", ids);
-        assertThat(response.getStatus()).isEqualTo(500);
-        assertThat(actual.getCode()).isEqualTo(500);
     }
 
     private Notification createNotification(final long id) {

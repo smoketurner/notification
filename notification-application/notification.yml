@@ -15,33 +15,23 @@ swagger:
   license: Apache 2.0
   licenseUrl: https://www.apache.org/licenses/LICENSE-2.0
 
-# Roll-up Rules
-rules:
-
-  new-follower:
-    max-size: 9
-    max-duration: 12 hours
-  like:
-    max-duration: 3 hours
-    match-on: message_id
-  mention:
-    max-size: 6
-    match-on: message_id
-  test-category:
-    max-size: 3
-
 # Riak-specific options.
 riak:
 
   nodes:
     - 127.0.0.1:8087
+    #- 10.0.57.33:8087
+    #- 10.0.57.34:8087
+    #- 10.0.57.35:8087
+    #- 10.0.57.36:8087
+    #- 10.0.57.37:8087
 
 # HTTP-specific options.
 server:
 
   applicationConnectors:
     - type: http
-      port: 8080
+      port: 8081
   
   adminConnectors:
     - type: http

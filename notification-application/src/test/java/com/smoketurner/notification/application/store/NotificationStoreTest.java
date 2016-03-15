@@ -23,7 +23,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.joda.time.DateTime;
@@ -31,12 +30,10 @@ import org.junit.Test;
 import com.basho.riak.client.api.RiakClient;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.core.IdGenerator;
-import com.smoketurner.notification.application.core.Rule;
 import com.smoketurner.notification.application.core.UserNotifications;
 
 public class NotificationStoreTest {
@@ -46,7 +43,7 @@ public class NotificationStoreTest {
     private final RiakClient client = mock(RiakClient.class);
     private final CursorStore cursors = mock(CursorStore.class);
     private final IdGenerator idGenerator = mock(IdGenerator.class);
-    private final Map<String, Rule> rules = ImmutableMap.of();
+    private final RuleStore rules = mock(RuleStore.class);
     private final NotificationStore store = new NotificationStore(client,
             idGenerator, cursors, rules) {
         @Override
