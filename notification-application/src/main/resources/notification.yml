@@ -18,16 +18,6 @@ swagger:
   license: Apache 2.0
   licenseUrl: https://www.apache.org/licenses/LICENSE-2.0
 
-# Roll-up Rules
-rules:
-
-  new-follower:
-    max-size: 9
-    max-duration: 12 hours
-  like:
-    max-duration: 3 hours
-    match-on: message_id
-
 # Riak-specific options.
 riak:
 
@@ -50,13 +40,6 @@ server:
       - type: console
         timeZone: UTC
         target: stdout
-      - type: file
-        currentLogFilename: "{{{path.logDirectory}}}/requests.log"
-        threshold: ALL
-        archive: true
-        archivedLogFilenamePattern: "{{{path.logDirectory}}}/requests-%d.log"
-        archivedFileCount: 5
-        timeZone: UTC
 
 logging:
   level: INFO
@@ -67,10 +50,3 @@ logging:
     - type: console
       timeZone: UTC
       target: stdout
-    - type: file
-      currentLogFilename: "{{{path.logDirectory}}}/app.log"
-      threshold: ALL
-      archive: true
-      archivedLogFilenamePattern: "{{{path.logDirectory}}}/app-%d.log"
-      archivedFileCount: 5
-      timeZone: UTC

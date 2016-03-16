@@ -55,7 +55,6 @@ public class RuleStore {
             .getLogger(RuleStore.class);
     private static final Namespace NAMESPACE = new Namespace("maps", "rules");
     private static final Location LOCATION = new Location(NAMESPACE, "rules");
-    private static final int RIAK_TIMEOUT_MILLIS = 1000;
 
     private final RiakClient client;
     private final LoadingCache<String, Map<String, Rule>> cache;
@@ -128,7 +127,7 @@ public class RuleStore {
 
         final FetchMap fetchMap = new FetchMap.Builder(LOCATION)
                 .withOption(FetchDatatype.Option.INCLUDE_CONTEXT, false)
-                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
+                .build();
 
         LOGGER.debug("Fetching key: {}", LOCATION);
 
@@ -158,8 +157,7 @@ public class RuleStore {
      *             if unable to fetch the rule context
      */
     public Optional<Context> fetchContext() throws NotificationStoreException {
-        final FetchMap fetchMap = new FetchMap.Builder(LOCATION)
-                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
+        final FetchMap fetchMap = new FetchMap.Builder(LOCATION).build();
 
         LOGGER.debug("Fetching key: {}", LOCATION);
 
@@ -253,8 +251,7 @@ public class RuleStore {
         final MapUpdate op = new MapUpdate();
         op.update(category, getUpdate(rule, fetchContext));
 
-        final UpdateMap.Builder builder = new UpdateMap.Builder(LOCATION, op)
-                .withTimeout(RIAK_TIMEOUT_MILLIS);
+        final UpdateMap.Builder builder = new UpdateMap.Builder(LOCATION, op);
         if (fetchContext.isPresent()) {
             builder.withContext(fetchContext.get());
         }
@@ -324,8 +321,7 @@ public class RuleStore {
         op.removeMap(category);
 
         final UpdateMap.Builder builder = new UpdateMap.Builder(LOCATION, op)
-                .withContext(fetchContext.get())
-                .withTimeout(RIAK_TIMEOUT_MILLIS);
+                .withContext(fetchContext.get());
 
         LOGGER.debug("Storing key (async): {}", LOCATION);
 
@@ -339,7 +335,7 @@ public class RuleStore {
      */
     public void removeAll() {
         final DeleteValue deleteValue = new DeleteValue.Builder(LOCATION)
-                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
+                .build();
 
         LOGGER.debug("Deleting key (async): {}", LOCATION);
         try (Timer.Context context = deleteTimer.time()) {

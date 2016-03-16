@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.jersey.client.JerseyClientBuilder;
@@ -36,14 +38,23 @@ public class NotificationGenerator {
 
         final CountDownLatch latch = new CountDownLatch(NUM_THREADS);
 
+        final ExecutorService executor = Executors
+                .newFixedThreadPool(NUM_THREADS);
+
         // new-follower
-        final Thread follower = new Thread(() -> {
-            for (int i = 0; i < MAX_NOTIFICATIONS / NUM_THREADS; i++) {
-                final int userId = RANDOM.nextInt(USERS.size());
-                final String message = String.format("%s is now following you",
+        executor.execute(() -> {
+            final int count = MAX_NOTIFICATIONS / NUM_THREADS;
+            System.out.println("Starting to send " + count + " new-followers");
+
+            int userId;
+            String message;
+            Notification notification;
+            for (int i = 0; i < count; i++) {
+                userId = RANDOM.nextInt(USERS.size());
+                message = String.format("%s is now following you",
                         USERS.get(userId));
 
-                final Notification notification = Notification.builder()
+                notification = Notification.builder()
                         .withCategory("new-follower")
                         .withMessage(message).withProperties(ImmutableMap
                                 .of("follower_id", String.valueOf(userId)))
@@ -51,21 +62,27 @@ public class NotificationGenerator {
 
                 client.store(USERNAME, notification);
             }
+            System.out.println("Finished creating " + count + " new-followers");
             latch.countDown();
         });
-        follower.setDaemon(true);
-        follower.start();
 
         // like
-        final Thread like = new Thread(() -> {
-            for (int i = 0; i < MAX_NOTIFICATIONS / NUM_THREADS; i++) {
-                final int userId = RANDOM.nextInt(USERS.size());
-                final String message = String.format("%s liked your post",
-                        USERS.get(userId));
-                final int messageId = RANDOM.nextInt(5);
+        executor.execute(() -> {
+            final int count = MAX_NOTIFICATIONS / NUM_THREADS;
+            System.out.println("Starting to send " + count + " likes");
 
-                final Notification notification = Notification.builder()
-                        .withCategory("like").withMessage(message)
+            int userId;
+            String message;
+            int messageId;
+            Notification notification;
+            for (int i = 0; i < count; i++) {
+                userId = RANDOM.nextInt(USERS.size());
+                message = String.format("%s liked your post",
+                        USERS.get(userId));
+                messageId = RANDOM.nextInt(5);
+
+                notification = Notification.builder().withCategory("like")
+                        .withMessage(message)
                         .withProperties(ImmutableMap.of("message_id",
                                 String.valueOf(messageId), "liker_id",
                                 String.valueOf(userId)))
@@ -73,21 +90,27 @@ public class NotificationGenerator {
 
                 client.store(USERNAME, notification);
             }
+            System.out.println("Finished creating " + count + " likes");
             latch.countDown();
         });
-        like.setDaemon(true);
-        like.start();
 
         // mention
-        final Thread mention = new Thread(() -> {
-            for (int i = 0; i < MAX_NOTIFICATIONS / NUM_THREADS; i++) {
-                final int userId = RANDOM.nextInt(USERS.size());
-                final String message = String.format(
-                        "%s mentioned you in a post", USERS.get(userId));
-                final int messageId = RANDOM.nextInt(5);
+        executor.execute(() -> {
+            final int count = MAX_NOTIFICATIONS / NUM_THREADS;
+            System.out.println("Starting to send " + count + " mentions");
 
-                final Notification notification = Notification.builder()
-                        .withCategory("mention").withMessage(message)
+            int userId;
+            String message;
+            int messageId;
+            Notification notification;
+            for (int i = 0; i < count; i++) {
+                userId = RANDOM.nextInt(USERS.size());
+                message = String.format("%s mentioned you in a post",
+                        USERS.get(userId));
+                messageId = RANDOM.nextInt(5);
+
+                notification = Notification.builder().withCategory("mention")
+                        .withMessage(message)
                         .withProperties(ImmutableMap.of("message_id",
                                 String.valueOf(messageId), "user_id",
                                 String.valueOf(userId)))
@@ -95,10 +118,9 @@ public class NotificationGenerator {
 
                 client.store(USERNAME, notification);
             }
+            System.out.println("Finished creating " + count + " mentions");
             latch.countDown();
         });
-        mention.setDaemon(true);
-        mention.start();
 
         latch.await();
         client.close();

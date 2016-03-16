@@ -43,7 +43,6 @@ public class CursorStore {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CursorStore.class);
     private static final Namespace NAMESPACE = new Namespace("cursors");
-    private static final int RIAK_TIMEOUT_MILLIS = 1000;
     private final RiakClient client;
 
     // timers
@@ -122,8 +121,7 @@ public class CursorStore {
         LOGGER.debug("Fetching key: {}", location);
 
         final CursorObject cursor;
-        final FetchValue fv = new FetchValue.Builder(location)
-                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
+        final FetchValue fv = new FetchValue.Builder(location).build();
         try (Timer.Context context = fetchTimer.time()) {
             final FetchValue.Response response = client.execute(fv);
             cursor = response.getValue(CursorObject.class);
@@ -171,8 +169,7 @@ public class CursorStore {
         final Location location = new Location(NAMESPACE, key);
         final UpdateValue updateValue = new UpdateValue.Builder(location)
                 .withUpdate(update)
-                .withStoreOption(StoreValue.Option.RETURN_BODY, false)
-                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
+                .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
 
         LOGGER.debug("Updating key ({}) to value (async): {}", location, value);
         try (Timer.Context context = storeTimer.time()) {
@@ -201,7 +198,7 @@ public class CursorStore {
         final String key = getCursorKey(username, cursorName);
         final Location location = new Location(NAMESPACE, key);
         final DeleteValue deleteValue = new DeleteValue.Builder(location)
-                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
+                .build();
 
         LOGGER.debug("Deleting key (async): {}", location);
         try (Timer.Context context = deleteTimer.time()) {

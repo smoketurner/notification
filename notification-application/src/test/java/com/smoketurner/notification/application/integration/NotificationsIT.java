@@ -18,7 +18,6 @@ package com.smoketurner.notification.application.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -89,9 +88,6 @@ public class NotificationsIT {
             expected.add(
                     Notification.builder(response).withUnseen(true).build());
         }
-
-        // need to sleep here so all requests will finish
-        TimeUnit.SECONDS.sleep(1);
 
         int requests = 0;
         String nextRange = null;

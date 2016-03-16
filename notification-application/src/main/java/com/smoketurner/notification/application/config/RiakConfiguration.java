@@ -56,7 +56,7 @@ public class RiakConfiguration {
 
     @Min(1)
     @NotNull
-    private Integer minConnections = RiakNode.Builder.DEFAULT_MIN_CONNECTIONS;
+    private Integer minConnections = 10;
 
     @Min(0)
     @NotNull

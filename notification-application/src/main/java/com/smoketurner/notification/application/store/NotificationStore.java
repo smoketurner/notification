@@ -60,7 +60,6 @@ public class NotificationStore {
             .getLogger(NotificationStore.class);
     public static final String CURSOR_NAME = "notifications";
     private static final Namespace NAMESPACE = new Namespace("notifications");
-    private static final int RIAK_TIMEOUT_MILLIS = 1000;
     private final RiakClient client;
     private final IdGenerator idGenerator;
     private final CursorStore cursors;
@@ -204,6 +203,7 @@ public class NotificationStore {
 
         // fetch rules from cache
         final Map<String, Rule> rules = ruleStore.fetchCached();
+        LOGGER.debug("Fetched {} rules from cache", rules.size());
 
         final Rollup unseenRollup = new Rollup(rules);
 
@@ -257,7 +257,7 @@ public class NotificationStore {
     }
 
     /**
-     * Asynchronously store a new notification for a user
+     * Store a new notification for a user
      *
      * @param username
      *            User to store the notification
@@ -286,13 +286,19 @@ public class NotificationStore {
         final Location location = new Location(NAMESPACE, username);
         final UpdateValue updateValue = new UpdateValue.Builder(location)
                 .withUpdate(update)
-                .withStoreOption(StoreValue.Option.RETURN_BODY, false)
-                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
+                .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
 
-        LOGGER.debug("Updating key (async): {}", location);
+        LOGGER.debug("Updating key: {}", location);
 
         try (Timer.Context context = updateTimer.time()) {
-            client.executeAsync(updateValue);
+            client.execute(updateValue);
+        } catch (ExecutionException e) {
+            LOGGER.error("Unable to update key: " + location, e);
+            throw new NotificationStoreException(e);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Update request was interrupted", e);
+            Thread.currentThread().interrupt();
+            throw new NotificationStoreException(e);
         }
         return updatedNotification;
     }
@@ -311,7 +317,7 @@ public class NotificationStore {
 
         final Location location = new Location(NAMESPACE, username);
         final DeleteValue deleteValue = new DeleteValue.Builder(location)
-                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
+                .build();
 
         LOGGER.debug("Deleting key (async): {}", location);
         try (Timer.Context context = deleteTimer.time()) {
@@ -347,8 +353,7 @@ public class NotificationStore {
                 ids);
         final UpdateValue updateValue = new UpdateValue.Builder(location)
                 .withUpdate(delete)
-                .withStoreOption(StoreValue.Option.RETURN_BODY, false)
-                .withTimeout(RIAK_TIMEOUT_MILLIS).build();
+                .withStoreOption(StoreValue.Option.RETURN_BODY, false).build();
 
         LOGGER.debug("Updating key (async): {}", location);
         try (Timer.Context context = updateTimer.time()) {
