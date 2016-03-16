@@ -22,10 +22,10 @@ import java.util.stream.Stream;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.api.Rule;
 import io.dropwizard.util.Duration;
 
 public class RollupTest {
@@ -62,8 +62,7 @@ public class RollupTest {
                 .<Notification> naturalOrder()
                 .add(n1, n2, n3, n4, n5, n6, n7, n8, n9).build();
 
-        final Rule rule = new Rule(Optional.<Integer> absent(),
-                Optional.<Duration> absent(), Optional.of("first_name"));
+        final Rule rule = Rule.builder().withMatchOn("first_name").build();
 
         final Rollup rollup = new Rollup(ImmutableMap.of("new-follower", rule));
 
@@ -114,8 +113,8 @@ public class RollupTest {
                 .<Notification> naturalOrder()
                 .add(n1, n2, n3, n4, n5, n6, n7, n8, n9).build();
 
-        final Rule rule = new Rule(Optional.of(3),
-                Optional.of(Duration.minutes(20)), Optional.<String> absent());
+        final Rule rule = Rule.builder().withMaxSize(3)
+                .withMaxDuration(Duration.minutes(20)).build();
 
         final Rollup rollup = new Rollup(ImmutableMap.of("new-follower", rule));
 
@@ -148,8 +147,7 @@ public class RollupTest {
                 .<Notification> naturalOrder()
                 .add(n1, n2, n3, n4, n5, n6, n7, n8, n9).build();
 
-        final Rule rule = new Rule(Optional.of(2), Optional.<Duration> absent(),
-                Optional.<String> absent());
+        final Rule rule = Rule.builder().withMaxSize(2).build();
 
         final Rollup rollup = new Rollup(ImmutableMap.of("new-follower", rule));
 

@@ -1,0 +1,5 @@
+{
+  "match_on": "first_name",
+  "max_size": 3,
+  "max_duration": "test"
+}

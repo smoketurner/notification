@@ -56,7 +56,7 @@ public class RiakConfiguration {
 
     @Min(1)
     @NotNull
-    private Integer minConnections = RiakNode.Builder.DEFAULT_MIN_CONNECTIONS;
+    private Integer minConnections = 10;
 
     @Min(0)
     @NotNull
@@ -171,13 +171,12 @@ public class RiakConfiguration {
 
         final RiakNode.Builder builder = new RiakNode.Builder()
                 .withMinConnections(minConnections)
+                .withMaxConnections(maxConnections)
                 .withConnectionTimeout(
                         Ints.checkedCast(connectionTimeout.toMilliseconds()))
                 .withIdleTimeout(Ints.checkedCast(idleTimeout.toMilliseconds()))
                 .withBlockOnMaxConnections(false);
-        if (maxConnections > 0) {
-            builder.withMaxConnections(maxConnections);
-        }
+
         if (!Strings.isNullOrEmpty(username) && !Strings.isNullOrEmpty(password)
                 && !Strings.isNullOrEmpty(keyStore)) {
             // TODO finish keyStore implementation
@@ -195,11 +194,11 @@ public class RiakConfiguration {
             nodes.add(node);
         }
 
+        DefaultCharset.set(StandardCharsets.UTF_8);
+
         final RiakCluster cluster = RiakCluster.builder(nodes)
                 .withExecutionAttempts(executionAttempts).build();
         environment.lifecycle().manage(new RiakClusterManager(cluster));
-
-        DefaultCharset.set(StandardCharsets.UTF_8);
 
         final RiakClient client = new RiakClient(cluster);
         environment.healthChecks().register("riak",

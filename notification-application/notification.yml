@@ -15,21 +15,6 @@ swagger:
   license: Apache 2.0
   licenseUrl: https://www.apache.org/licenses/LICENSE-2.0
 
-# Roll-up Rules
-rules:
-
-  new-follower:
-    max-size: 9
-    max-duration: 12 hours
-  like:
-    max-duration: 3 hours
-    match-on: message_id
-  mention:
-    max-size: 6
-    match-on: message_id
-  test-category:
-    max-size: 3
-
 # Riak-specific options.
 riak:
 

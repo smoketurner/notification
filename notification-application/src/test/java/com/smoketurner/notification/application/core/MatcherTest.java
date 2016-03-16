@@ -18,10 +18,10 @@ package com.smoketurner.notification.application.core;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.api.Rule;
 import io.dropwizard.util.Duration;
 
 public class MatcherTest {
@@ -34,8 +34,7 @@ public class MatcherTest {
 
     @Test
     public void testMatch() {
-        final Rule rule = new Rule(Optional.<Integer> absent(),
-                Optional.<Duration> absent(), Optional.of("first_name"));
+        final Rule rule = Rule.builder().withMatchOn("first_name").build();
 
         final Matcher matcher = new Matcher(rule, notification);
 
@@ -61,8 +60,7 @@ public class MatcherTest {
 
     @Test
     public void testCheckMatch() {
-        final Rule rule = new Rule(Optional.<Integer> absent(),
-                Optional.<Duration> absent(), Optional.of("first_name"));
+        final Rule rule = Rule.builder().withMatchOn("first_name").build();
 
         final Matcher matcher = new Matcher(rule, notification);
 
@@ -86,8 +84,7 @@ public class MatcherTest {
     @Test
     public void testCheckMatchInitialNotSet() {
         final Notification notification = Notification.builder().build();
-        final Rule rule = new Rule(Optional.<Integer> absent(),
-                Optional.<Duration> absent(), Optional.of("first_name"));
+        final Rule rule = Rule.builder().withMatchOn("first_name").build();
 
         final Matcher matcher = new Matcher(rule, notification);
 
@@ -110,8 +107,7 @@ public class MatcherTest {
 
     @Test
     public void testCheckSize() {
-        final Rule rule = new Rule(Optional.of(2), Optional.<Duration> absent(),
-                Optional.<String> absent());
+        final Rule rule = Rule.builder().withMaxSize(2).build();
 
         final Notification n2 = Notification.builder().withId(2L).build();
         final Notification n3 = Notification.builder().withId(3L).build();
@@ -124,8 +120,8 @@ public class MatcherTest {
 
     @Test
     public void testCheckDuration() {
-        final Rule rule = new Rule(Optional.<Integer> absent(),
-                Optional.of(Duration.minutes(10)), Optional.<String> absent());
+        final Rule rule = Rule.builder()
+                .withMaxDuration(Duration.minutes(10)).build();
 
         final Notification future = Notification.builder()
                 .withCreatedAt(new DateTime("2015-07-31T23:31:35Z")).build();
@@ -148,10 +144,8 @@ public class MatcherTest {
 
     @Test
     public void testNaturalOrdering() {
-        final Rule rule1 = new Rule(Optional.<Integer> absent(),
-                Optional.<Duration> absent(), Optional.of("first_name"));
-        final Rule rule2 = new Rule(Optional.<Integer> absent(),
-                Optional.<Duration> absent(), Optional.of("last_name"));
+        final Rule rule1 = Rule.builder().withMatchOn("first_name").build();
+        final Rule rule2 = Rule.builder().withMatchOn("last_name").build();
 
         final Notification n1 = Notification.builder().withId(1L).build();
         final Notification n2 = Notification.builder().withId(2L).build();

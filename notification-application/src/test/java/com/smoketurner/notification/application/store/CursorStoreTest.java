@@ -22,7 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.util.concurrent.ExecutionException;
 import org.junit.Ignore;
 import org.junit.Test;
 import com.basho.riak.client.api.RiakClient;
@@ -31,7 +30,6 @@ import com.basho.riak.client.api.commands.kv.DeleteValue;
 import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.UpdateValue;
 import com.google.common.base.Optional;
-import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 
 public class CursorStoreTest {
 
@@ -103,7 +101,7 @@ public class CursorStoreTest {
     @Test
     public void testStore() throws Exception {
         store.store(TEST_USER, CURSOR_NAME, 1L);
-        verify(client).execute(any(UpdateValue.class));
+        verify(client).executeAsync(any(UpdateValue.class));
     }
 
     @Test
@@ -147,37 +145,9 @@ public class CursorStoreTest {
     }
 
     @Test
-    public void testStoreExecutionException() throws Exception {
-        when(client.execute(any(UpdateValue.class)))
-                .thenThrow(new ExecutionException(new Exception()));
-
-        try {
-            store.store(TEST_USER, CURSOR_NAME, 1L);
-            failBecauseExceptionWasNotThrown(NotificationStoreException.class);
-        } catch (NotificationStoreException e) {
-        }
-
-        verify(client).execute(any(UpdateValue.class));
-    }
-
-    @Test
-    public void testStoreInterruptedException() throws Exception {
-        when(client.execute(any(UpdateValue.class)))
-                .thenThrow(new InterruptedException());
-
-        try {
-            store.store(TEST_USER, CURSOR_NAME, 1L);
-            failBecauseExceptionWasNotThrown(NotificationStoreException.class);
-        } catch (NotificationStoreException e) {
-        }
-
-        verify(client).execute(any(UpdateValue.class));
-    }
-
-    @Test
     public void testDelete() throws Exception {
         store.delete(TEST_USER, CURSOR_NAME);
-        verify(client).execute(any(DeleteValue.class));
+        verify(client).executeAsync(any(DeleteValue.class));
     }
 
     @Test
@@ -218,34 +188,6 @@ public class CursorStoreTest {
         } catch (IllegalArgumentException e) {
         }
         verify(client, never()).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testDeleteExecutionException() throws Exception {
-        when(client.execute(any(DeleteValue.class)))
-                .thenThrow(new ExecutionException(new Exception()));
-
-        try {
-            store.delete(TEST_USER, CURSOR_NAME);
-            failBecauseExceptionWasNotThrown(NotificationStoreException.class);
-        } catch (NotificationStoreException e) {
-        }
-
-        verify(client).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testDeleteInterruptedException() throws Exception {
-        when(client.execute(any(DeleteValue.class)))
-                .thenThrow(new InterruptedException());
-
-        try {
-            store.delete(TEST_USER, CURSOR_NAME);
-            failBecauseExceptionWasNotThrown(NotificationStoreException.class);
-        } catch (NotificationStoreException e) {
-        }
-
-        verify(client).execute(any(DeleteValue.class));
     }
 
     @Test

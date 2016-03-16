@@ -21,6 +21,7 @@ import java.util.TreeSet;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.api.Rule;
 
 public class Rollup {
 
@@ -60,7 +61,7 @@ public class Rollup {
 
             // If the notification category doesn't match any rule categories,
             // add the notification as-is to the list of rollups.
-            if (rule == null) {
+            if (rule == null || !rule.isValid()) {
                 rollups.add(notification);
             } else if (matchers.isEmpty()) {
                 // If we don't have any matchers yet, add the first one
