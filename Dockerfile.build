@@ -1,0 +1,16 @@
+FROM maven:3-jdk-8
+MAINTAINER Justin Plock <jplock@smoketurner.com>
+
+RUN mkdir -p /src/notification-application /src/notification-client /src/notification-api
+WORKDIR /src
+
+# selectively add the POM file
+ADD pom.xml /src
+ADD notification-application/pom.xml /src/notification-application
+ADD notification-api/pom.xml /src/notification-api
+ADD notification-client/pom.xml /src/notification-client
+# download all of the dependencies
+#RUN mvn verify clean --fail-never
+
+ADD . /src
+RUN mvn package -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dsource.skip=true -Ddwpackage.skip=true

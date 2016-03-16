@@ -1,15 +1,14 @@
-FROM maven:3-jdk-8
+FROM java:openjdk-8-jre-alpine
 MAINTAINER Justin Plock <jplock@smoketurner.com>
 
 LABEL name="notification" version="1.1.1-SNAPSHOT"
 
-RUN mkdir -p /src
-WORKDIR /src
-ADD . /src
-RUN mvn package -DskipTests=true
-WORKDIR notification-application
-VOLUME ["/src/notification-application"]
+RUN mkdir -p /opt
+WORKDIR /opt
+COPY ./notification.jar /opt
+COPY ./notification-application/notification.yml /opt
+VOLUME ["/opt"]
 
 EXPOSE 8080 8180
-ENTRYPOINT ["java", "-d64", "-server", "-jar", "target/notification-application-1.1.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-d64", "-server", "-jar", "notification.jar"]
 CMD ["server", "notification.yml"]
