@@ -27,7 +27,7 @@ When a user retrieves their list of notifications, the service will update the v
 
 Rollups
 -------
-The Notification service supports the concept of "rollups". In the `notification.yml` file, you can control various rollup rules for a given notification category:
+The Notification service supports the concept of "rollups" using rules. Rules are created by using the API (see below).
 
 ```
 # Roll-up Rules
@@ -170,6 +170,59 @@ Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
 ```
 
 This will remove all of the `test` user's notifications, their cursor and will always return a `204` response code.
+
+### Creating or updating a rollup rule
+
+To create or update a rollup rule, you can execute a `PUT` request specifying the category of notifications this rule applies to.
+
+```
+curl \
+-X PUT \
+-H "Content-Type: application/json" \
+-d '{"max_size": 9, "max_duration": "12 hours"}' \
+http://localhost:8080/v1/rules/new-follower -i
+
+HTTP/1.1 204 No Content
+Date: Sun, 26 Jul 2015 16:34:15 GMT
+Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
+```
+
+When retrieving notifications, any notifications with the `new-follower` category will be rolled up to a maximum of 9 notifications as long as there are no more than 12 hours between the first and last notifications.
+
+### Deleting a rollup rule
+
+```
+curl -X DELETE http://localhost:8080/v1/rules/new-follower -i
+
+HTTP/1.1 204 No Content
+Date: Sun, 26 Jul 2015 16:34:15 GMT
+Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
+```
+
+### Retrieve rollup rules
+
+```
+curl -X GET http://localhost:8080/v1/rules -i
+
+HTTP/1.1 200 OK
+Date: Sun, 26 Jul 2015 16:12:11 GMT
+Content-Type: application/json;charset=UTF-8
+Request-Id: ce32a162-483d-4c34-9524-02b7f667704f
+Cache-Control: no-cache, no-store, no-transform, must-revalidate
+Content-Length: 190
+
+{
+  "new-follower": {
+    "max_size": 3,
+    "max_duration": "12 hours"
+  },
+  "like": {
+    "max_duration": "3 hours",
+    "match_on": "message_id"
+  }
+}
+```
+
 
 Support
 -------
