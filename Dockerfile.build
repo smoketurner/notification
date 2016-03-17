@@ -5,12 +5,12 @@ RUN mkdir -p /src/notification-application /src/notification-client /src/notific
 WORKDIR /src
 
 # selectively add the POM file
-ADD pom.xml /src
-ADD notification-application/pom.xml /src/notification-application
-ADD notification-api/pom.xml /src/notification-api
-ADD notification-client/pom.xml /src/notification-client
+COPY pom.xml /src
+COPY notification-application/pom.xml /src/notification-application
+COPY notification-api/pom.xml /src/notification-api
+COPY notification-client/pom.xml /src/notification-client
 # download all of the dependencies
 #RUN mvn verify clean --fail-never
 
-ADD . /src
+COPY . /src
 RUN mvn package -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dsource.skip=true -Ddwpackage.skip=true
