@@ -15,11 +15,10 @@
  */
 package com.smoketurner.notification.application.health;
 
-import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import com.basho.riak.client.api.RiakClient;
-import com.basho.riak.client.core.RiakNode;
+import com.basho.riak.client.core.operations.PingOperation;
 import com.codahale.metrics.health.HealthCheck;
 
 public class RiakHealthCheck extends HealthCheck {
@@ -38,10 +37,13 @@ public class RiakHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {
-        final List<RiakNode> nodes = client.getRiakCluster().getNodes();
-        if (!nodes.isEmpty()) {
-            return Result.healthy();
+        final PingOperation ping = new PingOperation();
+        client.getRiakCluster().execute(ping);
+        ping.await();
+
+        if (ping.isSuccess()) {
+            return Result.healthy("Riak is healthly");
         }
-        return Result.unhealthy("No available Riak nodes");
+        return Result.unhealthy("Riak is down");
     }
 }
