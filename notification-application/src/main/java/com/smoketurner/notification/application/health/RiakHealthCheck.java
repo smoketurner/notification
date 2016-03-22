@@ -16,6 +16,7 @@
 package com.smoketurner.notification.application.health;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.core.operations.PingOperation;
@@ -39,7 +40,7 @@ public class RiakHealthCheck extends HealthCheck {
     protected Result check() throws Exception {
         final PingOperation ping = new PingOperation();
         client.getRiakCluster().execute(ping);
-        ping.await();
+        ping.await(1, TimeUnit.SECONDS);
 
         if (ping.isSuccess()) {
             return Result.healthy("Riak is healthly");
