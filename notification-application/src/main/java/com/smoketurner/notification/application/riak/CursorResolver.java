@@ -15,22 +15,38 @@
  */
 package com.smoketurner.notification.application.riak;
 
+import static com.codahale.metrics.MetricRegistry.name;
 import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.cap.ConflictResolver;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
+import com.codahale.metrics.Histogram;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.SharedMetricRegistries;
 
 public class CursorResolver implements ConflictResolver<CursorObject> {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(CursorResolver.class);
+    private final Histogram siblingCounts;
+
+    /**
+     * Constructor
+     */
+    public CursorResolver() {
+        final MetricRegistry registry = SharedMetricRegistries
+                .getOrCreate("default");
+        this.siblingCounts = registry
+                .histogram(name(CursorResolver.class, "sibling-counts"));
+    }
 
     @Override
     public CursorObject resolve(final List<CursorObject> siblings)
             throws UnresolvedConflictException {
         LOGGER.debug("Found {} siblings", siblings.size());
+        siblingCounts.update(siblings.size());
         if (siblings.size() > 1) {
             Collections.sort(siblings);
             return siblings.get(0);

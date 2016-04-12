@@ -15,6 +15,7 @@
  */
 package com.smoketurner.notification.application.riak;
 
+import static com.codahale.metrics.MetricRegistry.name;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.cap.ConflictResolver;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
+import com.codahale.metrics.Histogram;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.SharedMetricRegistries;
 import com.smoketurner.notification.api.Notification;
 
 public class NotificationListResolver
@@ -30,12 +34,24 @@ public class NotificationListResolver
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(NotificationListResolver.class);
+    private final Histogram siblingCounts;
+
+    /**
+     * Constructor
+     */
+    public NotificationListResolver() {
+        final MetricRegistry registry = SharedMetricRegistries
+                .getOrCreate("default");
+        this.siblingCounts = registry.histogram(
+                name(NotificationListResolver.class, "sibling-counts"));
+    }
 
     @Override
     public NotificationListObject resolve(
             final List<NotificationListObject> siblings)
-                    throws UnresolvedConflictException {
+            throws UnresolvedConflictException {
         LOGGER.debug("Found {} siblings", siblings.size());
+        siblingCounts.update(siblings.size());
         if (siblings.size() > 1) {
 
             final Iterator<NotificationListObject> iterator = siblings
