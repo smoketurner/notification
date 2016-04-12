@@ -13,7 +13,7 @@
 
     <properties>
         <package.name>notification</package.name>
-        <jmh.version>1.11.3</jmh.version>
+        <jmh.version>1.12</jmh.version>
     </properties>
 
     <dependencies>
