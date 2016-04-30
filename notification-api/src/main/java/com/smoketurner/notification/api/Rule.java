@@ -123,7 +123,7 @@ public final class Rule {
 
     @JsonIgnore
     public boolean isValid() {
-        return (maxSize != null || maxDuration != null || matchOn != null);
+        return maxSize != null || maxDuration != null || matchOn != null;
     }
 
     @Override

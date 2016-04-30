@@ -109,6 +109,7 @@ public final class RangeHeader {
                 try {
                     max = Integer.parseInt(second.group("max"));
                 } catch (NumberFormatException ignore) {
+                    // ignore
                 }
             }
         }

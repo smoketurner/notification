@@ -181,7 +181,7 @@ public class RuleStore {
      *            the map from Riak to convert
      * @return a map of rule objects where the key is the category
      */
-    private Map<String, Rule> getRules(@Nonnull final RiakMap map) {
+    private static Map<String, Rule> getRules(@Nonnull final RiakMap map) {
         final ImmutableMap.Builder<String, Rule> rules = ImmutableMap.builder();
 
         for (BinaryValue category : map.view().keySet()) {
@@ -272,7 +272,7 @@ public class RuleStore {
      *            Riak context from previous fetch operation
      * @return Riak Map update operation
      */
-    private MapUpdate getUpdate(@Nonnull final Rule rule,
+    private static MapUpdate getUpdate(@Nonnull final Rule rule,
             @Nonnull final Optional<Context> context) {
         final MapUpdate op = new MapUpdate();
         if (rule.getMaxSize().isPresent()) {

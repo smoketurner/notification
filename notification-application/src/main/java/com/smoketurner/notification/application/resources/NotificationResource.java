@@ -130,7 +130,7 @@ public class NotificationResource {
 
         Notification from = newest;
         boolean fromInclusive = true;
-        Notification to = oldest;
+        Notification to;
         boolean toInclusive = true;
 
         int limit = DEFAULT_LIMIT;
