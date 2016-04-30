@@ -53,8 +53,11 @@ public class RuleStore {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(RuleStore.class);
-    private static final Namespace NAMESPACE = new Namespace("maps", "rules");
-    private static final Location LOCATION = new Location(NAMESPACE, "rules");
+    private static final String BUCKET_NAME = "rules";
+    private static final Namespace NAMESPACE = new Namespace("maps",
+            BUCKET_NAME);
+    private static final Location LOCATION = new Location(NAMESPACE,
+            BUCKET_NAME);
 
     private final RiakClient client;
     private final LoadingCache<String, Map<String, Rule>> cache;
@@ -107,7 +110,7 @@ public class RuleStore {
      */
     public Map<String, Rule> fetchCached() {
         try {
-            return cache.get("rules");
+            return cache.get(BUCKET_NAME);
         } catch (ExecutionException e) {
             LOGGER.warn("Unable to fetch rules from cache, returning no rules",
                     e);
@@ -215,6 +218,9 @@ public class RuleStore {
                     break;
                 case Rule.MATCH_ON:
                     builder.withMatchOn(value);
+                    break;
+                default:
+                    // should never happen
                     break;
                 }
             }
