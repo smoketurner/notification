@@ -55,6 +55,7 @@ public class NotificationApplication
         extends Application<NotificationConfiguration> {
 
     public static void main(final String[] args) throws Exception {
+        // http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/java-dg-jvm-ttl.html
         java.security.Security.setProperty("networkaddress.cache.ttl", "60");
         new NotificationApplication().run(args);
     }
@@ -71,6 +72,7 @@ public class NotificationApplication
                 bootstrap.getConfigurationSourceProvider(),
                 new EnvironmentVariableSubstitutor(false)));
 
+        // add Swagger bundle
         bootstrap.addBundle(new SwaggerBundle<NotificationConfiguration>() {
             @Override
             protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(
