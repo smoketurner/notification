@@ -208,7 +208,6 @@ public class NotificationStore {
         final Rollup unseenRollup = new Rollup(rules);
 
         final Optional<Long> cursor = cursors.fetch(username, CURSOR_NAME);
-        final long lastSeenId = cursor.or(0L);
         if (!cursor.isPresent()) {
             LOGGER.debug("User ({}) has no cursor", username);
 
@@ -222,6 +221,7 @@ public class NotificationStore {
                     unseenRollup.rollup(setUnseenState(notifications, true)));
         }
 
+        final long lastSeenId = cursor.or(0L);
         LOGGER.debug("Last seen notification ID: {}", lastSeenId);
 
         // if the latest seen notification ID is less than the newest
@@ -402,8 +402,10 @@ public class NotificationStore {
                 return true;
             }
 
-            // then check to see if the notification is included in any rolled
-            // up notifications
+            // Check to see if the notification is included in any rolled
+            // up notifications. This code should not be hit as tryFind() is
+            // called prior to the rollups happening, but we include this here
+            // for completeness.
             final Collection<Notification> children = notification
                     .getNotifications().or(Collections.emptyList());
             if (children.isEmpty()) {
