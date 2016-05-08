@@ -16,21 +16,25 @@
 package com.smoketurner.notification.application.filter;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.PreMatching;
+import io.dropwizard.util.Duration;
 
 /**
  * This class adds an "X-Runtime" HTTP response header that includes the time
  * taken to execute the request, in seconds.
+ * 
+ * @see https://github.com/rack/rack/blob/master/lib/rack/runtime.rb
  */
 @PreMatching
 public class RuntimeFilter
         implements ContainerRequestFilter, ContainerResponseFilter {
 
+    private static final float NANOS_IN_SECOND = Duration.seconds(1)
+            .toNanoseconds();
     private static final String RUNTIME_HEADER = "X-Runtime";
     private static final String RUNTIME_PROPERTY = "com.smoketurner.notification.runtime";
 
@@ -45,9 +49,10 @@ public class RuntimeFilter
             final ContainerResponseContext response) throws IOException {
         final Long startTime = (Long) request.getProperty(RUNTIME_PROPERTY);
         if (startTime != null) {
-            final double delta = (System.nanoTime() - startTime) / 1000000000.0;
+            final float deltaSeconds = (System.nanoTime() - startTime)
+                    / NANOS_IN_SECOND;
             response.getHeaders().add(RUNTIME_HEADER,
-                    new DecimalFormat("#.#####").format(delta));
+                    String.format("%.6f", deltaSeconds));
         }
     }
 }
