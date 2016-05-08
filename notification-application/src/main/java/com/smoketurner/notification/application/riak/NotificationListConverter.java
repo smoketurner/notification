@@ -60,7 +60,7 @@ public class NotificationListConverter
 
         final NotificationListObject obj = new NotificationListObject();
         list.getNotificationList().stream()
-                .map(notification -> convert(notification))
+                .map(NotificationListConverter::convert)
                 .forEach(obj::addNotification);
         obj.deleteNotifications(list.getDeletedIdList());
         return obj;
@@ -73,7 +73,7 @@ public class NotificationListConverter
                 .newBuilder().addAllDeletedId(domainObject.getDeletedIds());
 
         domainObject.getNotifications().stream()
-                .map(notification -> convert(notification))
+                .map(NotificationListConverter::convert)
                 .forEach(builder::addNotification);
 
         final NotificationListPB list = builder.build();
