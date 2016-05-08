@@ -23,6 +23,7 @@ import com.smoketurner.notification.application.core.Rollup;
 @State(Scope.Benchmark)
 public class RollupBenchmark {
 
+    private static final String CATEGORY = "test";
     private final Rule sizeRule = Rule.builder().withMaxSize(3).build();
     private final List<Notification> notifications = new ArrayList<>(1000);
 
@@ -47,7 +48,7 @@ public class RollupBenchmark {
 
     @Benchmark
     public Stream<Notification> rollupEveryMatch() {
-        final Rollup rollup = new Rollup(ImmutableMap.of("test", sizeRule));
+        final Rollup rollup = new Rollup(ImmutableMap.of(CATEGORY, sizeRule));
         return rollup.rollup(notifications.stream());
     }
 
@@ -58,6 +59,6 @@ public class RollupBenchmark {
     }
 
     private Notification createNotification(final long id) {
-        return Notification.builder().withId(id).withCategory("test").build();
+        return Notification.builder().withId(id).withCategory(CATEGORY).build();
     }
 }
