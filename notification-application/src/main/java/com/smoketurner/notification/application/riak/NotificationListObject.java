@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
 import com.basho.riak.client.api.annotations.RiakBucketName;
@@ -102,7 +103,7 @@ public class NotificationListObject {
         return key;
     }
 
-    public TreeSet<Notification> getNotifications() {
+    public SortedSet<Notification> getNotifications() {
         return notifications;
     }
 
