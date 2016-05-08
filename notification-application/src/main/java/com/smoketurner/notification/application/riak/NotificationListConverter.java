@@ -15,7 +15,6 @@
  */
 package com.smoketurner.notification.application.riak;
 
-import java.util.Map;
 import javax.annotation.Nonnull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -60,9 +59,9 @@ public class NotificationListConverter
         }
 
         final NotificationListObject obj = new NotificationListObject();
-        for (NotificationPB notification : list.getNotificationList()) {
-            obj.addNotification(convert(notification));
-        }
+        list.getNotificationList().stream()
+                .map(notification -> convert(notification))
+                .forEach(obj::addNotification);
         obj.deleteNotifications(list.getDeletedIdList());
         return obj;
     }
@@ -72,9 +71,11 @@ public class NotificationListConverter
             @Nonnull final NotificationListObject domainObject) {
         final NotificationListPB.Builder builder = NotificationListPB
                 .newBuilder().addAllDeletedId(domainObject.getDeletedIds());
-        for (Notification notification : domainObject.getNotifications()) {
-            builder.addNotification(convert(notification));
-        }
+
+        domainObject.getNotifications().stream()
+                .map(notification -> convert(notification))
+                .forEach(builder::addNotification);
+
         final NotificationListPB list = builder.build();
 
         return new ContentAndType(BinaryValue.unsafeCreate(list.toByteArray()),
@@ -85,9 +86,9 @@ public class NotificationListConverter
             @Nonnull final NotificationPB notification) {
         final ImmutableMap.Builder<String, String> builder = ImmutableMap
                 .builder();
-        for (final Property property : notification.getPropertyList()) {
-            builder.put(property.getKey(), property.getValue());
-        }
+
+        notification.getPropertyList().forEach(property -> builder
+                .put(property.getKey(), property.getValue()));
 
         return Notification.builder().withId(notification.getId())
                 .withCategory(notification.getCategory())
@@ -105,11 +106,11 @@ public class NotificationListConverter
                 .setMessage(notification.getMessage())
                 .setCreatedAt(notification.getCreatedAt().getMillis());
 
-        for (Map.Entry<String, String> property : notification.getProperties()
-                .entrySet()) {
-            builder.addProperty(Property.newBuilder().setKey(property.getKey())
-                    .setValue(property.getValue()));
-        }
+        notification.getProperties().entrySet().stream()
+                .forEach(property -> builder.addProperty(
+                        Property.newBuilder().setKey(property.getKey())
+                                .setValue(property.getValue())));
+
         return builder.build();
     }
 }
