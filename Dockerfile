@@ -1,7 +1,7 @@
 FROM java:openjdk-8-jre-alpine
 MAINTAINER Justin Plock <jplock@smoketurner.com>
 
-LABEL name="notification" version="1.1.1-SNAPSHOT"
+LABEL name="notification" version="1.2.1-SNAPSHOT"
 
 RUN mkdir -p /opt
 WORKDIR /opt
