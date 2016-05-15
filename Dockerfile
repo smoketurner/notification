@@ -1,13 +1,18 @@
 FROM java:openjdk-8-jre-alpine
 MAINTAINER Justin Plock <jplock@smoketurner.com>
 
-LABEL name="notification" version="1.2.1-SNAPSHOT"
+ARG VERSION="1.2.1-SNAPSHOT"
 
-RUN mkdir -p /opt
-WORKDIR /opt
-COPY ./notification.jar /opt
-COPY ./notification-application/notification.yml /opt
-VOLUME ["/opt"]
+LABEL name="notification" version=$VERSION
+
+ENV DW_DATACENTER_ID 1
+ENV DW_WORKER_ID 1
+
+RUN mkdir -p /opt/notification
+WORKDIR /opt/notification
+COPY ./notification.jar /opt/notification
+COPY ./notification-application/notification.yml /opt/notification
+VOLUME ["/opt/notification"]
 
 EXPOSE 8080 8180
 ENTRYPOINT ["java", "-d64", "-server", "-jar", "notification.jar"]
