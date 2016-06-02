@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -104,7 +105,8 @@ public class RuleResource {
     public Response store(
             @ApiParam(value = "category",
                       required = true) @PathParam("category") final String category,
-            @ApiParam(value = "rule", required = true) @Valid final Rule rule) {
+            @ApiParam(value = "rule",
+                      required = true) @NotNull @Valid final Rule rule) {
 
         if (!rule.isValid()) {
             throw new NotificationException(Response.Status.BAD_REQUEST,

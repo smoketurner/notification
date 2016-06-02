@@ -421,6 +421,20 @@ public class NotificationResourceTest {
     }
 
     @Test
+    public void testStoreNull() throws Exception {
+        final Response response = resources.client()
+                .target("/v1/notifications/test")
+                .request(MediaType.APPLICATION_JSON).post(null);
+
+        verify(store, never()).store(anyString(), any(Notification.class));
+        assertThat(response.getStatus()).isEqualTo(400);
+
+        final ValidationErrorMessage msg = response
+                .readEntity(ValidationErrorMessage.class);
+        assertThat(msg.getErrors()).containsOnly("add.arg1 may not be null");
+    }
+
+    @Test
     public void testRemove() throws Exception {
         final Response response = resources.client()
                 .target("/v1/notifications/test").request().delete();

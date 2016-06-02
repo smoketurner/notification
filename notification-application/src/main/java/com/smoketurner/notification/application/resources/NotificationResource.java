@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -214,7 +215,7 @@ public class NotificationResource {
             @ApiParam(value = "username",
                       required = true) @PathParam("username") final String username,
             @ApiParam(value = "notification",
-                      required = true) @Valid final Notification notification) {
+                      required = true) @NotNull @Valid final Notification notification) {
 
         final Notification storedNotification;
         try {
