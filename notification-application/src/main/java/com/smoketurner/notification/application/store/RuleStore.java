@@ -35,6 +35,7 @@ import com.basho.riak.client.core.query.Namespace;
 import com.basho.riak.client.core.query.crdt.types.RiakMap;
 import com.basho.riak.client.core.query.crdt.types.RiakRegister;
 import com.basho.riak.client.core.util.BinaryValue;
+import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
@@ -62,10 +63,11 @@ public class RuleStore {
     private final RiakClient client;
     private final LoadingCache<String, Map<String, Rule>> cache;
 
-    // timers
+    // metrics
     private final Timer fetchTimer;
     private final Timer storeTimer;
     private final Timer deleteTimer;
+    private final Meter cacheMisses;
 
     /**
      * Constructor
@@ -85,6 +87,8 @@ public class RuleStore {
                 .timer(MetricRegistry.name(RuleStore.class, "store"));
         this.deleteTimer = registry
                 .timer(MetricRegistry.name(RuleStore.class, "delete"));
+        this.cacheMisses = registry
+                .meter(MetricRegistry.name(RuleStore.class, "cache-misses"));
 
         this.client = Objects.requireNonNull(client);
 
@@ -96,6 +100,8 @@ public class RuleStore {
                     @Override
                     public Map<String, Rule> load(String key)
                             throws NotificationStoreException {
+                        cacheMisses.mark();
+
                         // all rules are stored under a common key, so we don't
                         // need to reference it
                         return fetch().or(Collections.emptyMap());
