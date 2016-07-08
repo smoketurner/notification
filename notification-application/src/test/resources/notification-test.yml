@@ -9,6 +9,12 @@ swagger:
 
   resourcePackage: com.smoketurner.notification.application.resources
 
+# Zipkin-specific options.
+zipkin:
+
+  serviceHost: 127.0.0.1
+  collector: logging
+
 # Riak-specific options.
 riak:
 
