@@ -93,7 +93,7 @@ HTTP/1.1 201 Created
 Date: Sun, 26 Jul 2015 16:06:10 GMT
 Location: http://localhost:8080/v1/notifications/test
 Content-Type: application/json;charset=UTF-8
-Request-Id: 9a3ec8d0-1e00-47de-bb78-609a499849c4
+X-Request-Id: 9a3ec8d0-1e00-47de-bb78-609a499849c4
 Content-Length: 157
 
 {
@@ -118,7 +118,7 @@ Last-Modified: Sun, 26 Jul 2015 16:06:10 GMT
 Accept-Ranges: id
 Content-Range: id 625336317638742016..625336317638742016
 Content-Type: application/json;charset=UTF-8
-Request-Id: ce32a162-483d-4c34-9524-02b7f667704f
+X-Request-Id: ce32a162-483d-4c34-9524-02b7f667704f
 Cache-Control: no-cache, no-store, no-transform, must-revalidate
 Content-Length: 190
 
@@ -152,7 +152,7 @@ curl -X DELETE "http://localhost:8080/v1/notifications/test?ids=6253363176387420
 
 HTTP/1.1 204 No Content
 Date: Sun, 26 Jul 2015 16:34:15 GMT
-Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
+X-Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
 ```
 
 This endpoint will always return a `204` response code even if the notification ID's don't exist.
@@ -166,7 +166,7 @@ curl -X DELETE http://localhost:8080/v1/notifications/test -i
 
 HTTP/1.1 204 No Content
 Date: Sun, 26 Jul 2015 16:34:15 GMT
-Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
+X-Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
 ```
 
 This will remove all of the `test` user's notifications, their cursor and will always return a `204` response code.
@@ -184,7 +184,7 @@ http://localhost:8080/v1/rules/new-follower -i
 
 HTTP/1.1 204 No Content
 Date: Sun, 26 Jul 2015 16:34:15 GMT
-Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
+X-Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
 ```
 
 When retrieving notifications, any notifications with the `new-follower` category will be rolled up to a maximum of 9 notifications as long as there are no more than 12 hours between the first and last notifications.
@@ -196,7 +196,7 @@ curl -X DELETE http://localhost:8080/v1/rules/new-follower -i
 
 HTTP/1.1 204 No Content
 Date: Sun, 26 Jul 2015 16:34:15 GMT
-Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
+X-Request-Id: d3b446ea-08b4-4e81-9c13-06c6c372ba46
 ```
 
 ### Retrieve rollup rules
@@ -207,7 +207,7 @@ curl -X GET http://localhost:8080/v1/rules -i
 HTTP/1.1 200 OK
 Date: Sun, 26 Jul 2015 16:12:11 GMT
 Content-Type: application/json;charset=UTF-8
-Request-Id: ce32a162-483d-4c34-9524-02b7f667704f
+X-Request-Id: ce32a162-483d-4c34-9524-02b7f667704f
 Cache-Control: no-cache, no-store, no-transform, must-revalidate
 Content-Length: 190
 
