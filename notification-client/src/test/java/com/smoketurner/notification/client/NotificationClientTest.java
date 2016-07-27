@@ -19,8 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import java.util.List;
 import java.util.Optional;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -49,8 +47,6 @@ import io.dropwizard.testing.junit.DropwizardClientRule;
 public class NotificationClientTest {
 
     private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
-    private static final Validator VALIDATOR = Validation
-            .buildDefaultValidatorFactory().getValidator();
 
     @Path("/v1/notifications/{username}")
     public static class NotificationResource {
@@ -103,7 +99,7 @@ public class NotificationClientTest {
     @Before
     public void setUp() {
         final ClientConfig config = new ClientConfig();
-        config.register(new JacksonMessageBodyProvider(MAPPER, VALIDATOR));
+        config.register(new JacksonMessageBodyProvider(MAPPER));
         client = new NotificationClient(registry,
                 ClientBuilder.newClient(config), resources.baseUri());
     }

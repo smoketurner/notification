@@ -427,11 +427,12 @@ public class NotificationResourceTest {
                 .request(MediaType.APPLICATION_JSON).post(null);
 
         verify(store, never()).store(anyString(), any(Notification.class));
-        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.getStatus()).isEqualTo(422);
 
         final ValidationErrorMessage msg = response
                 .readEntity(ValidationErrorMessage.class);
-        assertThat(msg.getErrors()).containsOnly("add.arg1 may not be null");
+        assertThat(msg.getErrors())
+                .containsOnly("The request body may not be null");
     }
 
     @Test

@@ -15,7 +15,6 @@ import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.client.NotificationClient;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import io.dropwizard.jersey.validation.Validators;
 
 public class NotificationGenerator {
 
@@ -29,9 +28,8 @@ public class NotificationGenerator {
     public static void main(String[] args) throws Exception {
         final MetricRegistry registry = new MetricRegistry();
         final URI uri = UriBuilder.fromUri("http://localhost:8080").build();
-        final Client jerseyClient = new JerseyClientBuilder()
-                .register(new JacksonMessageBodyProvider(
-                        Jackson.newObjectMapper(), Validators.newValidator()))
+        final Client jerseyClient = new JerseyClientBuilder().register(
+                new JacksonMessageBodyProvider(Jackson.newObjectMapper()))
                 .build();
         final NotificationClient client = new NotificationClient(registry,
                 jerseyClient, uri);
