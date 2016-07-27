@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
@@ -41,7 +42,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
@@ -164,7 +164,7 @@ public class NotificationStore {
         }
 
         if (list == null) {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         return Optional
@@ -185,7 +185,7 @@ public class NotificationStore {
      */
     public UserNotifications splitNotifications(@Nonnull final String username,
             @Nonnull final SortedSet<Notification> notifications)
-            throws NotificationStoreException {
+                    throws NotificationStoreException {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -221,7 +221,7 @@ public class NotificationStore {
                     unseenRollup.rollup(setUnseenState(notifications, true)));
         }
 
-        final long lastSeenId = cursor.or(0L);
+        final long lastSeenId = cursor.orElse(0L);
         LOGGER.debug("Last seen notification ID: {}", lastSeenId);
 
         // if the latest seen notification ID is less than the newest
@@ -269,7 +269,7 @@ public class NotificationStore {
      */
     public Notification store(@Nonnull final String username,
             @Nonnull final Notification notification)
-            throws NotificationStoreException {
+                    throws NotificationStoreException {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -393,26 +393,32 @@ public class NotificationStore {
             @Nonnull final Iterable<Notification> notifications,
             final long id) {
 
-        return Iterables.tryFind(notifications, notification -> {
-            // first check that the ID matches
-            final Optional<Long> notificationId = notification.getId();
-            if (!notificationId.isPresent()) {
-                return false;
-            } else if (notificationId.get() == id) {
-                return true;
-            }
+        final com.google.common.base.Optional<Notification> result = Iterables
+                .tryFind(notifications, notification -> {
+                    // first check that the ID matches
+                    final Optional<Long> notificationId = notification.getId();
+                    if (!notificationId.isPresent()) {
+                        return false;
+                    } else if (notificationId.get() == id) {
+                        return true;
+                    }
 
-            // Check to see if the notification is included in any rolled
-            // up notifications. This code should not be hit as tryFind() is
-            // called prior to the rollups happening, but we include this here
-            // for completeness.
-            final Collection<Notification> children = notification
-                    .getNotifications().or(Collections.emptyList());
-            if (children.isEmpty()) {
-                return false;
-            }
-            return (tryFind(children, id)).isPresent();
-        });
+                    // Check to see if the notification is included in any
+                    // rolled up notifications. This code should not be hit as
+                    // tryFind() is called prior to the rollups happening, but
+                    // we include this here for completeness.
+                    final Collection<Notification> children = notification
+                            .getNotifications().orElse(Collections.emptyList());
+                    if (children.isEmpty()) {
+                        return false;
+                    }
+                    return (tryFind(children, id)).isPresent();
+                });
+
+        if (result.isPresent()) {
+            return Optional.of(result.get());
+        }
+        return Optional.empty();
     }
 
     /**
@@ -441,7 +447,7 @@ public class NotificationStore {
             // then check to see if the notification is included in any rolled
             // up notifications
             final Collection<Notification> children = notification
-                    .getNotifications().or(Collections.emptyList());
+                    .getNotifications().orElse(Collections.emptyList());
             if (children.isEmpty()) {
                 return false;
             }

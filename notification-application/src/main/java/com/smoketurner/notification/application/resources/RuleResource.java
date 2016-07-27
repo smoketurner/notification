@@ -17,6 +17,7 @@ package com.smoketurner.notification.application.resources;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -31,7 +32,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.JSONP;
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Optional;
 import com.smoketurner.notification.api.Rule;
 import com.smoketurner.notification.application.exceptions.NotificationException;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;

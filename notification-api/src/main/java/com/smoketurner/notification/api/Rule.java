@@ -16,6 +16,7 @@
 package com.smoketurner.notification.api;
 
 import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.concurrent.Immutable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import io.dropwizard.jackson.JsonSnakeCase;
 import io.dropwizard.util.Duration;
 
@@ -56,13 +56,13 @@ public final class Rule {
     private Rule(@JsonProperty(MAX_SIZE) final Optional<Integer> maxSize,
             @JsonProperty(MAX_DURATION) final Optional<String> maxDuration,
             @JsonProperty(MATCH_ON) final Optional<String> matchOn) {
-        this.maxSize = maxSize.orNull();
+        this.maxSize = maxSize.orElse(null);
         if (maxDuration.isPresent()) {
             this.maxDuration = Duration.parse(maxDuration.get());
         } else {
             this.maxDuration = null;
         }
-        this.matchOn = matchOn.orNull();
+        this.matchOn = matchOn.orElse(null);
     }
 
     public static Builder builder() {
@@ -92,33 +92,33 @@ public final class Rule {
         public Rule build() {
             final String duration = (maxDuration != null)
                     ? maxDuration.toString() : null;
-            return new Rule(Optional.fromNullable(maxSize),
-                    Optional.fromNullable(duration),
-                    Optional.fromNullable(matchOn));
+            return new Rule(Optional.ofNullable(maxSize),
+                    Optional.ofNullable(duration),
+                    Optional.ofNullable(matchOn));
         }
     }
 
     @JsonProperty(MAX_SIZE)
     public Optional<Integer> getMaxSize() {
-        return Optional.fromNullable(maxSize);
+        return Optional.ofNullable(maxSize);
     }
 
     @JsonIgnore
     public Optional<Duration> getMaxDuration() {
-        return Optional.fromNullable(maxDuration);
+        return Optional.ofNullable(maxDuration);
     }
 
     @JsonProperty(MAX_DURATION)
     public Optional<String> getMaxDurationAsString() {
         if (maxDuration == null) {
-            return Optional.absent();
+            return Optional.empty();
         }
         return Optional.of(maxDuration.toString());
     }
 
     @JsonProperty(MATCH_ON)
     public Optional<String> getMatchOn() {
-        return Optional.fromNullable(matchOn);
+        return Optional.ofNullable(matchOn);
     }
 
     @JsonIgnore

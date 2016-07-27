@@ -18,6 +18,7 @@ package com.smoketurner.notification.application.store;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.slf4j.Logger;
@@ -39,7 +40,6 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -104,7 +104,7 @@ public class RuleStore {
 
                         // all rules are stored under a common key, so we don't
                         // need to reference it
-                        return fetch().or(Collections.emptyMap());
+                        return fetch().orElse(Collections.emptyMap());
                     }
                 });
     }
@@ -145,7 +145,7 @@ public class RuleStore {
 
             final RiakMap map = response.getDatatype();
             if (map == null) {
-                return Optional.absent();
+                return Optional.empty();
             }
             return Optional.of(getRules(map));
         } catch (ExecutionException e) {
@@ -172,7 +172,7 @@ public class RuleStore {
 
         try (Timer.Context context = fetchTimer.time()) {
             final FetchMap.Response response = client.execute(fetchMap);
-            return Optional.fromNullable(response.getContext());
+            return Optional.ofNullable(response.getContext());
         } catch (ExecutionException e) {
             LOGGER.error("Unable to fetch key: " + LOCATION, e);
             throw new NotificationStoreException(e);

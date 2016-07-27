@@ -55,8 +55,8 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
         this.rule = Objects.requireNonNull(rule);
         this.notification = Objects.requireNonNull(notification);
 
-        this.maxSize = rule.getMaxSize().or(0);
-        this.matchOn = rule.getMatchOn().orNull();
+        this.maxSize = rule.getMaxSize().orElse(0);
+        this.matchOn = rule.getMatchOn().orElse(null);
         if (matchOn != null) {
             this.matchValue = notification.getProperties().get(matchOn);
         } else {

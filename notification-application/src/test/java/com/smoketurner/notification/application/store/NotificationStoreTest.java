@@ -23,12 +23,12 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import com.basho.riak.client.api.RiakClient;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
@@ -138,7 +138,7 @@ public class NotificationStoreTest {
     @Test
     public void testSplitNotificationsNoCursor() throws Exception {
         when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME))
-                .thenReturn(Optional.<Long> absent());
+                .thenReturn(Optional.<Long> empty());
 
         final Notification n1 = createNotification(1);
 
@@ -247,7 +247,7 @@ public class NotificationStoreTest {
         assertThat(NotificationStore.tryFind(notifications, 10))
                 .isEqualTo(Optional.of(createNotification(10)));
         assertThat(NotificationStore.tryFind(notifications, 12))
-                .isEqualTo(Optional.<Notification> absent());
+                .isEqualTo(Optional.<Notification> empty());
         assertThat(NotificationStore.tryFind(notifications, 100))
                 .isEqualTo(Optional.of(n100));
         assertThat(NotificationStore.tryFind(notifications, 101))
@@ -255,7 +255,7 @@ public class NotificationStoreTest {
         assertThat(NotificationStore.tryFind(notifications, 102))
                 .isEqualTo(Optional.of(n100));
         assertThat(NotificationStore.tryFind(notifications, 103))
-                .isEqualTo(Optional.<Notification> absent());
+                .isEqualTo(Optional.<Notification> empty());
         assertThat(NotificationStore.tryFind(notifications, 150))
                 .isEqualTo(Optional.of(n150));
     }

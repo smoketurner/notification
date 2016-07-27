@@ -24,6 +24,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -36,7 +37,6 @@ import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
@@ -278,7 +278,7 @@ public class NotificationResourceTest {
     @Test
     public void testFetchNotFound() throws Exception {
         when(store.fetch("test"))
-                .thenReturn(Optional.<UserNotifications> absent());
+                .thenReturn(Optional.<UserNotifications> empty());
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")

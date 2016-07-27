@@ -16,6 +16,7 @@
 package com.smoketurner.notification.application.store;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.slf4j.Logger;
@@ -32,7 +33,6 @@ import com.basho.riak.client.core.query.Namespace;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.riak.CursorObject;
@@ -106,7 +106,7 @@ public class CursorStore {
      */
     public Optional<Long> fetch(@Nonnull final String username,
             @Nonnull final String cursorName)
-            throws NotificationStoreException {
+                    throws NotificationStoreException {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -138,7 +138,7 @@ public class CursorStore {
         }
 
         if (cursor == null) {
-            return Optional.absent();
+            return Optional.empty();
         }
         return Optional.of(cursor.getValue());
     }

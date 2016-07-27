@@ -25,6 +25,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.util.Map;
+import java.util.Optional;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
@@ -34,7 +35,6 @@ import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.smoketurner.notification.api.Rule;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
@@ -102,7 +102,7 @@ public class RuleResourceTest {
 
     @Test
     public void testFetchNotFound() throws Exception {
-        when(store.fetch()).thenReturn(Optional.absent());
+        when(store.fetch()).thenReturn(Optional.empty());
 
         final Response response = resources.client().target("/v1/rules")
                 .request(MediaType.APPLICATION_JSON).get();

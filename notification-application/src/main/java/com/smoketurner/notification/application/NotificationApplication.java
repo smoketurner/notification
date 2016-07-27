@@ -18,8 +18,6 @@ package com.smoketurner.notification.application;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.ConflictResolverFactory;
 import com.basho.riak.client.api.convert.ConverterFactory;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.SharedMetricRegistries;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ge.snowizard.core.IdWorker;
 import com.smoketurner.dropwizard.riak.config.RiakConfiguration;
@@ -100,9 +98,6 @@ public class NotificationApplication
 
         // set up zipkin tracing
         configuration.getZipkin().build(environment);
-
-        final MetricRegistry registry = environment.metrics();
-        SharedMetricRegistries.add("default", registry);
 
         // returns all DateTime objects as ISO8601 strings
         environment.getObjectMapper().configure(

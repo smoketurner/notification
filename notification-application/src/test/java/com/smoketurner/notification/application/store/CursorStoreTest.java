@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.util.Optional;
 import org.junit.Ignore;
 import org.junit.Test;
 import com.basho.riak.client.api.RiakClient;
@@ -29,7 +30,6 @@ import com.basho.riak.client.api.commands.buckets.StoreBucketProperties;
 import com.basho.riak.client.api.commands.kv.DeleteValue;
 import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.UpdateValue;
-import com.google.common.base.Optional;
 
 public class CursorStoreTest {
 
