@@ -30,7 +30,7 @@ import io.dropwizard.util.Duration;
 @Immutable
 @JsonSnakeCase
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class Rule {
 
     public static final String MAX_SIZE = "max_size";

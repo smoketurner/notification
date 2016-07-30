@@ -6,6 +6,7 @@ snowizard:
 
   datacenterId: ${DW_DATACENTER_ID:-1}
   workerId: ${DW_WORKER_ID:-1}
+  enabled: true
 
 # Swagger-specific options.
 swagger:

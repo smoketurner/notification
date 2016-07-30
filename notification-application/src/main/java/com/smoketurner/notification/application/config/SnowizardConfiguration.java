@@ -19,7 +19,6 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.codahale.metrics.Gauge;
@@ -37,19 +36,16 @@ public class SnowizardConfiguration {
 
     @Min(1)
     @Max(31)
-    @NotNull
-    private Integer datacenterId;
+    private int datacenterId;
 
     @Min(1)
     @Max(31)
-    @NotNull
-    private Integer workerId;
+    private int workerId;
 
-    @NotNull
-    private Boolean enabled = Boolean.FALSE;
+    private boolean enabled = false;
 
     @JsonProperty
-    public Integer getDatacenterId() {
+    public int getDatacenterId() {
         return datacenterId;
     }
 
@@ -59,7 +55,7 @@ public class SnowizardConfiguration {
     }
 
     @JsonProperty
-    public Integer getWorkerId() {
+    public int getWorkerId() {
         return workerId;
     }
 

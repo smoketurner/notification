@@ -40,7 +40,7 @@ import io.dropwizard.jackson.JsonSnakeCase;
 @Immutable
 @JsonSnakeCase
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class Notification implements Comparable<Notification> {
 
     private final Long id;
