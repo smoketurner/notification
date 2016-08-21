@@ -14,5 +14,3 @@ dependency-reduced-pom.xml
 *.backup
 terraform.tfvars
 insecure-deployer*
-.ottoid
-.otto
