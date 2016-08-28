@@ -106,7 +106,7 @@ public class CursorStore {
      */
     public Optional<Long> fetch(@Nonnull final String username,
             @Nonnull final String cursorName)
-                    throws NotificationStoreException {
+            throws NotificationStoreException {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -124,6 +124,9 @@ public class CursorStore {
         final FetchValue fv = new FetchValue.Builder(location).build();
         try (Timer.Context context = fetchTimer.time()) {
             final FetchValue.Response response = client.execute(fv);
+            if (response.isNotFound()) {
+                return Optional.empty();
+            }
             cursor = response.getValue(CursorObject.class);
         } catch (UnresolvedConflictException e) {
             LOGGER.error("Unable to resolve siblings for key: " + location, e);

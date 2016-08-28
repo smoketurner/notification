@@ -95,8 +95,8 @@ public class NotificationListObject {
         deletedIds.add(id);
     }
 
-    public void deleteNotifications(final Collection<Long> deletedIds) {
-        this.deletedIds.addAll(deletedIds);
+    public void deleteNotifications(final Collection<Long> ids) {
+        deletedIds.addAll(ids);
     }
 
     public String getKey() {

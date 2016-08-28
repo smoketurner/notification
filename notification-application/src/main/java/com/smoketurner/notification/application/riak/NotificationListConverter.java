@@ -82,7 +82,7 @@ public class NotificationListConverter
                 ProtocolBufferMediaType.APPLICATION_PROTOBUF);
     }
 
-    public static Notification convert(
+    private static Notification convert(
             @Nonnull final NotificationPB notification) {
         final ImmutableMap.Builder<String, String> builder = ImmutableMap
                 .builder();
@@ -98,7 +98,7 @@ public class NotificationListConverter
                 .withProperties(builder.build()).build();
     }
 
-    public static NotificationPB convert(
+    private static NotificationPB convert(
             @Nonnull final Notification notification) {
         final NotificationPB.Builder builder = NotificationPB.newBuilder()
                 .setId(notification.getId().get())

@@ -150,6 +150,9 @@ public class NotificationStore {
         final FetchValue fv = new FetchValue.Builder(location).build();
         try (Timer.Context context = fetchTimer.time()) {
             final FetchValue.Response response = client.execute(fv);
+            if (response.isNotFound()) {
+                return Optional.empty();
+            }
             list = response.getValue(NotificationListObject.class);
         } catch (UnresolvedConflictException e) {
             LOGGER.error("Unable to resolve siblings for key: " + location, e);
@@ -185,7 +188,7 @@ public class NotificationStore {
      */
     public UserNotifications splitNotifications(@Nonnull final String username,
             @Nonnull final SortedSet<Notification> notifications)
-                    throws NotificationStoreException {
+            throws NotificationStoreException {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
@@ -269,7 +272,7 @@ public class NotificationStore {
      */
     public Notification store(@Nonnull final String username,
             @Nonnull final Notification notification)
-                    throws NotificationStoreException {
+            throws NotificationStoreException {
 
         Objects.requireNonNull(username);
         Preconditions.checkArgument(!username.isEmpty(),
