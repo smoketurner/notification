@@ -31,26 +31,17 @@ riak:
 # HTTP-specific options.
 server:
 
-  applicationConnectors:
-    - type: http
-      port: 8080
-  
-  adminConnectors:
-    - type: http
-      port: 8180
+  type: simple
+  applicationContextPath: /
+  connector:
+    type: http
+    port: 8080
 
   requestLog:
     appenders:
       - type: console
         timeZone: UTC
         target: stdout
-#      - type: file
-#        currentLogFilename: /var/log/notification/requests.log
-#        threshold: ALL
-#        archive: true
-#        archivedLogFilenamePattern: /var/log/notification/requests-%d.log
-#        archivedFileCount: 5
-#        timeZone: UTC
 
 logging:
   level: INFO
@@ -61,10 +52,3 @@ logging:
     - type: console
       timeZone: UTC
       target: stdout
-#    - type: file
-#      currentLogFilename: /var/log/notification/app.log
-#      threshold: ALL
-#      archive: true
-#      archivedLogFilenamePattern: /var/log/notification/app-%d.log
-#      archivedFileCount: 5
-#      timeZone: UTC

@@ -62,4 +62,16 @@ public class RuleTest {
         } catch (JsonMappingException e) {
         }
     }
+
+    @Test
+    public void testIsValidMatchOn() throws Exception {
+        Rule rule = Rule.builder().build();
+        assertThat(rule.isValid()).isFalse();
+
+        rule = Rule.builder().withMatchOn(null).build();
+        assertThat(rule.isValid()).isFalse();
+
+        rule = Rule.builder().withMatchOn("").build();
+        assertThat(rule.isValid()).isTrue();
+    }
 }
