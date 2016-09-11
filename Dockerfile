@@ -15,7 +15,7 @@ ENV DW_WORKER_ID 1
 WORKDIR /app
 COPY . .
 
-RUN apk add --no-cache curl openjdk8 && \
+RUN apk add --no-cache curl openjdk8="$JAVA_ALPINE_VERSION" && \
     curl http://mirrors.sonic.net/apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz | tar -zx && \
     mv apache-maven-3.3.9 /usr/lib/mvn && \
     # build the application into a single JAR, including dependencies
