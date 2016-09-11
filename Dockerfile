@@ -30,4 +30,4 @@ RUN apk add --no-cache curl openjdk8="$JAVA_ALPINE_VERSION" && \
     rm -rf notification-application/target && \
     apk del openjdk8
 
-CMD java -Ddw.server.connector.port=$PORT -jar app.jar server config.yml
+CMD java $JAVA_OPTS -Ddw.server.connector.port=$PORT -jar app.jar server config.yml
