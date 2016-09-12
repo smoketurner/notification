@@ -6,768 +6,111 @@ package com.smoketurner.notification.application.protos;
 public final class NotificationProtos {
   private NotificationProtos() {}
   public static void registerAllExtensions(
+      com.google.protobuf.ExtensionRegistryLite registry) {
+  }
+
+  public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (com.google.protobuf.ExtensionRegistryLite) registry);
   }
-  public interface PropertyOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:notification.Property)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>required string key = 1;</code>
-     */
-    boolean hasKey();
-    /**
-     * <code>required string key = 1;</code>
-     */
-    java.lang.String getKey();
-    /**
-     * <code>required string key = 1;</code>
-     */
-    com.google.protobuf.ByteString
-        getKeyBytes();
-
-    /**
-     * <code>required string value = 2;</code>
-     */
-    boolean hasValue();
-    /**
-     * <code>required string value = 2;</code>
-     */
-    java.lang.String getValue();
-    /**
-     * <code>required string value = 2;</code>
-     */
-    com.google.protobuf.ByteString
-        getValueBytes();
-  }
-  /**
-   * Protobuf type {@code notification.Property}
-   */
-  public static final class Property extends
-      com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:notification.Property)
-      PropertyOrBuilder {
-    // Use Property.newBuilder() to construct.
-    private Property(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
-      super(builder);
-      this.unknownFields = builder.getUnknownFields();
-    }
-    private Property(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final Property defaultInstance;
-    public static Property getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public Property getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
-      return this.unknownFields;
-    }
-    private Property(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 10: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000001;
-              key_ = bs;
-              break;
-            }
-            case 18: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000002;
-              value_ = bs;
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_Property_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_Property_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              com.smoketurner.notification.application.protos.NotificationProtos.Property.class, com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<Property> PARSER =
-        new com.google.protobuf.AbstractParser<Property>() {
-      public Property parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Property(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<Property> getParserForType() {
-      return PARSER;
-    }
-
-    private int bitField0_;
-    public static final int KEY_FIELD_NUMBER = 1;
-    private java.lang.Object key_;
-    /**
-     * <code>required string key = 1;</code>
-     */
-    public boolean hasKey() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>required string key = 1;</code>
-     */
-    public java.lang.String getKey() {
-      java.lang.Object ref = key_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          key_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string key = 1;</code>
-     */
-    public com.google.protobuf.ByteString
-        getKeyBytes() {
-      java.lang.Object ref = key_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        key_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int VALUE_FIELD_NUMBER = 2;
-    private java.lang.Object value_;
-    /**
-     * <code>required string value = 2;</code>
-     */
-    public boolean hasValue() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>required string value = 2;</code>
-     */
-    public java.lang.String getValue() {
-      java.lang.Object ref = value_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          value_ = s;
-        }
-        return s;
-      }
-    }
-    /**
-     * <code>required string value = 2;</code>
-     */
-    public com.google.protobuf.ByteString
-        getValueBytes() {
-      java.lang.Object ref = value_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        value_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    private void initFields() {
-      key_ = "";
-      value_ = "";
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      if (!hasKey()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasValue()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, getKeyBytes());
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getValueBytes());
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, getKeyBytes());
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, getValueBytes());
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
-    }
-
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
-    }
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
-    }
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static com.smoketurner.notification.application.protos.NotificationProtos.Property parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.smoketurner.notification.application.protos.NotificationProtos.Property prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code notification.Property}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:notification.Property)
-        com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_Property_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_Property_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                com.smoketurner.notification.application.protos.NotificationProtos.Property.class, com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder.class);
-      }
-
-      // Construct using com.smoketurner.notification.application.protos.NotificationProtos.Property.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-        }
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-
-      public Builder clear() {
-        super.clear();
-        key_ = "";
-        bitField0_ = (bitField0_ & ~0x00000001);
-        value_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
-        return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_Property_descriptor;
-      }
-
-      public com.smoketurner.notification.application.protos.NotificationProtos.Property getDefaultInstanceForType() {
-        return com.smoketurner.notification.application.protos.NotificationProtos.Property.getDefaultInstance();
-      }
-
-      public com.smoketurner.notification.application.protos.NotificationProtos.Property build() {
-        com.smoketurner.notification.application.protos.NotificationProtos.Property result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public com.smoketurner.notification.application.protos.NotificationProtos.Property buildPartial() {
-        com.smoketurner.notification.application.protos.NotificationProtos.Property result = new com.smoketurner.notification.application.protos.NotificationProtos.Property(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
-        result.key_ = key_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
-        result.value_ = value_;
-        result.bitField0_ = to_bitField0_;
-        onBuilt();
-        return result;
-      }
-
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.smoketurner.notification.application.protos.NotificationProtos.Property) {
-          return mergeFrom((com.smoketurner.notification.application.protos.NotificationProtos.Property)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(com.smoketurner.notification.application.protos.NotificationProtos.Property other) {
-        if (other == com.smoketurner.notification.application.protos.NotificationProtos.Property.getDefaultInstance()) return this;
-        if (other.hasKey()) {
-          bitField0_ |= 0x00000001;
-          key_ = other.key_;
-          onChanged();
-        }
-        if (other.hasValue()) {
-          bitField0_ |= 0x00000002;
-          value_ = other.value_;
-          onChanged();
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        if (!hasKey()) {
-          
-          return false;
-        }
-        if (!hasValue()) {
-          
-          return false;
-        }
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        com.smoketurner.notification.application.protos.NotificationProtos.Property parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.smoketurner.notification.application.protos.NotificationProtos.Property) e.getUnfinishedMessage();
-          throw e;
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-      private int bitField0_;
-
-      private java.lang.Object key_ = "";
-      /**
-       * <code>required string key = 1;</code>
-       */
-      public boolean hasKey() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>required string key = 1;</code>
-       */
-      public java.lang.String getKey() {
-        java.lang.Object ref = key_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            key_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>required string key = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getKeyBytes() {
-        java.lang.Object ref = key_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          key_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>required string key = 1;</code>
-       */
-      public Builder setKey(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        key_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required string key = 1;</code>
-       */
-      public Builder clearKey() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        key_ = getDefaultInstance().getKey();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required string key = 1;</code>
-       */
-      public Builder setKeyBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-        key_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object value_ = "";
-      /**
-       * <code>required string value = 2;</code>
-       */
-      public boolean hasValue() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>required string value = 2;</code>
-       */
-      public java.lang.String getValue() {
-        java.lang.Object ref = value_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            value_ = s;
-          }
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <code>required string value = 2;</code>
-       */
-      public com.google.protobuf.ByteString
-          getValueBytes() {
-        java.lang.Object ref = value_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          value_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>required string value = 2;</code>
-       */
-      public Builder setValue(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        value_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required string value = 2;</code>
-       */
-      public Builder clearValue() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        value_ = getDefaultInstance().getValue();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required string value = 2;</code>
-       */
-      public Builder setValueBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        value_ = value;
-        onChanged();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:notification.Property)
-    }
-
-    static {
-      defaultInstance = new Property(true);
-      defaultInstance.initFields();
-    }
-
-    // @@protoc_insertion_point(class_scope:notification.Property)
-  }
-
   public interface NotificationPBOrBuilder extends
       // @@protoc_insertion_point(interface_extends:notification.NotificationPB)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required int64 id = 1;</code>
-     */
-    boolean hasId();
-    /**
-     * <code>required int64 id = 1;</code>
+     * <code>optional int64 id = 1;</code>
      */
     long getId();
 
     /**
-     * <code>required string category = 2;</code>
-     */
-    boolean hasCategory();
-    /**
-     * <code>required string category = 2;</code>
+     * <code>optional string category = 2;</code>
      */
     java.lang.String getCategory();
     /**
-     * <code>required string category = 2;</code>
+     * <code>optional string category = 2;</code>
      */
     com.google.protobuf.ByteString
         getCategoryBytes();
 
     /**
-     * <code>required string message = 3;</code>
-     */
-    boolean hasMessage();
-    /**
-     * <code>required string message = 3;</code>
+     * <code>optional string message = 3;</code>
      */
     java.lang.String getMessage();
     /**
-     * <code>required string message = 3;</code>
+     * <code>optional string message = 3;</code>
      */
     com.google.protobuf.ByteString
         getMessageBytes();
 
     /**
-     * <code>required int64 created_at = 4;</code>
-     */
-    boolean hasCreatedAt();
-    /**
-     * <code>required int64 created_at = 4;</code>
+     * <code>optional int64 created_at = 4;</code>
      */
     long getCreatedAt();
 
     /**
-     * <code>repeated .notification.Property property = 5;</code>
-     */
-    java.util.List<com.smoketurner.notification.application.protos.NotificationProtos.Property> 
-        getPropertyList();
-    /**
-     * <code>repeated .notification.Property property = 5;</code>
-     */
-    com.smoketurner.notification.application.protos.NotificationProtos.Property getProperty(int index);
-    /**
-     * <code>repeated .notification.Property property = 5;</code>
+     * <code>map&lt;string, string&gt; property = 5;</code>
      */
     int getPropertyCount();
     /**
-     * <code>repeated .notification.Property property = 5;</code>
+     * <code>map&lt;string, string&gt; property = 5;</code>
      */
-    java.util.List<? extends com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder> 
-        getPropertyOrBuilderList();
+    boolean containsProperty(
+        java.lang.String key);
     /**
-     * <code>repeated .notification.Property property = 5;</code>
+     * Use {@link #getPropertyMap()} instead.
      */
-    com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder getPropertyOrBuilder(
-        int index);
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, java.lang.String>
+    getProperty();
+    /**
+     * <code>map&lt;string, string&gt; property = 5;</code>
+     */
+    java.util.Map<java.lang.String, java.lang.String>
+    getPropertyMap();
+    /**
+     * <code>map&lt;string, string&gt; property = 5;</code>
+     */
+
+    java.lang.String getPropertyOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue);
+    /**
+     * <code>map&lt;string, string&gt; property = 5;</code>
+     */
+
+    java.lang.String getPropertyOrThrow(
+        java.lang.String key);
   }
   /**
    * Protobuf type {@code notification.NotificationPB}
    */
-  public static final class NotificationPB extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class NotificationPB extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:notification.NotificationPB)
       NotificationPBOrBuilder {
     // Use NotificationPB.newBuilder() to construct.
-    private NotificationPB(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private NotificationPB(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private NotificationPB(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final NotificationPB defaultInstance;
-    public static NotificationPB getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public NotificationPB getDefaultInstanceForType() {
-      return defaultInstance;
+    private NotificationPB() {
+      id_ = 0L;
+      category_ = "";
+      message_ = "";
+      createdAt_ = 0L;
     }
 
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
-      return this.unknownFields;
+    getUnknownFields() {
+      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
     private NotificationPB(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -777,40 +120,43 @@ public final class NotificationProtos {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!input.skipField(tag)) {
                 done = true;
               }
               break;
             }
             case 8: {
-              bitField0_ |= 0x00000001;
+
               id_ = input.readInt64();
               break;
             }
             case 18: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000002;
-              category_ = bs;
+              java.lang.String s = input.readStringRequireUtf8();
+
+              category_ = s;
               break;
             }
             case 26: {
-              com.google.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000004;
-              message_ = bs;
+              java.lang.String s = input.readStringRequireUtf8();
+
+              message_ = s;
               break;
             }
             case 32: {
-              bitField0_ |= 0x00000008;
+
               createdAt_ = input.readInt64();
               break;
             }
             case 42: {
               if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-                property_ = new java.util.ArrayList<com.smoketurner.notification.application.protos.NotificationProtos.Property>();
+                property_ = com.google.protobuf.MapField.newMapField(
+                    PropertyDefaultEntryHolder.defaultEntry);
                 mutable_bitField0_ |= 0x00000010;
               }
-              property_.add(input.readMessage(com.smoketurner.notification.application.protos.NotificationProtos.Property.PARSER, extensionRegistry));
+              com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+              property = input.readMessage(
+                  PropertyDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+              property_.getMutableMap().put(property.getKey(), property.getValue());
               break;
             }
           }
@@ -819,12 +165,8 @@ public final class NotificationProtos {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-          property_ = java.util.Collections.unmodifiableList(property_);
-        }
-        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -833,54 +175,38 @@ public final class NotificationProtos {
       return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_NotificationPB_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    @SuppressWarnings({"rawtypes"})
+    protected com.google.protobuf.MapField internalGetMapField(
+        int number) {
+      switch (number) {
+        case 5:
+          return internalGetProperty();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_NotificationPB_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB.class, com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<NotificationPB> PARSER =
-        new com.google.protobuf.AbstractParser<NotificationPB>() {
-      public NotificationPB parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new NotificationPB(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<NotificationPB> getParserForType() {
-      return PARSER;
-    }
-
     private int bitField0_;
     public static final int ID_FIELD_NUMBER = 1;
     private long id_;
     /**
-     * <code>required int64 id = 1;</code>
-     */
-    public boolean hasId() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>required int64 id = 1;</code>
+     * <code>optional int64 id = 1;</code>
      */
     public long getId() {
       return id_;
     }
 
     public static final int CATEGORY_FIELD_NUMBER = 2;
-    private java.lang.Object category_;
+    private volatile java.lang.Object category_;
     /**
-     * <code>required string category = 2;</code>
-     */
-    public boolean hasCategory() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>required string category = 2;</code>
+     * <code>optional string category = 2;</code>
      */
     public java.lang.String getCategory() {
       java.lang.Object ref = category_;
@@ -890,14 +216,12 @@ public final class NotificationProtos {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          category_ = s;
-        }
+        category_ = s;
         return s;
       }
     }
     /**
-     * <code>required string category = 2;</code>
+     * <code>optional string category = 2;</code>
      */
     public com.google.protobuf.ByteString
         getCategoryBytes() {
@@ -914,15 +238,9 @@ public final class NotificationProtos {
     }
 
     public static final int MESSAGE_FIELD_NUMBER = 3;
-    private java.lang.Object message_;
+    private volatile java.lang.Object message_;
     /**
-     * <code>required string message = 3;</code>
-     */
-    public boolean hasMessage() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>required string message = 3;</code>
+     * <code>optional string message = 3;</code>
      */
     public java.lang.String getMessage() {
       java.lang.Object ref = message_;
@@ -932,14 +250,12 @@ public final class NotificationProtos {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        if (bs.isValidUtf8()) {
-          message_ = s;
-        }
+        message_ = s;
         return s;
       }
     }
     /**
-     * <code>required string message = 3;</code>
+     * <code>optional string message = 3;</code>
      */
     public com.google.protobuf.ByteString
         getMessageBytes() {
@@ -958,149 +274,205 @@ public final class NotificationProtos {
     public static final int CREATED_AT_FIELD_NUMBER = 4;
     private long createdAt_;
     /**
-     * <code>required int64 created_at = 4;</code>
-     */
-    public boolean hasCreatedAt() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>required int64 created_at = 4;</code>
+     * <code>optional int64 created_at = 4;</code>
      */
     public long getCreatedAt() {
       return createdAt_;
     }
 
     public static final int PROPERTY_FIELD_NUMBER = 5;
-    private java.util.List<com.smoketurner.notification.application.protos.NotificationProtos.Property> property_;
-    /**
-     * <code>repeated .notification.Property property = 5;</code>
-     */
-    public java.util.List<com.smoketurner.notification.application.protos.NotificationProtos.Property> getPropertyList() {
+    private static final class PropertyDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.String, java.lang.String> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.String, java.lang.String>newDefaultInstance(
+                  com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_NotificationPB_PropertyEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "");
+    }
+    private com.google.protobuf.MapField<
+        java.lang.String, java.lang.String> property_;
+    private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+    internalGetProperty() {
+      if (property_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            PropertyDefaultEntryHolder.defaultEntry);
+      }
       return property_;
-    }
-    /**
-     * <code>repeated .notification.Property property = 5;</code>
-     */
-    public java.util.List<? extends com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder> 
-        getPropertyOrBuilderList() {
-      return property_;
-    }
-    /**
-     * <code>repeated .notification.Property property = 5;</code>
-     */
-    public int getPropertyCount() {
-      return property_.size();
-    }
-    /**
-     * <code>repeated .notification.Property property = 5;</code>
-     */
-    public com.smoketurner.notification.application.protos.NotificationProtos.Property getProperty(int index) {
-      return property_.get(index);
-    }
-    /**
-     * <code>repeated .notification.Property property = 5;</code>
-     */
-    public com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder getPropertyOrBuilder(
-        int index) {
-      return property_.get(index);
     }
 
-    private void initFields() {
-      id_ = 0L;
-      category_ = "";
-      message_ = "";
-      createdAt_ = 0L;
-      property_ = java.util.Collections.emptyList();
+    public int getPropertyCount() {
+      return internalGetProperty().getMap().size();
     }
+    /**
+     * <code>map&lt;string, string&gt; property = 5;</code>
+     */
+
+    public boolean containsProperty(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      return internalGetProperty().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getPropertyMap()} instead.
+     */
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String> getProperty() {
+      return getPropertyMap();
+    }
+    /**
+     * <code>map&lt;string, string&gt; property = 5;</code>
+     */
+
+    public java.util.Map<java.lang.String, java.lang.String> getPropertyMap() {
+      return internalGetProperty().getMap();
+    }
+    /**
+     * <code>map&lt;string, string&gt; property = 5;</code>
+     */
+
+    public java.lang.String getPropertyOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetProperty().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, string&gt; property = 5;</code>
+     */
+
+    public java.lang.String getPropertyOrThrow(
+        java.lang.String key) {
+      if (key == null) { throw new java.lang.NullPointerException(); }
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetProperty().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasCategory()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasMessage()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasCreatedAt()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      for (int i = 0; i < getPropertyCount(); i++) {
-        if (!getProperty(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       memoizedIsInitialized = 1;
       return true;
     }
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (id_ != 0L) {
         output.writeInt64(1, id_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getCategoryBytes());
+      if (!getCategoryBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, category_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, getMessageBytes());
+      if (!getMessageBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, message_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (createdAt_ != 0L) {
         output.writeInt64(4, createdAt_);
       }
-      for (int i = 0; i < property_.size(); i++) {
-        output.writeMessage(5, property_.get(i));
+      for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
+           : internalGetProperty().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+        property = PropertyDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        output.writeMessage(5, property);
       }
-      getUnknownFields().writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      if (id_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(1, id_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, getCategoryBytes());
+      if (!getCategoryBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, category_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, getMessageBytes());
+      if (!getMessageBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, message_);
       }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      if (createdAt_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(4, createdAt_);
       }
-      for (int i = 0; i < property_.size(); i++) {
+      for (java.util.Map.Entry<java.lang.String, java.lang.String> entry
+           : internalGetProperty().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.String, java.lang.String>
+        property = PropertyDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, property_.get(i));
+            .computeMessageSize(5, property);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      memoizedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB)) {
+        return super.equals(obj);
+      }
+      com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB other = (com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB) obj;
+
+      boolean result = true;
+      result = result && (getId()
+          == other.getId());
+      result = result && getCategory()
+          .equals(other.getCategory());
+      result = result && getMessage()
+          .equals(other.getMessage());
+      result = result && (getCreatedAt()
+          == other.getCreatedAt());
+      result = result && internalGetProperty().equals(
+          other.internalGetProperty());
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptorForType().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getId());
+      hash = (37 * hash) + CATEGORY_FIELD_NUMBER;
+      hash = (53 * hash) + getCategory().hashCode();
+      hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
+      hash = (53 * hash) + getMessage().hashCode();
+      hash = (37 * hash) + CREATED_AT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getCreatedAt());
+      if (!internalGetProperty().getMap().isEmpty()) {
+        hash = (37 * hash) + PROPERTY_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetProperty().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
     }
 
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB parseFrom(
@@ -1126,46 +498,57 @@ public final class NotificationProtos {
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -1173,7 +556,7 @@ public final class NotificationProtos {
      * Protobuf type {@code notification.NotificationPB}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:notification.NotificationPB)
         com.smoketurner.notification.application.protos.NotificationProtos.NotificationPBOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -1181,7 +564,29 @@ public final class NotificationProtos {
         return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_NotificationPB_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMapField(
+          int number) {
+        switch (number) {
+          case 5:
+            return internalGetProperty();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapField internalGetMutableMapField(
+          int number) {
+        switch (number) {
+          case 5:
+            return internalGetMutableProperty();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_NotificationPB_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -1194,40 +599,27 @@ public final class NotificationProtos {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          getPropertyFieldBuilder();
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
         id_ = 0L;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        category_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
-        message_ = "";
-        bitField0_ = (bitField0_ & ~0x00000004);
-        createdAt_ = 0L;
-        bitField0_ = (bitField0_ & ~0x00000008);
-        if (propertyBuilder_ == null) {
-          property_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000010);
-        } else {
-          propertyBuilder_.clear();
-        }
-        return this;
-      }
 
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
+        category_ = "";
+
+        message_ = "";
+
+        createdAt_ = 0L;
+
+        internalGetMutableProperty().clear();
+        return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -1251,36 +643,43 @@ public final class NotificationProtos {
         com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB result = new com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
         result.id_ = id_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
         result.category_ = category_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
         result.message_ = message_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000008;
-        }
         result.createdAt_ = createdAt_;
-        if (propertyBuilder_ == null) {
-          if (((bitField0_ & 0x00000010) == 0x00000010)) {
-            property_ = java.util.Collections.unmodifiableList(property_);
-            bitField0_ = (bitField0_ & ~0x00000010);
-          }
-          result.property_ = property_;
-        } else {
-          result.property_ = propertyBuilder_.build();
-        }
+        result.property_ = internalGetProperty();
+        result.property_.makeImmutable();
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB) {
           return mergeFrom((com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB)other);
@@ -1292,75 +691,27 @@ public final class NotificationProtos {
 
       public Builder mergeFrom(com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB other) {
         if (other == com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB.getDefaultInstance()) return this;
-        if (other.hasId()) {
+        if (other.getId() != 0L) {
           setId(other.getId());
         }
-        if (other.hasCategory()) {
-          bitField0_ |= 0x00000002;
+        if (!other.getCategory().isEmpty()) {
           category_ = other.category_;
           onChanged();
         }
-        if (other.hasMessage()) {
-          bitField0_ |= 0x00000004;
+        if (!other.getMessage().isEmpty()) {
           message_ = other.message_;
           onChanged();
         }
-        if (other.hasCreatedAt()) {
+        if (other.getCreatedAt() != 0L) {
           setCreatedAt(other.getCreatedAt());
         }
-        if (propertyBuilder_ == null) {
-          if (!other.property_.isEmpty()) {
-            if (property_.isEmpty()) {
-              property_ = other.property_;
-              bitField0_ = (bitField0_ & ~0x00000010);
-            } else {
-              ensurePropertyIsMutable();
-              property_.addAll(other.property_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.property_.isEmpty()) {
-            if (propertyBuilder_.isEmpty()) {
-              propertyBuilder_.dispose();
-              propertyBuilder_ = null;
-              property_ = other.property_;
-              bitField0_ = (bitField0_ & ~0x00000010);
-              propertyBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
-                   getPropertyFieldBuilder() : null;
-            } else {
-              propertyBuilder_.addAllMessages(other.property_);
-            }
-          }
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
+        internalGetMutableProperty().mergeFrom(
+            other.internalGetProperty());
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
-        if (!hasId()) {
-          
-          return false;
-        }
-        if (!hasCategory()) {
-          
-          return false;
-        }
-        if (!hasMessage()) {
-          
-          return false;
-        }
-        if (!hasCreatedAt()) {
-          
-          return false;
-        }
-        for (int i = 0; i < getPropertyCount(); i++) {
-          if (!getProperty(i).isInitialized()) {
-            
-            return false;
-          }
-        }
         return true;
       }
 
@@ -1373,7 +724,7 @@ public final class NotificationProtos {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -1385,31 +736,25 @@ public final class NotificationProtos {
 
       private long id_ ;
       /**
-       * <code>required int64 id = 1;</code>
-       */
-      public boolean hasId() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      /**
-       * <code>required int64 id = 1;</code>
+       * <code>optional int64 id = 1;</code>
        */
       public long getId() {
         return id_;
       }
       /**
-       * <code>required int64 id = 1;</code>
+       * <code>optional int64 id = 1;</code>
        */
       public Builder setId(long value) {
-        bitField0_ |= 0x00000001;
+        
         id_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required int64 id = 1;</code>
+       * <code>optional int64 id = 1;</code>
        */
       public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
         id_ = 0L;
         onChanged();
         return this;
@@ -1417,13 +762,7 @@ public final class NotificationProtos {
 
       private java.lang.Object category_ = "";
       /**
-       * <code>required string category = 2;</code>
-       */
-      public boolean hasCategory() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>required string category = 2;</code>
+       * <code>optional string category = 2;</code>
        */
       public java.lang.String getCategory() {
         java.lang.Object ref = category_;
@@ -1431,16 +770,14 @@ public final class NotificationProtos {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            category_ = s;
-          }
+          category_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>required string category = 2;</code>
+       * <code>optional string category = 2;</code>
        */
       public com.google.protobuf.ByteString
           getCategoryBytes() {
@@ -1456,36 +793,37 @@ public final class NotificationProtos {
         }
       }
       /**
-       * <code>required string category = 2;</code>
+       * <code>optional string category = 2;</code>
        */
       public Builder setCategory(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  
         category_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string category = 2;</code>
+       * <code>optional string category = 2;</code>
        */
       public Builder clearCategory() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        
         category_ = getDefaultInstance().getCategory();
         onChanged();
         return this;
       }
       /**
-       * <code>required string category = 2;</code>
+       * <code>optional string category = 2;</code>
        */
       public Builder setCategoryBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  checkByteStringIsUtf8(value);
+        
         category_ = value;
         onChanged();
         return this;
@@ -1493,13 +831,7 @@ public final class NotificationProtos {
 
       private java.lang.Object message_ = "";
       /**
-       * <code>required string message = 3;</code>
-       */
-      public boolean hasMessage() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>required string message = 3;</code>
+       * <code>optional string message = 3;</code>
        */
       public java.lang.String getMessage() {
         java.lang.Object ref = message_;
@@ -1507,16 +839,14 @@ public final class NotificationProtos {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          if (bs.isValidUtf8()) {
-            message_ = s;
-          }
+          message_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>required string message = 3;</code>
+       * <code>optional string message = 3;</code>
        */
       public com.google.protobuf.ByteString
           getMessageBytes() {
@@ -1532,36 +862,37 @@ public final class NotificationProtos {
         }
       }
       /**
-       * <code>required string message = 3;</code>
+       * <code>optional string message = 3;</code>
        */
       public Builder setMessage(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  
         message_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required string message = 3;</code>
+       * <code>optional string message = 3;</code>
        */
       public Builder clearMessage() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        
         message_ = getDefaultInstance().getMessage();
         onChanged();
         return this;
       }
       /**
-       * <code>required string message = 3;</code>
+       * <code>optional string message = 3;</code>
        */
       public Builder setMessageBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  checkByteStringIsUtf8(value);
+        
         message_ = value;
         onChanged();
         return this;
@@ -1569,285 +900,195 @@ public final class NotificationProtos {
 
       private long createdAt_ ;
       /**
-       * <code>required int64 created_at = 4;</code>
-       */
-      public boolean hasCreatedAt() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>required int64 created_at = 4;</code>
+       * <code>optional int64 created_at = 4;</code>
        */
       public long getCreatedAt() {
         return createdAt_;
       }
       /**
-       * <code>required int64 created_at = 4;</code>
+       * <code>optional int64 created_at = 4;</code>
        */
       public Builder setCreatedAt(long value) {
-        bitField0_ |= 0x00000008;
+        
         createdAt_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required int64 created_at = 4;</code>
+       * <code>optional int64 created_at = 4;</code>
        */
       public Builder clearCreatedAt() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        
         createdAt_ = 0L;
         onChanged();
         return this;
       }
 
-      private java.util.List<com.smoketurner.notification.application.protos.NotificationProtos.Property> property_ =
-        java.util.Collections.emptyList();
-      private void ensurePropertyIsMutable() {
-        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-          property_ = new java.util.ArrayList<com.smoketurner.notification.application.protos.NotificationProtos.Property>(property_);
-          bitField0_ |= 0x00000010;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilder<
-          com.smoketurner.notification.application.protos.NotificationProtos.Property, com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder, com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder> propertyBuilder_;
-
-      /**
-       * <code>repeated .notification.Property property = 5;</code>
-       */
-      public java.util.List<com.smoketurner.notification.application.protos.NotificationProtos.Property> getPropertyList() {
-        if (propertyBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(property_);
-        } else {
-          return propertyBuilder_.getMessageList();
+      private com.google.protobuf.MapField<
+          java.lang.String, java.lang.String> property_;
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetProperty() {
+        if (property_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              PropertyDefaultEntryHolder.defaultEntry);
         }
+        return property_;
       }
-      /**
-       * <code>repeated .notification.Property property = 5;</code>
-       */
+      private com.google.protobuf.MapField<java.lang.String, java.lang.String>
+      internalGetMutableProperty() {
+        onChanged();;
+        if (property_ == null) {
+          property_ = com.google.protobuf.MapField.newMapField(
+              PropertyDefaultEntryHolder.defaultEntry);
+        }
+        if (!property_.isMutable()) {
+          property_ = property_.copy();
+        }
+        return property_;
+      }
+
       public int getPropertyCount() {
-        if (propertyBuilder_ == null) {
-          return property_.size();
-        } else {
-          return propertyBuilder_.getCount();
-        }
+        return internalGetProperty().getMap().size();
       }
       /**
-       * <code>repeated .notification.Property property = 5;</code>
+       * <code>map&lt;string, string&gt; property = 5;</code>
        */
-      public com.smoketurner.notification.application.protos.NotificationProtos.Property getProperty(int index) {
-        if (propertyBuilder_ == null) {
-          return property_.get(index);
-        } else {
-          return propertyBuilder_.getMessage(index);
-        }
+
+      public boolean containsProperty(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        return internalGetProperty().getMap().containsKey(key);
       }
       /**
-       * <code>repeated .notification.Property property = 5;</code>
+       * Use {@link #getPropertyMap()} instead.
        */
-      public Builder setProperty(
-          int index, com.smoketurner.notification.application.protos.NotificationProtos.Property value) {
-        if (propertyBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensurePropertyIsMutable();
-          property_.set(index, value);
-          onChanged();
-        } else {
-          propertyBuilder_.setMessage(index, value);
-        }
-        return this;
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String> getProperty() {
+        return getPropertyMap();
       }
       /**
-       * <code>repeated .notification.Property property = 5;</code>
+       * <code>map&lt;string, string&gt; property = 5;</code>
        */
-      public Builder setProperty(
-          int index, com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder builderForValue) {
-        if (propertyBuilder_ == null) {
-          ensurePropertyIsMutable();
-          property_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          propertyBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
+
+      public java.util.Map<java.lang.String, java.lang.String> getPropertyMap() {
+        return internalGetProperty().getMap();
       }
       /**
-       * <code>repeated .notification.Property property = 5;</code>
+       * <code>map&lt;string, string&gt; property = 5;</code>
        */
-      public Builder addProperty(com.smoketurner.notification.application.protos.NotificationProtos.Property value) {
-        if (propertyBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensurePropertyIsMutable();
-          property_.add(value);
-          onChanged();
-        } else {
-          propertyBuilder_.addMessage(value);
-        }
-        return this;
+
+      public java.lang.String getPropertyOrDefault(
+          java.lang.String key,
+          java.lang.String defaultValue) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetProperty().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
       }
       /**
-       * <code>repeated .notification.Property property = 5;</code>
+       * <code>map&lt;string, string&gt; property = 5;</code>
        */
-      public Builder addProperty(
-          int index, com.smoketurner.notification.application.protos.NotificationProtos.Property value) {
-        if (propertyBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensurePropertyIsMutable();
-          property_.add(index, value);
-          onChanged();
-        } else {
-          propertyBuilder_.addMessage(index, value);
+
+      public java.lang.String getPropertyOrThrow(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        java.util.Map<java.lang.String, java.lang.String> map =
+            internalGetProperty().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
         }
-        return this;
+        return map.get(key);
       }
-      /**
-       * <code>repeated .notification.Property property = 5;</code>
-       */
-      public Builder addProperty(
-          com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder builderForValue) {
-        if (propertyBuilder_ == null) {
-          ensurePropertyIsMutable();
-          property_.add(builderForValue.build());
-          onChanged();
-        } else {
-          propertyBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .notification.Property property = 5;</code>
-       */
-      public Builder addProperty(
-          int index, com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder builderForValue) {
-        if (propertyBuilder_ == null) {
-          ensurePropertyIsMutable();
-          property_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          propertyBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .notification.Property property = 5;</code>
-       */
-      public Builder addAllProperty(
-          java.lang.Iterable<? extends com.smoketurner.notification.application.protos.NotificationProtos.Property> values) {
-        if (propertyBuilder_ == null) {
-          ensurePropertyIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, property_);
-          onChanged();
-        } else {
-          propertyBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <code>repeated .notification.Property property = 5;</code>
-       */
+
       public Builder clearProperty() {
-        if (propertyBuilder_ == null) {
-          property_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000010);
-          onChanged();
-        } else {
-          propertyBuilder_.clear();
-        }
+        getMutableProperty().clear();
         return this;
       }
       /**
-       * <code>repeated .notification.Property property = 5;</code>
+       * <code>map&lt;string, string&gt; property = 5;</code>
        */
-      public Builder removeProperty(int index) {
-        if (propertyBuilder_ == null) {
-          ensurePropertyIsMutable();
-          property_.remove(index);
-          onChanged();
-        } else {
-          propertyBuilder_.remove(index);
-        }
+
+      public Builder removeProperty(
+          java.lang.String key) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        getMutableProperty().remove(key);
         return this;
       }
       /**
-       * <code>repeated .notification.Property property = 5;</code>
+       * Use alternate mutation accessors instead.
        */
-      public com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder getPropertyBuilder(
-          int index) {
-        return getPropertyFieldBuilder().getBuilder(index);
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String>
+      getMutableProperty() {
+        return internalGetMutableProperty().getMutableMap();
       }
       /**
-       * <code>repeated .notification.Property property = 5;</code>
+       * <code>map&lt;string, string&gt; property = 5;</code>
        */
-      public com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder getPropertyOrBuilder(
-          int index) {
-        if (propertyBuilder_ == null) {
-          return property_.get(index);  } else {
-          return propertyBuilder_.getMessageOrBuilder(index);
-        }
+      public Builder putProperty(
+          java.lang.String key,
+          java.lang.String value) {
+        if (key == null) { throw new java.lang.NullPointerException(); }
+        if (value == null) { throw new java.lang.NullPointerException(); }
+        getMutableProperty().put(key, value);
+        return this;
       }
       /**
-       * <code>repeated .notification.Property property = 5;</code>
+       * <code>map&lt;string, string&gt; property = 5;</code>
        */
-      public java.util.List<? extends com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder> 
-           getPropertyOrBuilderList() {
-        if (propertyBuilder_ != null) {
-          return propertyBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(property_);
-        }
+
+      public Builder putAllProperty(
+          java.util.Map<java.lang.String, java.lang.String> values) {
+        getMutableProperty().putAll(values);
+        return this;
       }
-      /**
-       * <code>repeated .notification.Property property = 5;</code>
-       */
-      public com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder addPropertyBuilder() {
-        return getPropertyFieldBuilder().addBuilder(
-            com.smoketurner.notification.application.protos.NotificationProtos.Property.getDefaultInstance());
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
       }
-      /**
-       * <code>repeated .notification.Property property = 5;</code>
-       */
-      public com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder addPropertyBuilder(
-          int index) {
-        return getPropertyFieldBuilder().addBuilder(
-            index, com.smoketurner.notification.application.protos.NotificationProtos.Property.getDefaultInstance());
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
       }
-      /**
-       * <code>repeated .notification.Property property = 5;</code>
-       */
-      public java.util.List<com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder> 
-           getPropertyBuilderList() {
-        return getPropertyFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilder<
-          com.smoketurner.notification.application.protos.NotificationProtos.Property, com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder, com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder> 
-          getPropertyFieldBuilder() {
-        if (propertyBuilder_ == null) {
-          propertyBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              com.smoketurner.notification.application.protos.NotificationProtos.Property, com.smoketurner.notification.application.protos.NotificationProtos.Property.Builder, com.smoketurner.notification.application.protos.NotificationProtos.PropertyOrBuilder>(
-                  property_,
-                  ((bitField0_ & 0x00000010) == 0x00000010),
-                  getParentForChildren(),
-                  isClean());
-          property_ = null;
-        }
-        return propertyBuilder_;
-      }
+
 
       // @@protoc_insertion_point(builder_scope:notification.NotificationPB)
     }
 
+    // @@protoc_insertion_point(class_scope:notification.NotificationPB)
+    private static final com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB DEFAULT_INSTANCE;
     static {
-      defaultInstance = new NotificationPB(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB();
     }
 
-    // @@protoc_insertion_point(class_scope:notification.NotificationPB)
+    public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<NotificationPB>
+        PARSER = new com.google.protobuf.AbstractParser<NotificationPB>() {
+      public NotificationPB parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new NotificationPB(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<NotificationPB> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<NotificationPB> getParserForType() {
+      return PARSER;
+    }
+
+    public com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   public interface NotificationListPBOrBuilder extends
@@ -1894,40 +1135,30 @@ public final class NotificationProtos {
   /**
    * Protobuf type {@code notification.NotificationListPB}
    */
-  public static final class NotificationListPB extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class NotificationListPB extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:notification.NotificationListPB)
       NotificationListPBOrBuilder {
     // Use NotificationListPB.newBuilder() to construct.
-    private NotificationListPB(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private NotificationListPB(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private NotificationListPB(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final NotificationListPB defaultInstance;
-    public static NotificationListPB getDefaultInstance() {
-      return defaultInstance;
+    private NotificationListPB() {
+      notification_ = java.util.Collections.emptyList();
+      deletedId_ = java.util.Collections.emptyList();
     }
 
-    public NotificationListPB getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
-      return this.unknownFields;
+    getUnknownFields() {
+      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
     private NotificationListPB(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
       int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -1937,8 +1168,7 @@ public final class NotificationProtos {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!input.skipField(tag)) {
                 done = true;
               }
               break;
@@ -1948,7 +1178,8 @@ public final class NotificationProtos {
                 notification_ = new java.util.ArrayList<com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB>();
                 mutable_bitField0_ |= 0x00000001;
               }
-              notification_.add(input.readMessage(com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB.PARSER, extensionRegistry));
+              notification_.add(
+                  input.readMessage(com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB.parser(), extensionRegistry));
               break;
             }
             case 16: {
@@ -1978,7 +1209,7 @@ public final class NotificationProtos {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           notification_ = java.util.Collections.unmodifiableList(notification_);
@@ -1986,7 +1217,6 @@ public final class NotificationProtos {
         if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
           deletedId_ = java.util.Collections.unmodifiableList(deletedId_);
         }
-        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -1995,26 +1225,11 @@ public final class NotificationProtos {
       return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_NotificationListPB_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_NotificationListPB_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB.class, com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<NotificationListPB> PARSER =
-        new com.google.protobuf.AbstractParser<NotificationListPB>() {
-      public NotificationListPB parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new NotificationListPB(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<NotificationListPB> getParserForType() {
-      return PARSER;
     }
 
     public static final int NOTIFICATION_FIELD_NUMBER = 1;
@@ -2073,23 +1288,14 @@ public final class NotificationProtos {
     public long getDeletedId(int index) {
       return deletedId_.get(index);
     }
+    private int deletedIdMemoizedSerializedSize = -1;
 
-    private void initFields() {
-      notification_ = java.util.Collections.emptyList();
-      deletedId_ = java.util.Collections.emptyList();
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      for (int i = 0; i < getNotificationCount(); i++) {
-        if (!getNotification(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -2100,15 +1306,17 @@ public final class NotificationProtos {
       for (int i = 0; i < notification_.size(); i++) {
         output.writeMessage(1, notification_.get(i));
       }
-      for (int i = 0; i < deletedId_.size(); i++) {
-        output.writeInt64(2, deletedId_.get(i));
+      if (getDeletedIdList().size() > 0) {
+        output.writeUInt32NoTag(18);
+        output.writeUInt32NoTag(deletedIdMemoizedSerializedSize);
       }
-      getUnknownFields().writeTo(output);
+      for (int i = 0; i < deletedId_.size(); i++) {
+        output.writeInt64NoTag(deletedId_.get(i));
+      }
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -2123,18 +1331,54 @@ public final class NotificationProtos {
             .computeInt64SizeNoTag(deletedId_.get(i));
         }
         size += dataSize;
-        size += 1 * getDeletedIdList().size();
+        if (!getDeletedIdList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        deletedIdMemoizedSerializedSize = dataSize;
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      memoizedSize = size;
       return size;
     }
 
     private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB)) {
+        return super.equals(obj);
+      }
+      com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB other = (com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB) obj;
+
+      boolean result = true;
+      result = result && getNotificationList()
+          .equals(other.getNotificationList());
+      result = result && getDeletedIdList()
+          .equals(other.getDeletedIdList());
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptorForType().hashCode();
+      if (getNotificationCount() > 0) {
+        hash = (37 * hash) + NOTIFICATION_FIELD_NUMBER;
+        hash = (53 * hash) + getNotificationList().hashCode();
+      }
+      if (getDeletedIdCount() > 0) {
+        hash = (37 * hash) + DELETED_ID_FIELD_NUMBER;
+        hash = (53 * hash) + getDeletedIdList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
     }
 
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB parseFrom(
@@ -2160,46 +1404,57 @@ public final class NotificationProtos {
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
@@ -2207,7 +1462,7 @@ public final class NotificationProtos {
      * Protobuf type {@code notification.NotificationListPB}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:notification.NotificationListPB)
         com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPBOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -2215,7 +1470,7 @@ public final class NotificationProtos {
         return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_NotificationListPB_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return com.smoketurner.notification.application.protos.NotificationProtos.internal_static_notification_NotificationListPB_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -2228,19 +1483,16 @@ public final class NotificationProtos {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
           getNotificationFieldBuilder();
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
         if (notificationBuilder_ == null) {
@@ -2252,10 +1504,6 @@ public final class NotificationProtos {
         deletedId_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -2296,6 +1544,32 @@ public final class NotificationProtos {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB) {
           return mergeFrom((com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB)other);
@@ -2326,7 +1600,7 @@ public final class NotificationProtos {
               notification_ = other.notification_;
               bitField0_ = (bitField0_ & ~0x00000001);
               notificationBuilder_ = 
-                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getNotificationFieldBuilder() : null;
             } else {
               notificationBuilder_.addAllMessages(other.notification_);
@@ -2343,17 +1617,11 @@ public final class NotificationProtos {
           }
           onChanged();
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
-        for (int i = 0; i < getNotificationCount(); i++) {
-          if (!getNotification(i).isInitialized()) {
-            
-            return false;
-          }
-        }
         return true;
       }
 
@@ -2366,7 +1634,7 @@ public final class NotificationProtos {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -2385,7 +1653,7 @@ public final class NotificationProtos {
          }
       }
 
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private com.google.protobuf.RepeatedFieldBuilderV3<
           com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB, com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB.Builder, com.smoketurner.notification.application.protos.NotificationProtos.NotificationPBOrBuilder> notificationBuilder_;
 
       /**
@@ -2601,11 +1869,11 @@ public final class NotificationProtos {
            getNotificationBuilderList() {
         return getNotificationFieldBuilder().getBuilderList();
       }
-      private com.google.protobuf.RepeatedFieldBuilder<
+      private com.google.protobuf.RepeatedFieldBuilderV3<
           com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB, com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB.Builder, com.smoketurner.notification.application.protos.NotificationProtos.NotificationPBOrBuilder> 
           getNotificationFieldBuilder() {
         if (notificationBuilder_ == null) {
-          notificationBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+          notificationBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB, com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB.Builder, com.smoketurner.notification.application.protos.NotificationProtos.NotificationPBOrBuilder>(
                   notification_,
                   ((bitField0_ & 0x00000001) == 0x00000001),
@@ -2681,52 +1949,90 @@ public final class NotificationProtos {
         onChanged();
         return this;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
 
       // @@protoc_insertion_point(builder_scope:notification.NotificationListPB)
     }
 
+    // @@protoc_insertion_point(class_scope:notification.NotificationListPB)
+    private static final com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB DEFAULT_INSTANCE;
     static {
-      defaultInstance = new NotificationListPB(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB();
     }
 
-    // @@protoc_insertion_point(class_scope:notification.NotificationListPB)
+    public static com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<NotificationListPB>
+        PARSER = new com.google.protobuf.AbstractParser<NotificationListPB>() {
+      public NotificationListPB parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new NotificationListPB(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<NotificationListPB> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<NotificationListPB> getParserForType() {
+      return PARSER;
+    }
+
+    public com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_notification_Property_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_notification_Property_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_notification_NotificationPB_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_notification_NotificationPB_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_notification_NotificationPB_PropertyEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_notification_NotificationPB_PropertyEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_notification_NotificationListPB_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_notification_NotificationListPB_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static  com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\022notification.proto\022\014notification\"&\n\010Pr" +
-      "operty\022\013\n\003key\030\001 \002(\t\022\r\n\005value\030\002 \002(\t\"}\n\016No" +
-      "tificationPB\022\n\n\002id\030\001 \002(\003\022\020\n\010category\030\002 \002" +
-      "(\t\022\017\n\007message\030\003 \002(\t\022\022\n\ncreated_at\030\004 \002(\003\022" +
-      "(\n\010property\030\005 \003(\0132\026.notification.Propert" +
-      "y\"\\\n\022NotificationListPB\0222\n\014notification\030" +
-      "\001 \003(\0132\034.notification.NotificationPB\022\022\n\nd" +
-      "eleted_id\030\002 \003(\003BG\n/com.smoketurner.notif" +
-      "ication.application.protosB\022Notification" +
-      "ProtosH\001"
+      "\n\022notification.proto\022\014notification\"\302\001\n\016N" +
+      "otificationPB\022\n\n\002id\030\001 \001(\003\022\020\n\010category\030\002 " +
+      "\001(\t\022\017\n\007message\030\003 \001(\t\022\022\n\ncreated_at\030\004 \001(\003" +
+      "\022<\n\010property\030\005 \003(\0132*.notification.Notifi" +
+      "cationPB.PropertyEntry\032/\n\rPropertyEntry\022" +
+      "\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"\\\n\022Notif" +
+      "icationListPB\0222\n\014notification\030\001 \003(\0132\034.no" +
+      "tification.NotificationPB\022\022\n\ndeleted_id\030" +
+      "\002 \003(\003BG\n/com.smoketurner.notification.ap" +
+      "plication.protosB\022NotificationProtosH\001b\006",
+      "proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2740,22 +2046,22 @@ public final class NotificationProtos {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
-    internal_static_notification_Property_descriptor =
-      getDescriptor().getMessageTypes().get(0);
-    internal_static_notification_Property_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_notification_Property_descriptor,
-        new java.lang.String[] { "Key", "Value", });
     internal_static_notification_NotificationPB_descriptor =
-      getDescriptor().getMessageTypes().get(1);
+      getDescriptor().getMessageTypes().get(0);
     internal_static_notification_NotificationPB_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_notification_NotificationPB_descriptor,
         new java.lang.String[] { "Id", "Category", "Message", "CreatedAt", "Property", });
+    internal_static_notification_NotificationPB_PropertyEntry_descriptor =
+      internal_static_notification_NotificationPB_descriptor.getNestedTypes().get(0);
+    internal_static_notification_NotificationPB_PropertyEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_notification_NotificationPB_PropertyEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_notification_NotificationListPB_descriptor =
-      getDescriptor().getMessageTypes().get(2);
+      getDescriptor().getMessageTypes().get(1);
     internal_static_notification_NotificationListPB_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_notification_NotificationListPB_descriptor,
         new java.lang.String[] { "Notification", "DeletedId", });
   }

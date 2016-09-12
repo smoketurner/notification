@@ -23,12 +23,10 @@ import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.convert.ConversionException;
 import com.basho.riak.client.api.convert.Converter;
 import com.basho.riak.client.core.util.BinaryValue;
-import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.protos.NotificationProtos.NotificationListPB;
 import com.smoketurner.notification.application.protos.NotificationProtos.NotificationPB;
-import com.smoketurner.notification.application.protos.NotificationProtos.Property;
 import io.dropwizard.jersey.protobuf.ProtocolBufferMediaType;
 
 public class NotificationListConverter
@@ -84,33 +82,20 @@ public class NotificationListConverter
 
     private static Notification convert(
             @Nonnull final NotificationPB notification) {
-        final ImmutableMap.Builder<String, String> builder = ImmutableMap
-                .builder();
-
-        notification.getPropertyList().forEach(property -> builder
-                .put(property.getKey(), property.getValue()));
-
         return Notification.builder().withId(notification.getId())
                 .withCategory(notification.getCategory())
                 .withMessage(notification.getMessage())
                 .withCreatedAt(new DateTime(notification.getCreatedAt(),
                         DateTimeZone.UTC))
-                .withProperties(builder.build()).build();
+                .withProperties(notification.getPropertyMap()).build();
     }
 
     private static NotificationPB convert(
             @Nonnull final Notification notification) {
-        final NotificationPB.Builder builder = NotificationPB.newBuilder()
-                .setId(notification.getId().get())
+        return NotificationPB.newBuilder().setId(notification.getId().get())
                 .setCategory(notification.getCategory())
                 .setMessage(notification.getMessage())
-                .setCreatedAt(notification.getCreatedAt().getMillis());
-
-        notification.getProperties().entrySet().stream()
-                .forEach(property -> builder.addProperty(
-                        Property.newBuilder().setKey(property.getKey())
-                                .setValue(property.getValue())));
-
-        return builder.build();
+                .setCreatedAt(notification.getCreatedAt().getMillis())
+                .putAllProperty(notification.getProperties()).build();
     }
 }
