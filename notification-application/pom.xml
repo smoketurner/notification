@@ -13,7 +13,7 @@
 
     <properties>
         <package.name>notification</package.name>
-        <jmh.version>1.13</jmh.version>
+        <jmh.version>1.17</jmh.version>
     </properties>
 
     <dependencies>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>io.dropwizard.modules</groupId>
             <artifactId>dropwizard-protobuf</artifactId>
-            <version>1.0.2-2</version>
+            <version>1.0.5-1</version>
         </dependency>
         <dependency>
             <groupId>com.smoketurner.snowizard</groupId>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.smoketurner.dropwizard</groupId>
             <artifactId>dropwizard-riak</artifactId>
-            <version>1.0.2-1</version>
+            <version>1.0.5-2</version>
         </dependency>
         <dependency>
             <groupId>com.smoketurner</groupId>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.smoketurner.dropwizard</groupId>
             <artifactId>zipkin-core</artifactId>
-            <version>1.0.2-3</version>
+            <version>1.0.5-1</version>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
