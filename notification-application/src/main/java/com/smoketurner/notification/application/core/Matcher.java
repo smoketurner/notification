@@ -99,10 +99,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
      * @return true if the matcher is full, otherwise false
      */
     public boolean isFull() {
-        if (maxSize > 0 && notifications.size() >= maxSize) {
-            return true;
-        }
-        return false;
+        return (maxSize > 0 && notifications.size() >= maxSize);
     }
 
     /**

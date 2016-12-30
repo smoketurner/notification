@@ -47,12 +47,10 @@ public class NotificationStoreBenchmark {
     }
 
     public static void main(String[] args) throws Exception {
-        new Runner(
-                new OptionsBuilder()
-                        .include(NotificationStoreBenchmark.class
-                                .getSimpleName())
-                        .forks(1).warmupIterations(5).measurementIterations(5)
-                        .build()).run();
+        new Runner(new OptionsBuilder()
+                .include(NotificationStoreBenchmark.class.getSimpleName())
+                .forks(1).warmupIterations(5).measurementIterations(5).build())
+                        .run();
     }
 
     private Notification createNotification(final long id) {
