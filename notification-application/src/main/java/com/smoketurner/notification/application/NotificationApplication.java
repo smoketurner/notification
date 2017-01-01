@@ -20,7 +20,8 @@ import com.basho.riak.client.api.cap.ConflictResolverFactory;
 import com.basho.riak.client.api.convert.ConverterFactory;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ge.snowizard.core.IdWorker;
-import com.smoketurner.dropwizard.riak.config.RiakConfiguration;
+import com.smoketurner.dropwizard.riak.RiakBundle;
+import com.smoketurner.dropwizard.riak.RiakFactory;
 import com.smoketurner.dropwizard.zipkin.ZipkinBundle;
 import com.smoketurner.dropwizard.zipkin.ZipkinFactory;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
@@ -81,6 +82,15 @@ public class NotificationApplication
             }
         });
 
+        // add Riak bundle
+        bootstrap.addBundle(new RiakBundle<NotificationConfiguration>() {
+            @Override
+            public RiakFactory getRiakFactory(
+                    final NotificationConfiguration configuration) {
+                return configuration.getRiak();
+            }
+        });
+
         // add Zipkin bundle
         bootstrap.addBundle(
                 new ZipkinBundle<NotificationConfiguration>(getName()) {
@@ -117,8 +127,7 @@ public class NotificationApplication
                 configuration.getSnowizard().isEnabled());
 
         // riak
-        final RiakConfiguration riakConfig = configuration.getRiak();
-        final RiakClient client = riakConfig.build(environment);
+        final RiakClient client = configuration.getRiak().build();
 
         ConflictResolverFactory.INSTANCE.registerConflictResolver(
                 NotificationListObject.class, new NotificationListResolver());

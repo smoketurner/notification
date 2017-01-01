@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.smoketurner.dropwizard.riak.config.RiakConfiguration;
+import com.smoketurner.dropwizard.riak.RiakFactory;
 import com.smoketurner.dropwizard.zipkin.LoggingZipkinFactory;
 import com.smoketurner.dropwizard.zipkin.ZipkinFactory;
 import io.dropwizard.Configuration;
@@ -41,7 +41,7 @@ public class NotificationConfiguration extends Configuration {
     @Valid
     @NotNull
     @JsonProperty
-    private final RiakConfiguration riak = new RiakConfiguration();
+    private final RiakFactory riak = new RiakFactory();
 
     @Valid
     @NotNull
@@ -69,7 +69,7 @@ public class NotificationConfiguration extends Configuration {
     }
 
     @JsonProperty
-    public RiakConfiguration getRiak() {
+    public RiakFactory getRiak() {
         return riak;
     }
 
