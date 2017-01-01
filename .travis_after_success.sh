@@ -5,11 +5,11 @@ if [[ "${TRAVIS_JDK_VERSION}" != "oraclejdk8" ]]; then
     exit
 fi
 
-./mvnw -B cobertura:cobertura coveralls:report
+mvn -B cobertura:cobertura coveralls:report
 
 # Do not deploy SNAPSHOT artifacts for PRs
 if [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then
-    ./mvnw -B deploy --settings maven_deploy_settings.xml -DskipTests=true
+    mvn -B deploy --settings maven_deploy_settings.xml -DskipTests=true
 else
     echo 'Pull request, skipping deploy.'
 fi
