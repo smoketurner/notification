@@ -25,8 +25,8 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ge.snowizard.core.IdWorker;
 import com.smoketurner.notification.application.NotificationApplication;
+import com.smoketurner.snowizard.core.IdWorker;
 import io.dropwizard.setup.Environment;
 
 public class SnowizardConfiguration {
@@ -81,23 +81,17 @@ public class SnowizardConfiguration {
 
         registry.register(
                 MetricRegistry.name(NotificationApplication.class, "worker_id"),
-                new Gauge<Integer>() {
-                    @Override
-                    public Integer getValue() {
-                        return workerId;
-                    }
-                });
+                (Gauge<Integer>) this::getWorkerId);
 
-        registry.register(MetricRegistry.name(NotificationApplication.class,
-                "datacenter_id"), new Gauge<Integer>() {
-                    @Override
-                    public Integer getValue() {
-                        return datacenterId;
-                    }
-                });
+        registry.register(
+                MetricRegistry.name(NotificationApplication.class,
+                        "datacenter_id"),
+                (Gauge<Integer>) this::getDatacenterId);
 
         LOGGER.info("Worker ID: {}, Datacenter ID: {}", workerId, datacenterId);
 
-        return new IdWorker(workerId, datacenterId, 0, false, registry);
+        return IdWorker.builder(workerId, datacenterId)
+                .withMetricRegistry(registry).withValidateUserAgent(false)
+                .build();
     }
 }

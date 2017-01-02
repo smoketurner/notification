@@ -17,7 +17,6 @@ package com.smoketurner.notification.client;
 
 import static com.codahale.metrics.MetricRegistry.name;
 import java.io.Closeable;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -49,15 +48,6 @@ public class NotificationClient implements Closeable {
     private final Timer storeTimer;
     private final Timer deleteTimer;
     private final URI rootUri;
-
-    /**
-     * @deprecated Using an internal {@link MetricRegistry}
-     */
-    @Deprecated
-    public NotificationClient(@Nonnull final Client client,
-            @Nonnull final URI uri) {
-        this(new MetricRegistry(), client, uri);
-    }
 
     /**
      * Constructor
@@ -232,7 +222,7 @@ public class NotificationClient implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         client.close();
     }
 }

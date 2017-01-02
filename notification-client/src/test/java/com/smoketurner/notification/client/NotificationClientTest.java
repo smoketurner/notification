@@ -232,7 +232,7 @@ public class NotificationClientTest {
     @Test
     public void testDeleteEmptyIds() throws Exception {
         try {
-            client.delete("test", ImmutableList.<Long> of());
+            client.delete("test", ImmutableList.<Long>of());
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
         } catch (IllegalArgumentException e) {
         }

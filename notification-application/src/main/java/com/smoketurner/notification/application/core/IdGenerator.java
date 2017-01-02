@@ -20,9 +20,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.ge.snowizard.core.IdWorker;
-import com.ge.snowizard.exceptions.InvalidSystemClock;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
+import com.smoketurner.snowizard.core.IdWorker;
+import com.smoketurner.snowizard.exceptions.InvalidSystemClock;
 
 public class IdGenerator {
 
@@ -54,17 +54,14 @@ public class IdGenerator {
      *             if unable to generate an ID
      */
     public long nextId() throws NotificationStoreException {
-        final long id;
         if (enabled) {
             try {
-                id = snowizard.nextId();
+                return snowizard.nextId();
             } catch (InvalidSystemClock e) {
                 LOGGER.error("Clock is moving backward to generate IDs", e);
                 throw new NotificationStoreException(e);
             }
-        } else {
-            id = nextId.getAndIncrement();
         }
-        return id;
+        return nextId.getAndIncrement();
     }
 }
