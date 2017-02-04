@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <file.encoding>UTF-8</file.encoding>
-        <dropwizard.version>1.0.5</dropwizard.version>
+        <dropwizard.version>1.0.6</dropwizard.version>
     </properties>
 
     <modules>
@@ -170,9 +170,8 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <optimize>true</optimize>
-                    <debug>true</debug>
-                    <!-- <compilerId>javac-with-errorprone</compilerId>
-                    <forceJavacCompilerUse>true</forceJavacCompilerUse> -->
+                    <!-- <compilerId>javac-with-errorprone</compilerId> -->
+                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
                     <showWarnings>true</showWarnings>
                 </configuration>
                 <dependencies>
