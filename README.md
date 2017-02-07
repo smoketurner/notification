@@ -67,7 +67,7 @@ snowizard:
   workerId: 1
 ```
 
-To connect to Riak, [configure the cluster behind a load-balancer](http://docs.basho.com/riak/latest/ops/advanced/configs/load-balancing-proxy/) as generally recommended. In order to support the Notification service automatically retrying Riak requests to separate nodes in the cluster, it is recommended to list each Riak node individually in the configuration file.
+To connect to Riak, [configure the cluster behind a load-balancer](http://docs.basho.com/riak/kv/latest/configuring/load-balancing-proxy/) as generally recommended. In order to support the Notification service automatically retrying Riak requests to separate nodes in the cluster, it is recommended to list each Riak node individually in the configuration file.
 
 *NOTE*: The notification service provides no authentication or authorization of requests. It is recommended to use a separate service such as [Kong](http://www.getkong.org) or the [Amazon API Gateway](https://aws.amazon.com/api-gateway/) to authenticate and authorize users.
 
