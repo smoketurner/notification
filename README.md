@@ -45,12 +45,12 @@ This would mean, for the `new-follower` category, roll up to a maximum of 9 noti
 
 Installation
 ------------
-To build this code locally, clone the repository then use [Maven](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html) to build the jar:
+To build this code locally, clone the repository then build the jar:
 ```
 git clone https://github.com/smoketurner/notification.git
 cd notification
-mvn package
-java -jar notification-application/target/notification-application-1.2.1-SNAPSHOT.jar server config.yml
+./mvnw package
+java -jar notification-application/target/notification-application-1.2.2-SNAPSHOT.jar server config.yml
 ```
 
 The Notification service should be listening on port `8080` (with the Dropwizard administrative interface available at /admin).
