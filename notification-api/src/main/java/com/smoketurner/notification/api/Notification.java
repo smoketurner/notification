@@ -85,7 +85,7 @@ public final class Notification implements Comparable<Notification> {
         this.createdAt = createdAt.orElse(DateTime.now(DateTimeZone.UTC));
         this.unseen = unseen.orElse(null);
         this.properties = properties
-                .orElse(Collections.<String, String> emptyMap());
+                .orElse(Collections.<String, String>emptyMap());
         this.notifications = notifications.orElse(null);
     }
 

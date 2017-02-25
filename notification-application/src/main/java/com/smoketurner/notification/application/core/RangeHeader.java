@@ -17,12 +17,12 @@ package com.smoketurner.notification.application.core;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -119,27 +119,27 @@ public final class RangeHeader {
     }
 
     public Optional<String> getField() {
-        return Optional.fromNullable(field);
+        return Optional.ofNullable(field);
     }
 
     public Optional<Long> getFromId() {
-        return Optional.fromNullable(fromId);
+        return Optional.ofNullable(fromId);
     }
 
     public Optional<Boolean> getFromInclusive() {
-        return Optional.fromNullable(fromInclusive);
+        return Optional.ofNullable(fromInclusive);
     }
 
     public Optional<Long> getToId() {
-        return Optional.fromNullable(toId);
+        return Optional.ofNullable(toId);
     }
 
     public Optional<Boolean> getToInclusive() {
-        return Optional.fromNullable(toInclusive);
+        return Optional.ofNullable(toInclusive);
     }
 
     public Optional<Integer> getMax() {
-        return Optional.fromNullable(max);
+        return Optional.ofNullable(max);
     }
 
     @Override

@@ -418,10 +418,7 @@ public class NotificationStore {
                     return (tryFind(children, id)).isPresent();
                 });
 
-        if (result.isPresent()) {
-            return Optional.of(result.get());
-        }
-        return Optional.empty();
+        return result.toJavaUtil();
     }
 
     /**
