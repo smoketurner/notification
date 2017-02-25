@@ -43,8 +43,8 @@ import io.dropwizard.jackson.JsonSnakeCase;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class Notification implements Comparable<Notification> {
 
-    private final Long id;
-    private final String idStr;
+    private final Optional<Long> id;
+    private final Optional<String> idStr;
 
     @NotEmpty
     private final String category;
@@ -53,7 +53,7 @@ public final class Notification implements Comparable<Notification> {
     private final String message;
 
     private final DateTime createdAt;
-    private final Boolean unseen;
+    private final Optional<Boolean> unseen;
     private final Map<String, String> properties;
     private final Collection<Notification> notifications;
 
@@ -70,23 +70,22 @@ public final class Notification implements Comparable<Notification> {
      * @param notifications
      */
     @JsonCreator
-    private Notification(@JsonProperty("id") final Optional<Long> id,
-            @JsonProperty("id_str") final Optional<String> idStr,
+    private Notification(@JsonProperty("id") final Long id,
+            @JsonProperty("id_str") final String idStr,
             @JsonProperty("category") final String category,
             @JsonProperty("message") final String message,
-            @JsonProperty("created_at") final Optional<DateTime> createdAt,
-            @JsonProperty("unseen") final Optional<Boolean> unseen,
-            @JsonProperty("properties") final Optional<Map<String, String>> properties,
-            @JsonProperty("notifications") final Optional<Collection<Notification>> notifications) {
-        this.id = id.orElse(null);
-        this.idStr = idStr.orElse(null);
-        this.category = category;
-        this.message = message;
-        this.createdAt = createdAt.orElse(DateTime.now(DateTimeZone.UTC));
-        this.unseen = unseen.orElse(null);
-        this.properties = properties
-                .orElse(Collections.<String, String>emptyMap());
-        this.notifications = notifications.orElse(null);
+            @JsonProperty("created_at") final DateTime createdAt,
+            @JsonProperty("unseen") final Boolean unseen,
+            @JsonProperty("properties") final Map<String, String> properties,
+            @JsonProperty("notifications") final Collection<Notification> notifications) {
+        this.id = Optional.ofNullable(id);
+        this.idStr = Optional.ofNullable(idStr);
+        this.category = Objects.requireNonNull(category);
+        this.message = Objects.requireNonNull(message);
+        this.createdAt = createdAt;
+        this.unseen = Optional.ofNullable(unseen);
+        this.properties = properties;
+        this.notifications = notifications;
     }
 
     public static Builder builder() {
@@ -102,20 +101,27 @@ public final class Notification implements Comparable<Notification> {
         private String idStr;
         private String category;
         private String message;
-        private DateTime createdAt;
+        private DateTime createdAt = DateTime.now(DateTimeZone.UTC);
         private Boolean unseen;
-        private Map<String, String> properties;
-        private Collection<Notification> notifications;
+        private Map<String, String> properties = Collections.emptyMap();
+        private Collection<Notification> notifications = Collections
+                .emptyList();
 
         public Builder fromNotification(@Nonnull final Notification other) {
-            this.id = other.id;
-            this.idStr = other.idStr;
+            this.id = other.id.orElse(null);
+            this.idStr = other.idStr.orElse(null);
             this.category = other.category;
             this.message = other.message;
-            this.createdAt = other.createdAt;
-            this.unseen = other.unseen;
-            this.properties = other.properties;
-            this.notifications = other.notifications;
+            if (other.createdAt != null) {
+                this.createdAt = other.createdAt;
+            }
+            this.unseen = other.unseen.orElse(null);
+            if (other.properties != null) {
+                this.properties = other.properties;
+            }
+            if (other.notifications != null) {
+                this.notifications = other.notifications;
+            }
             return this;
         }
 
@@ -158,24 +164,21 @@ public final class Notification implements Comparable<Notification> {
 
         public Builder withNotifications(
                 @Nullable final Collection<Notification> notifications) {
-            if (notifications != null) {
+            if (notifications != null && !notifications.isEmpty()) {
                 this.notifications = ImmutableList.copyOf(notifications);
             }
             return this;
         }
 
         public Notification build() {
-            return new Notification(Optional.ofNullable(id),
-                    Optional.ofNullable(idStr), category, message,
-                    Optional.ofNullable(createdAt), Optional.ofNullable(unseen),
-                    Optional.ofNullable(properties),
-                    Optional.ofNullable(notifications));
+            return new Notification(id, idStr, category, message, createdAt,
+                    unseen, properties, notifications);
         }
     }
 
     @JsonProperty
     public Optional<Long> getId() {
-        return Optional.ofNullable(id);
+        return id;
     }
 
     /**
@@ -190,15 +193,12 @@ public final class Notification implements Comparable<Notification> {
      */
     @JsonIgnore
     public long getId(final long value) {
-        if (id == null) {
-            return value;
-        }
-        return id;
+        return id.orElse(value);
     }
 
     @JsonProperty
     public Optional<String> getIdStr() {
-        return Optional.ofNullable(idStr);
+        return idStr;
     }
 
     @JsonProperty
@@ -218,7 +218,7 @@ public final class Notification implements Comparable<Notification> {
 
     @JsonProperty
     public Optional<Boolean> getUnseen() {
-        return Optional.ofNullable(unseen);
+        return unseen;
     }
 
     @JsonProperty
@@ -227,8 +227,8 @@ public final class Notification implements Comparable<Notification> {
     }
 
     @JsonProperty
-    public Optional<Collection<Notification>> getNotifications() {
-        return Optional.ofNullable(notifications);
+    public Collection<Notification> getNotifications() {
+        return notifications;
     }
 
     @Override
@@ -260,8 +260,7 @@ public final class Notification implements Comparable<Notification> {
 
     @Override
     public int compareTo(final Notification that) {
-        return ComparisonChain.start()
-                .compare(this.id, that.id, Ordering.natural().reverse())
-                .result();
+        return ComparisonChain.start().compare(this.getId(0), that.getId(0),
+                Ordering.natural().reverse()).result();
     }
 }
