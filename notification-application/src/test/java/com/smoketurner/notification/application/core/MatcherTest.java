@@ -26,8 +26,8 @@ import io.dropwizard.util.Duration;
 
 public class MatcherTest {
 
-    private final Notification notification = Notification.builder().withId(1L)
-            .withCategory("new-follower")
+    private final Notification notification = Notification
+            .builder("new-follower", "test").withId(1L)
             .withProperties(
                     ImmutableMap.of("first_name", "Bob", "last_name", "Smith"))
             .withCreatedAt(new DateTime("2015-07-31T23:21:35Z")).build();
@@ -38,24 +38,22 @@ public class MatcherTest {
 
         final Matcher matcher = new Matcher(rule, notification);
 
-        final Notification n1 = Notification.builder().withId(2L)
-                .withCategory("new-follower")
-                .withProperties(ImmutableMap.of("first_name", "Bob")).build();
-        final Notification n2 = Notification.builder().withId(3L)
-                .withCategory("new-follower")
-                .withProperties(ImmutableMap.of("first_name", "Ted")).build();
-        final Notification n3 = Notification.builder().withId(4L)
-                .withCategory("new-follower")
+        final Notification n1 = Notification.builder("new-follower", "test")
+                .withId(2L).withProperties(ImmutableMap.of("first_name", "Bob"))
+                .build();
+        final Notification n2 = Notification.builder("new-follower", "test")
+                .withId(3L).withProperties(ImmutableMap.of("first_name", "Ted"))
+                .build();
+        final Notification n3 = Notification.builder("new-follower", "test")
+                .withId(4L)
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
-        final Notification n4 = Notification.builder().build();
-        final Notification n5 = Notification.builder().withId(5L)
-                .withCategory("like").build();
+        final Notification n4 = Notification.builder("like", "test").withId(5L)
+                .build();
 
         assertThat(matcher.test(n1)).isTrue();
         assertThat(matcher.test(n2)).isFalse();
         assertThat(matcher.test(n3)).isFalse();
         assertThat(matcher.test(n4)).isFalse();
-        assertThat(matcher.test(n5)).isFalse();
     }
 
     @Test
@@ -64,53 +62,50 @@ public class MatcherTest {
 
         final Matcher matcher = new Matcher(rule, notification);
 
-        final Notification n1 = Notification.builder()
+        final Notification n1 = Notification.builder("test", "test")
                 .withProperties(ImmutableMap.of("first_name", "Bob")).build();
-        final Notification n2 = Notification.builder()
+        final Notification n2 = Notification.builder("test", "test")
                 .withProperties(ImmutableMap.of("first_name", "Ted")).build();
-        final Notification n3 = Notification.builder()
+        final Notification n3 = Notification.builder("test", "test")
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
-        final Notification n4 = Notification.builder().build();
-        final Notification n5 = Notification.builder().withCategory("like")
-                .build();
+        final Notification n4 = Notification.builder("like", "test").build();
 
         assertThat(matcher.checkMatch(n1)).isTrue();
         assertThat(matcher.checkMatch(n2)).isFalse();
         assertThat(matcher.checkMatch(n3)).isFalse();
         assertThat(matcher.checkMatch(n4)).isFalse();
-        assertThat(matcher.checkMatch(n5)).isFalse();
     }
 
     @Test
     public void testCheckMatchInitialNotSet() {
-        final Notification notification = Notification.builder().build();
+        final Notification notification = Notification.builder("test", "test")
+                .build();
         final Rule rule = Rule.builder().withMatchOn("first_name").build();
 
         final Matcher matcher = new Matcher(rule, notification);
 
-        final Notification n1 = Notification.builder()
+        final Notification n1 = Notification.builder("test", "test")
                 .withProperties(ImmutableMap.of("first_name", "Bob")).build();
-        final Notification n2 = Notification.builder()
+        final Notification n2 = Notification.builder("test", "test")
                 .withProperties(ImmutableMap.of("first_name", "Ted")).build();
-        final Notification n3 = Notification.builder()
+        final Notification n3 = Notification.builder("test", "test")
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
-        final Notification n4 = Notification.builder().build();
-        final Notification n5 = Notification.builder().withCategory("like")
-                .build();
+        final Notification n4 = Notification.builder("like", "test").build();
 
         assertThat(matcher.checkMatch(n1)).isFalse();
         assertThat(matcher.checkMatch(n2)).isFalse();
         assertThat(matcher.checkMatch(n3)).isFalse();
         assertThat(matcher.checkMatch(n4)).isFalse();
-        assertThat(matcher.checkMatch(n5)).isFalse();
     }
 
     @Test
     public void testCheckSize() {
         final Rule rule = Rule.builder().withMaxSize(2).build();
 
-        final Notification n2 = Notification.builder().withId(2L).build();
-        final Notification n3 = Notification.builder().withId(3L).build();
+        final Notification n2 = Notification.builder("test", "test").withId(2L)
+                .build();
+        final Notification n3 = Notification.builder("test", "test").withId(3L)
+                .build();
 
         final Matcher matcher = new Matcher(rule, notification);
         assertThat(matcher.isFull()).isFalse();
@@ -120,18 +115,18 @@ public class MatcherTest {
 
     @Test
     public void testCheckDuration() {
-        final Rule rule = Rule.builder()
-                .withMaxDuration(Duration.minutes(10)).build();
+        final Rule rule = Rule.builder().withMaxDuration(Duration.minutes(10))
+                .build();
 
-        final Notification future = Notification.builder()
+        final Notification future = Notification.builder("test", "test")
                 .withCreatedAt(new DateTime("2015-07-31T23:31:35Z")).build();
-        final Notification future2 = Notification.builder()
+        final Notification future2 = Notification.builder("test", "test")
                 .withCreatedAt(new DateTime("2015-07-31T23:21:36Z")).build();
-        final Notification present = Notification.builder()
+        final Notification present = Notification.builder("test", "test")
                 .withCreatedAt(new DateTime("2015-07-31T23:21:35Z")).build();
-        final Notification past = Notification.builder()
+        final Notification past = Notification.builder("test", "test")
                 .withCreatedAt(new DateTime("2015-07-31T23:11:35Z")).build();
-        final Notification past2 = Notification.builder()
+        final Notification past2 = Notification.builder("test", "test")
                 .withCreatedAt(new DateTime("2015-07-31T23:11:34Z")).build();
 
         final Matcher matcher = new Matcher(rule, notification);
@@ -147,8 +142,10 @@ public class MatcherTest {
         final Rule rule1 = Rule.builder().withMatchOn("first_name").build();
         final Rule rule2 = Rule.builder().withMatchOn("last_name").build();
 
-        final Notification n1 = Notification.builder().withId(1L).build();
-        final Notification n2 = Notification.builder().withId(2L).build();
+        final Notification n1 = Notification.builder("test", "test").withId(1L)
+                .build();
+        final Notification n2 = Notification.builder("test", "test").withId(2L)
+                .build();
 
         final Matcher m1 = new Matcher(rule1, n1);
         final Matcher m2 = new Matcher(rule1, n2);

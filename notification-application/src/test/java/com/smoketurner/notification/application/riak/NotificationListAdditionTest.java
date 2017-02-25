@@ -24,7 +24,7 @@ public class NotificationListAdditionTest {
     @Test
     public void testAddsToNotification() {
         final Notification notification = Notification.builder().withId(1L)
-                .build();
+                .withCategory("test").withMessage("test").build();
 
         final NotificationListAddition update = new NotificationListAddition(
                 notification);
@@ -42,7 +42,7 @@ public class NotificationListAdditionTest {
     @Test
     public void testNoOriginal() {
         final Notification notification = Notification.builder().withId(1L)
-                .build();
+                .withCategory("test").withMessage("test").build();
 
         final NotificationListAddition update = new NotificationListAddition(
                 notification);

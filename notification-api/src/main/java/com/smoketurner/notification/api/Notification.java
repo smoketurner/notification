@@ -33,7 +33,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 import io.dropwizard.jackson.JsonSnakeCase;
 
@@ -92,6 +91,10 @@ public final class Notification implements Comparable<Notification> {
         return new Builder();
     }
 
+    public static Builder builder(final String category, final String message) {
+        return builder().withCategory(category).withMessage(message);
+    }
+
     public static Builder builder(final Notification other) {
         return builder().fromNotification(other);
     }
@@ -136,18 +139,18 @@ public final class Notification implements Comparable<Notification> {
             return this;
         }
 
-        public Builder withCategory(@Nullable final String category) {
-            this.category = category;
+        public Builder withCategory(@Nonnull final String category) {
+            this.category = Objects.requireNonNull(category);
             return this;
         }
 
-        public Builder withMessage(@Nullable final String message) {
-            this.message = message;
+        public Builder withMessage(@Nonnull final String message) {
+            this.message = Objects.requireNonNull(message);
             return this;
         }
 
-        public Builder withCreatedAt(@Nullable final DateTime createdAt) {
-            this.createdAt = createdAt;
+        public Builder withCreatedAt(@Nonnull final DateTime createdAt) {
+            this.createdAt = Objects.requireNonNull(createdAt);
             return this;
         }
 
@@ -157,16 +160,14 @@ public final class Notification implements Comparable<Notification> {
         }
 
         public Builder withProperties(
-                @Nullable final Map<String, String> properties) {
-            this.properties = properties;
+                @Nonnull final Map<String, String> properties) {
+            this.properties = Objects.requireNonNull(properties);
             return this;
         }
 
         public Builder withNotifications(
-                @Nullable final Collection<Notification> notifications) {
-            if (notifications != null && !notifications.isEmpty()) {
-                this.notifications = ImmutableList.copyOf(notifications);
-            }
+                @Nonnull final Collection<Notification> notifications) {
+            this.notifications = Objects.requireNonNull(notifications);
             return this;
         }
 

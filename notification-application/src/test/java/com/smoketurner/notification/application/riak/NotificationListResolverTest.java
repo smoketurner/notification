@@ -146,21 +146,21 @@ public class NotificationListResolverTest {
     public void testRemoveNotifications() throws Exception {
         final List<Notification> notifications = Lists.newArrayList(
                 createNotification(1L), createNotification(2L),
-                createNotification(3L), Notification.builder().build());
+                createNotification(3L));
 
         final List<Notification> expected = Arrays
                 .asList(createNotification(2L), createNotification(3L));
 
         NotificationListResolver.removeNotifications(notifications,
-                Lists.newArrayList(1L));
+                Arrays.asList(1L));
         assertThat(notifications).containsExactlyElementsOf(expected);
     }
 
     @Test
     public void testRemoveNotificationsEmpty() throws Exception {
-        final List<Notification> notifications = Lists.newArrayList(
+        final List<Notification> notifications = Arrays.asList(
                 createNotification(1L), createNotification(2L),
-                createNotification(3L), Notification.builder().build());
+                createNotification(3L));
 
         final List<Notification> expected = Arrays.asList(
                 createNotification(1L), createNotification(2L),
@@ -172,6 +172,6 @@ public class NotificationListResolverTest {
     }
 
     private Notification createNotification(final long id) {
-        return Notification.builder().withId(id).build();
+        return Notification.builder("test", "test").withId(id).build();
     }
 }

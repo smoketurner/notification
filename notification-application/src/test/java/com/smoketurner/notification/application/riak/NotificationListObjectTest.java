@@ -34,7 +34,7 @@ public class NotificationListObjectTest {
     @Test
     public void testMaximumNumberOfNotifications() {
         for (long i = 0; i <= 2000; i++) {
-            list.addNotification(Notification.builder().withId(i).build());
+            list.addNotification(createNotification(i));
         }
 
         final SortedSet<Notification> actual = list.getNotifications();
@@ -48,7 +48,7 @@ public class NotificationListObjectTest {
         final ImmutableList.Builder<Notification> builder = ImmutableList
                 .builder();
         for (long i = 0; i <= 2000; i++) {
-            builder.add(Notification.builder().withId(i).build());
+            builder.add(createNotification(i));
         }
 
         list.addNotifications(builder.build());
@@ -62,7 +62,7 @@ public class NotificationListObjectTest {
     @Test
     public void testNoDuplicateNotifications() {
         for (long i = 0; i < 5; i++) {
-            list.addNotification(Notification.builder().withId(1L).build());
+            list.addNotification(createNotification(1L));
         }
 
         final SortedSet<Notification> actual = list.getNotifications();
@@ -85,5 +85,9 @@ public class NotificationListObjectTest {
     @Test
     public void testGetKey() {
         assertThat(list.getKey()).isEqualTo("test");
+    }
+
+    private Notification createNotification(final long id) {
+        return Notification.builder("test", "test").withId(id).build();
     }
 }
