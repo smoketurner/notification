@@ -404,8 +404,8 @@ public class NotificationResourceTest {
 
     @Test
     public void testStoreEmptyMessage() throws Exception {
-        final Notification notification = Notification
-                .builder("test-category", "").build();
+        final Notification notification = Notification.builder()
+                .withCategory("test-category").withMessage("").build();
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")
@@ -456,6 +456,6 @@ public class NotificationResourceTest {
     }
 
     private Notification createNotification(final long id) {
-        return Notification.builder("test", "test").withId(id).build();
+        return Notification.builder().withId(id).build();
     }
 }

@@ -152,7 +152,7 @@ public class NotificationListResolverTest {
                 .asList(createNotification(2L), createNotification(3L));
 
         NotificationListResolver.removeNotifications(notifications,
-                Arrays.asList(1L));
+                Lists.newArrayList(1L));
         assertThat(notifications).containsExactlyElementsOf(expected);
     }
 
@@ -172,6 +172,6 @@ public class NotificationListResolverTest {
     }
 
     private Notification createNotification(final long id) {
-        return Notification.builder("test", "test").withId(id).build();
+        return Notification.builder().withId(id).build();
     }
 }

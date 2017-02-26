@@ -201,15 +201,15 @@ public class NotificationStoreTest {
 
         builder = ImmutableList.builder();
         for (long i = 1; i < 11; i++) {
-            builder.add(Notification.builder("test", "test").withId(i)
-                    .withUnseen(true).build());
+            builder.add(
+                    Notification.builder().withId(i).withUnseen(true).build());
         }
         final List<Notification> expectedUnseen = builder.build();
 
         builder = ImmutableList.builder();
         for (long i = 1; i < 11; i++) {
-            builder.add(Notification.builder("test", "test").withId(i)
-                    .withUnseen(false).build());
+            builder.add(
+                    Notification.builder().withId(i).withUnseen(false).build());
         }
         final List<Notification> expectedSeen = builder.build();
 
@@ -221,15 +221,13 @@ public class NotificationStoreTest {
 
     @Test
     public void testFindNotification() throws Exception {
-        final Notification n100 = Notification.builder("test", "test")
-                .withId(100L)
+        final Notification n100 = Notification.builder().withId(100L)
                 .withNotifications(Arrays.asList(createNotification(101L),
                         createNotification(102L)))
                 .build();
 
-        final Notification n150 = Notification.builder("test", "test")
-                .withId(150L).withNotifications(Collections.emptyList())
-                .build();
+        final Notification n150 = Notification.builder().withId(150L)
+                .withNotifications(Collections.emptyList()).build();
 
         final ImmutableList.Builder<Notification> builder = ImmutableList
                 .builder();
@@ -325,6 +323,6 @@ public class NotificationStoreTest {
     }
 
     private Notification createNotification(final long id) {
-        return Notification.builder("test", "test").withId(id).build();
+        return Notification.builder().withId(id).build();
     }
 }

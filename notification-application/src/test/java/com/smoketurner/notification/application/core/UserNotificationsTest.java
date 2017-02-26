@@ -60,6 +60,6 @@ public class UserNotificationsTest {
     }
 
     private Notification createNotification(final long id) {
-        return Notification.builder("test", "test").withId(id).build();
+        return Notification.builder().withId(id).build();
     }
 }

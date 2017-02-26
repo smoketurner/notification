@@ -79,8 +79,8 @@ public final class Notification implements Comparable<Notification> {
             @JsonProperty("notifications") final Collection<Notification> notifications) {
         this.id = Optional.ofNullable(id);
         this.idStr = Optional.ofNullable(idStr);
-        this.category = Objects.requireNonNull(category);
-        this.message = Objects.requireNonNull(message);
+        this.category = category;
+        this.message = message;
         this.createdAt = createdAt;
         this.unseen = Optional.ofNullable(unseen);
         this.properties = properties;
@@ -89,10 +89,6 @@ public final class Notification implements Comparable<Notification> {
 
     public static Builder builder() {
         return new Builder();
-    }
-
-    public static Builder builder(final String category, final String message) {
-        return builder().withCategory(category).withMessage(message);
     }
 
     public static Builder builder(final Notification other) {
