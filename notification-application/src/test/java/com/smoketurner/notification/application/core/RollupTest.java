@@ -169,7 +169,7 @@ public class RollupTest {
     }
 
     private Notification createNotification(final long id) {
-        return Notification.builder().withCategory("new-follower")
-                .withMessage("test").withId(id).build();
+        return Notification.builder().withCategory("new-follower").withId(id)
+                .build();
     }
 }

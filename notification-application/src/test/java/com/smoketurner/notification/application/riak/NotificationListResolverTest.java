@@ -146,7 +146,7 @@ public class NotificationListResolverTest {
     public void testRemoveNotifications() throws Exception {
         final List<Notification> notifications = Lists.newArrayList(
                 createNotification(1L), createNotification(2L),
-                createNotification(3L));
+                createNotification(3L), Notification.builder().build());
 
         final List<Notification> expected = Arrays
                 .asList(createNotification(2L), createNotification(3L));
@@ -160,7 +160,7 @@ public class NotificationListResolverTest {
     public void testRemoveNotificationsEmpty() throws Exception {
         final List<Notification> notifications = Arrays.asList(
                 createNotification(1L), createNotification(2L),
-                createNotification(3L));
+                createNotification(3L), Notification.builder().build());
 
         final List<Notification> expected = Arrays.asList(
                 createNotification(1L), createNotification(2L),

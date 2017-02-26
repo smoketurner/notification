@@ -236,6 +236,7 @@ public class NotificationStoreTest {
         }
         builder.add(n100);
         builder.add(n150);
+        builder.add(Notification.builder().build());
 
         final List<Notification> notifications = builder.build();
 

@@ -47,13 +47,15 @@ public class MatcherTest {
         final Notification n3 = Notification.builder().withId(4L)
                 .withCategory("new-follower")
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
-        final Notification n4 = Notification.builder().withId(5L)
+        final Notification n4 = Notification.builder().build();
+        final Notification n5 = Notification.builder().withId(5L)
                 .withCategory("like").build();
 
         assertThat(matcher.test(n1)).isTrue();
         assertThat(matcher.test(n2)).isFalse();
         assertThat(matcher.test(n3)).isFalse();
         assertThat(matcher.test(n4)).isFalse();
+        assertThat(matcher.test(n5)).isFalse();
     }
 
     @Test
@@ -69,11 +71,14 @@ public class MatcherTest {
         final Notification n3 = Notification.builder()
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
         final Notification n4 = Notification.builder().build();
+        final Notification n5 = Notification.builder().withCategory("like")
+                .build();
 
         assertThat(matcher.checkMatch(n1)).isTrue();
         assertThat(matcher.checkMatch(n2)).isFalse();
         assertThat(matcher.checkMatch(n3)).isFalse();
         assertThat(matcher.checkMatch(n4)).isFalse();
+        assertThat(matcher.checkMatch(n5)).isFalse();
     }
 
     @Test
@@ -90,11 +95,14 @@ public class MatcherTest {
         final Notification n3 = Notification.builder()
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
         final Notification n4 = Notification.builder().build();
+        final Notification n5 = Notification.builder().withCategory("like")
+                .build();
 
         assertThat(matcher.checkMatch(n1)).isFalse();
         assertThat(matcher.checkMatch(n2)).isFalse();
         assertThat(matcher.checkMatch(n3)).isFalse();
         assertThat(matcher.checkMatch(n4)).isFalse();
+        assertThat(matcher.checkMatch(n5)).isFalse();
     }
 
     @Test
