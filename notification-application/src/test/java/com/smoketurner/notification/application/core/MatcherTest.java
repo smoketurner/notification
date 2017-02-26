@@ -120,8 +120,8 @@ public class MatcherTest {
 
     @Test
     public void testCheckDuration() {
-        final Rule rule = Rule.builder()
-                .withMaxDuration(Duration.minutes(10)).build();
+        final Rule rule = Rule.builder().withMaxDuration(Duration.minutes(10))
+                .build();
 
         final Notification future = Notification.builder()
                 .withCreatedAt(new DateTime("2015-07-31T23:31:35Z")).build();

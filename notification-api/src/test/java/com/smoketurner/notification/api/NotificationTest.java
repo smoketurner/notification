@@ -83,10 +83,11 @@ public class NotificationTest {
                 DateTimeZone.UTC);
         final Notification n1 = Notification.builder().withId(1L)
                 .withCategory("test-category").withCreatedAt(now).build();
-        assertThat(n1.toString()).isEqualTo(
-                "Notification{id=1, idStr=1, category=test-category, message=null,"
-                        + " createdAt=2015-08-14T21:25:19.533Z, unseen=null, properties={},"
-                        + " notifications=null}");
+        assertThat(n1.toString())
+                .isEqualTo("Notification{id=Optional[1], idStr=Optional[1],"
+                        + " category=test-category, message=null,"
+                        + " createdAt=2015-08-14T21:25:19.533Z, unseen=Optional.empty,"
+                        + " properties={}, notifications=[]}");
     }
 
     @Test

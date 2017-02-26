@@ -37,9 +37,9 @@ public final class Rule {
     public static final String MAX_DURATION = "max_duration";
     public static final String MATCH_ON = "match_on";
 
-    private final Integer maxSize;
-    private final Duration maxDuration;
-    private final String matchOn;
+    private final Optional<Integer> maxSize;
+    private final Optional<Duration> maxDuration;
+    private final Optional<String> matchOn;
 
     /**
      * Constructor
@@ -54,15 +54,11 @@ public final class Rule {
      */
     @JsonCreator
     private Rule(@JsonProperty(MAX_SIZE) final Optional<Integer> maxSize,
-            @JsonProperty(MAX_DURATION) final Optional<String> maxDuration,
+            @JsonProperty(MAX_DURATION) final Optional<Duration> maxDuration,
             @JsonProperty(MATCH_ON) final Optional<String> matchOn) {
-        this.maxSize = maxSize.orElse(null);
-        if (maxDuration.isPresent()) {
-            this.maxDuration = Duration.parse(maxDuration.get());
-        } else {
-            this.maxDuration = null;
-        }
-        this.matchOn = matchOn.orElse(null);
+        this.maxSize = maxSize;
+        this.maxDuration = maxDuration;
+        this.matchOn = matchOn;
     }
 
     public static Builder builder() {
@@ -90,40 +86,31 @@ public final class Rule {
         }
 
         public Rule build() {
-            final String duration = (maxDuration != null)
-                    ? maxDuration.toString() : null;
             return new Rule(Optional.ofNullable(maxSize),
-                    Optional.ofNullable(duration),
+                    Optional.ofNullable(maxDuration),
                     Optional.ofNullable(matchOn));
         }
     }
 
     @JsonProperty(MAX_SIZE)
     public Optional<Integer> getMaxSize() {
-        return Optional.ofNullable(maxSize);
-    }
-
-    @JsonIgnore
-    public Optional<Duration> getMaxDuration() {
-        return Optional.ofNullable(maxDuration);
+        return maxSize;
     }
 
     @JsonProperty(MAX_DURATION)
-    public Optional<String> getMaxDurationAsString() {
-        if (maxDuration == null) {
-            return Optional.empty();
-        }
-        return Optional.of(maxDuration.toString());
+    public Optional<Duration> getMaxDuration() {
+        return maxDuration;
     }
 
     @JsonProperty(MATCH_ON)
     public Optional<String> getMatchOn() {
-        return Optional.ofNullable(matchOn);
+        return matchOn;
     }
 
     @JsonIgnore
     public boolean isValid() {
-        return maxSize != null || maxDuration != null || matchOn != null;
+        return maxSize.isPresent() || maxDuration.isPresent()
+                || matchOn.isPresent();
     }
 
     @Override

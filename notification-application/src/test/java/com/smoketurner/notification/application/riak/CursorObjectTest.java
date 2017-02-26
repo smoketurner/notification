@@ -21,7 +21,6 @@ import java.util.TreeSet;
 import org.junit.Before;
 import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
 import io.dropwizard.jackson.Jackson;
 
 public class CursorObjectTest {
@@ -69,7 +68,7 @@ public class CursorObjectTest {
     public void testCursorSorting() {
         final CursorObject c2 = new CursorObject("test-notifications", 1L);
         final CursorObject c3 = new CursorObject("test-notifications", 2L);
-        final TreeSet<CursorObject> cursors = Sets.newTreeSet();
+        final TreeSet<CursorObject> cursors = new TreeSet<>();
         cursors.add(cursor);
         cursors.add(c2);
         cursors.add(c3);

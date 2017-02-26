@@ -138,7 +138,7 @@ public class NotificationStoreTest {
     @Test
     public void testSplitNotificationsNoCursor() throws Exception {
         when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME))
-                .thenReturn(Optional.<Long> empty());
+                .thenReturn(Optional.<Long>empty());
 
         final Notification n1 = createNotification(1);
 
@@ -160,7 +160,7 @@ public class NotificationStoreTest {
     @Test
     public void testSplitNotificationsUserNull() throws Exception {
         try {
-            store.splitNotifications(null, Sets.<Notification> newTreeSet());
+            store.splitNotifications(null, Sets.<Notification>newTreeSet());
             failBecauseExceptionWasNotThrown(NullPointerException.class);
         } catch (NullPointerException e) {
         }
@@ -169,7 +169,7 @@ public class NotificationStoreTest {
     @Test
     public void testSplitNotificationsUserEmpty() throws Exception {
         try {
-            store.splitNotifications("", Sets.<Notification> newTreeSet());
+            store.splitNotifications("", Sets.<Notification>newTreeSet());
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
         } catch (IllegalArgumentException e) {
         }
@@ -187,7 +187,7 @@ public class NotificationStoreTest {
     public void testSplitNotificationsNotificationsEmpty() throws Exception {
         final Set<Notification> expected = Collections.emptySortedSet();
         final UserNotifications actual = store.splitNotifications(TEST_USER,
-                Sets.<Notification> newTreeSet());
+                Sets.<Notification>newTreeSet());
         assertThat(actual.getNotifications()).isEqualTo(expected);
     }
 
@@ -247,7 +247,7 @@ public class NotificationStoreTest {
         assertThat(NotificationStore.tryFind(notifications, 10))
                 .isEqualTo(Optional.of(createNotification(10)));
         assertThat(NotificationStore.tryFind(notifications, 12))
-                .isEqualTo(Optional.<Notification> empty());
+                .isEqualTo(Optional.<Notification>empty());
         assertThat(NotificationStore.tryFind(notifications, 100))
                 .isEqualTo(Optional.of(n100));
         assertThat(NotificationStore.tryFind(notifications, 101))
@@ -255,7 +255,7 @@ public class NotificationStoreTest {
         assertThat(NotificationStore.tryFind(notifications, 102))
                 .isEqualTo(Optional.of(n100));
         assertThat(NotificationStore.tryFind(notifications, 103))
-                .isEqualTo(Optional.<Notification> empty());
+                .isEqualTo(Optional.<Notification>empty());
         assertThat(NotificationStore.tryFind(notifications, 150))
                 .isEqualTo(Optional.of(n150));
     }
@@ -263,14 +263,14 @@ public class NotificationStoreTest {
     @Test
     public void testSkip() throws Exception {
         final ImmutableSortedSet.Builder<Notification> builder = ImmutableSortedSet
-                .<Notification> naturalOrder();
+                .<Notification>naturalOrder();
         for (long i = 1; i <= 100; i++) {
             builder.add(createNotification(i));
         }
         final ImmutableSortedSet<Notification> notifications = builder.build();
 
         final ImmutableList.Builder<Notification> builder2 = ImmutableList
-                .<Notification> builder();
+                .<Notification>builder();
         for (long i = 100; i > 90; i--) {
             builder2.add(createNotification(i));
         }
@@ -284,14 +284,14 @@ public class NotificationStoreTest {
     @Test
     public void testSkipWithStart() throws Exception {
         final ImmutableSortedSet.Builder<Notification> builder = ImmutableSortedSet
-                .<Notification> naturalOrder();
+                .<Notification>naturalOrder();
         for (long i = 1; i <= 100; i++) {
             builder.add(createNotification(i));
         }
         final ImmutableSortedSet<Notification> notifications = builder.build();
 
         final ImmutableList.Builder<Notification> builder2 = ImmutableList
-                .<Notification> builder();
+                .<Notification>builder();
         for (long i = 55; i > 45; i--) {
             builder2.add(createNotification(i));
         }
@@ -305,14 +305,14 @@ public class NotificationStoreTest {
     @Test
     public void testSkipWithStartNotFound() throws Exception {
         final ImmutableSortedSet.Builder<Notification> builder = ImmutableSortedSet
-                .<Notification> naturalOrder();
+                .<Notification>naturalOrder();
         for (long i = 1; i <= 100; i++) {
             builder.add(createNotification(i));
         }
         final ImmutableSortedSet<Notification> notifications = builder.build();
 
         final ImmutableList.Builder<Notification> builder2 = ImmutableList
-                .<Notification> builder();
+                .<Notification>builder();
         for (long i = 100; i > 90; i--) {
             builder2.add(createNotification(i));
         }

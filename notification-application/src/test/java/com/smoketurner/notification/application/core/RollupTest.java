@@ -59,7 +59,7 @@ public class RollupTest {
                 .withProperties(ImmutableMap.of("first_name", "Bob")).build();
 
         final ImmutableSortedSet<Notification> notifications = ImmutableSortedSet
-                .<Notification> naturalOrder()
+                .<Notification>naturalOrder()
                 .add(n1, n2, n3, n4, n5, n6, n7, n8, n9).build();
 
         final Rule rule = Rule.builder().withMatchOn("first_name").build();
@@ -110,7 +110,7 @@ public class RollupTest {
                 .build();
 
         final ImmutableSortedSet<Notification> notifications = ImmutableSortedSet
-                .<Notification> naturalOrder()
+                .<Notification>naturalOrder()
                 .add(n1, n2, n3, n4, n5, n6, n7, n8, n9).build();
 
         final Rule rule = Rule.builder().withMaxSize(3)
@@ -144,7 +144,7 @@ public class RollupTest {
         final Notification n9 = createNotification(9);
 
         final ImmutableSortedSet<Notification> notifications = ImmutableSortedSet
-                .<Notification> naturalOrder()
+                .<Notification>naturalOrder()
                 .add(n1, n2, n3, n4, n5, n6, n7, n8, n9).build();
 
         final Rule rule = Rule.builder().withMaxSize(2).build();

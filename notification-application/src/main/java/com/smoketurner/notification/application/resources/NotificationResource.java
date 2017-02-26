@@ -86,19 +86,13 @@ public class NotificationResource {
     @Path("/{username}")
     @Produces({ MediaType.APPLICATION_JSON, "application/javascript" })
     @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
-    @ApiOperation(value = "Fetch Notifications",
-                  notes = "Return notifications for the given username",
-                  responseContainer = "List", response = Notification.class)
+    @ApiOperation(value = "Fetch Notifications", notes = "Return notifications for the given username", responseContainer = "List", response = Notification.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Unable to fetch notifications",
-                         response = ErrorMessage.class),
-            @ApiResponse(code = 404, message = "Notifications not found",
-                         response = ErrorMessage.class) })
+            @ApiResponse(code = 500, message = "Unable to fetch notifications", response = ErrorMessage.class),
+            @ApiResponse(code = 404, message = "Notifications not found", response = ErrorMessage.class) })
     public Response fetch(
-            @ApiParam(value = "range header",
-                      required = false) @HeaderParam("Range") final String rangeHeader,
-            @ApiParam(value = "username",
-                      required = true) @PathParam("username") final String username) {
+            @ApiParam(value = "range header", required = false) @HeaderParam("Range") final String rangeHeader,
+            @ApiParam(value = "username", required = true) @PathParam("username") final String username) {
 
         final Optional<UserNotifications> list;
         try {
@@ -151,7 +145,7 @@ public class NotificationResource {
             // If a Range header is present, return a 206 response
             builder = Response.status(Response.Status.PARTIAL_CONTENT);
             final RangeHeader range = RangeHeader.parse(rangeHeader);
-            limit = range.getMax().or(DEFAULT_LIMIT);
+            limit = range.getMax().orElse(DEFAULT_LIMIT);
             if (limit > MAX_LIMIT) {
                 limit = MAX_LIMIT;
             }
@@ -162,7 +156,7 @@ public class NotificationResource {
                     if (from == null) {
                         from = newest;
                     }
-                    fromInclusive = range.getFromInclusive().or(true);
+                    fromInclusive = range.getFromInclusive().orElse(true);
 
                     to = Iterables.getLast(store.skip(notifications,
                             from.getId(0L), fromInclusive, limit));
@@ -205,17 +199,12 @@ public class NotificationResource {
     @Path("/{username}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Store Notification",
-                  notes = "Add a new notification",
-                  response = Notification.class)
+    @ApiOperation(value = "Store Notification", notes = "Add a new notification", response = Notification.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Unable to store notification",
-                         response = ErrorMessage.class) })
+            @ApiResponse(code = 500, message = "Unable to store notification", response = ErrorMessage.class) })
     public Response add(
-            @ApiParam(value = "username",
-                      required = true) @PathParam("username") final String username,
-            @ApiParam(value = "notification",
-                      required = true) @NotNull @Valid final Notification notification) {
+            @ApiParam(value = "username", required = true) @PathParam("username") final String username,
+            @ApiParam(value = "notification", required = true) @NotNull @Valid final Notification notification) {
 
         final Notification storedNotification;
         try {
@@ -235,22 +224,17 @@ public class NotificationResource {
     @DELETE
     @Timed
     @Path("/{username}")
-    @ApiOperation(value = "Delete Notifications",
-                  notes = "Delete individual or all notifications")
+    @ApiOperation(value = "Delete Notifications", notes = "Delete individual or all notifications")
     @ApiResponses(value = {
-            @ApiResponse(code = 500, message = "Unable to delete notifications",
-                         response = ErrorMessage.class) })
+            @ApiResponse(code = 500, message = "Unable to delete notifications", response = ErrorMessage.class) })
     public Response delete(
-            @ApiParam(value = "username",
-                      required = true) @PathParam("username") final String username,
-            @ApiParam(value = "ids",
-                      required = false) @QueryParam("ids") final LongSetParam idsParam) {
+            @ApiParam(value = "username", required = true) @PathParam("username") final String username,
+            @ApiParam(value = "ids", required = false) @QueryParam("ids") final LongSetParam idsParam) {
 
         if (idsParam != null) {
             store.remove(username, idsParam.get());
         } else {
             store.removeAll(username);
-
         }
 
         return Response.noContent().build();

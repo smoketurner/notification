@@ -167,7 +167,7 @@ public class NotificationListResolverTest {
                 createNotification(3L));
 
         NotificationListResolver.removeNotifications(notifications,
-                Collections.emptyList());
+                Lists.newArrayList());
         assertThat(notifications).containsExactlyElementsOf(expected);
     }
 

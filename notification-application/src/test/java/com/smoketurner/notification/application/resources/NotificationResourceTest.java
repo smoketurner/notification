@@ -16,8 +16,8 @@
 package com.smoketurner.notification.application.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -278,7 +278,7 @@ public class NotificationResourceTest {
     @Test
     public void testFetchNotFound() throws Exception {
         when(store.fetch("test"))
-                .thenReturn(Optional.<UserNotifications> empty());
+                .thenReturn(Optional.<UserNotifications>empty());
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")

@@ -16,7 +16,6 @@
 package com.smoketurner.notification.application.store;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -411,17 +410,14 @@ public class NotificationStore {
                     // tryFind() is called prior to the rollups happening, but
                     // we include this here for completeness.
                     final Collection<Notification> children = notification
-                            .getNotifications().orElse(Collections.emptyList());
+                            .getNotifications();
                     if (children.isEmpty()) {
                         return false;
                     }
                     return (tryFind(children, id)).isPresent();
                 });
 
-        if (result.isPresent()) {
-            return Optional.of(result.get());
-        }
-        return Optional.empty();
+        return result.toJavaUtil();
     }
 
     /**
@@ -450,7 +446,7 @@ public class NotificationStore {
             // then check to see if the notification is included in any rolled
             // up notifications
             final Collection<Notification> children = notification
-                    .getNotifications().orElse(Collections.emptyList());
+                    .getNotifications();
             if (children.isEmpty()) {
                 return false;
             }
