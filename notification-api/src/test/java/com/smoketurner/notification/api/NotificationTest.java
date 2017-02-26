@@ -87,7 +87,7 @@ public class NotificationTest {
                 .isEqualTo("Notification{id=Optional[1], idStr=Optional[1],"
                         + " category=test-category, message=null,"
                         + " createdAt=2015-08-14T21:25:19.533Z, unseen=Optional.empty,"
-                        + " properties={}, notifications=null}");
+                        + " properties={}, notifications=[]}");
     }
 
     @Test

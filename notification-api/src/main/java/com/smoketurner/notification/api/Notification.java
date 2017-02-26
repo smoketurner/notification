@@ -69,22 +69,22 @@ public final class Notification implements Comparable<Notification> {
      * @param notifications
      */
     @JsonCreator
-    private Notification(@JsonProperty("id") final Long id,
-            @JsonProperty("id_str") final String idStr,
+    private Notification(@JsonProperty("id") final Optional<Long> id,
+            @JsonProperty("id_str") final Optional<String> idStr,
             @JsonProperty("category") final String category,
             @JsonProperty("message") final String message,
-            @JsonProperty("created_at") final DateTime createdAt,
-            @JsonProperty("unseen") final Boolean unseen,
-            @JsonProperty("properties") final Map<String, String> properties,
-            @JsonProperty("notifications") final Collection<Notification> notifications) {
-        this.id = Optional.ofNullable(id);
-        this.idStr = Optional.ofNullable(idStr);
+            @JsonProperty("created_at") final Optional<DateTime> createdAt,
+            @JsonProperty("unseen") final Optional<Boolean> unseen,
+            @JsonProperty("properties") final Optional<Map<String, String>> properties,
+            @JsonProperty("notifications") final Optional<Collection<Notification>> notifications) {
+        this.id = id;
+        this.idStr = idStr;
         this.category = category;
         this.message = message;
-        this.createdAt = createdAt;
-        this.unseen = Optional.ofNullable(unseen);
-        this.properties = properties;
-        this.notifications = notifications;
+        this.createdAt = createdAt.orElse(DateTime.now(DateTimeZone.UTC));
+        this.unseen = unseen;
+        this.properties = properties.orElse(Collections.emptyMap());
+        this.notifications = notifications.orElse(Collections.emptyList());
     }
 
     public static Builder builder() {
@@ -100,11 +100,10 @@ public final class Notification implements Comparable<Notification> {
         private String idStr;
         private String category;
         private String message;
-        private DateTime createdAt = DateTime.now(DateTimeZone.UTC);
+        private DateTime createdAt;
         private Boolean unseen;
-        private Map<String, String> properties = Collections.emptyMap();
-        private Collection<Notification> notifications = Collections
-                .emptyList();
+        private Map<String, String> properties;
+        private Collection<Notification> notifications;
 
         public Builder fromNotification(@Nonnull final Notification other) {
             this.id = other.id.orElse(null);
@@ -168,8 +167,11 @@ public final class Notification implements Comparable<Notification> {
         }
 
         public Notification build() {
-            return new Notification(id, idStr, category, message, createdAt,
-                    unseen, properties, notifications);
+            return new Notification(Optional.ofNullable(id),
+                    Optional.ofNullable(idStr), category, message,
+                    Optional.ofNullable(createdAt), Optional.ofNullable(unseen),
+                    Optional.ofNullable(properties),
+                    Optional.ofNullable(notifications));
         }
     }
 

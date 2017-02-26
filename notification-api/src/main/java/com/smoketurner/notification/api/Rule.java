@@ -53,12 +53,12 @@ public final class Rule {
      *            Group notifications by a specific category
      */
     @JsonCreator
-    private Rule(@JsonProperty(MAX_SIZE) final Integer maxSize,
-            @JsonProperty(MAX_DURATION) final Duration maxDuration,
-            @JsonProperty(MATCH_ON) final String matchOn) {
-        this.maxSize = Optional.ofNullable(maxSize);
-        this.maxDuration = Optional.ofNullable(maxDuration);
-        this.matchOn = Optional.ofNullable(matchOn);
+    private Rule(@JsonProperty(MAX_SIZE) final Optional<Integer> maxSize,
+            @JsonProperty(MAX_DURATION) final Optional<Duration> maxDuration,
+            @JsonProperty(MATCH_ON) final Optional<String> matchOn) {
+        this.maxSize = maxSize;
+        this.maxDuration = maxDuration;
+        this.matchOn = matchOn;
     }
 
     public static Builder builder() {
@@ -86,7 +86,9 @@ public final class Rule {
         }
 
         public Rule build() {
-            return new Rule(maxSize, maxDuration, matchOn);
+            return new Rule(Optional.ofNullable(maxSize),
+                    Optional.ofNullable(maxDuration),
+                    Optional.ofNullable(matchOn));
         }
     }
 

@@ -158,7 +158,7 @@ public class NotificationListResolverTest {
 
     @Test
     public void testRemoveNotificationsEmpty() throws Exception {
-        final List<Notification> notifications = Arrays.asList(
+        final List<Notification> notifications = Lists.newArrayList(
                 createNotification(1L), createNotification(2L),
                 createNotification(3L), Notification.builder().build());
 
@@ -167,7 +167,7 @@ public class NotificationListResolverTest {
                 createNotification(3L));
 
         NotificationListResolver.removeNotifications(notifications,
-                Collections.emptyList());
+                Lists.newArrayList());
         assertThat(notifications).containsExactlyElementsOf(expected);
     }
 
