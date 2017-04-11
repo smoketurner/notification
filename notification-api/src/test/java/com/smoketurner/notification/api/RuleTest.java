@@ -27,7 +27,7 @@ import io.dropwizard.util.Duration;
 public class RuleTest {
     private final ObjectMapper MAPPER = Jackson.newObjectMapper();
     private final Rule rule = Rule.builder().withMatchOn("first_name")
-            .withMaxSize(3).withMaxDuration(Duration.minutes(10)).build();;
+            .withMaxSize(3).withMaxDuration(Duration.minutes(10)).build();
 
     @Test
     public void serializesToJSON() throws Exception {
