@@ -25,7 +25,9 @@ import javax.annotation.concurrent.Immutable;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.BoundType;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Range;
 import com.google.common.primitives.Longs;
 
 @Immutable
@@ -36,31 +38,102 @@ public final class RangeHeader {
     private static final Pattern OPTIONS_PATTERN = Pattern
             .compile("max=(?<max>\\d+)");
     private final String field;
-    private final Long fromId;
-    private final Boolean fromInclusive;
-    private final Long toId;
-    private final Boolean toInclusive;
+    private final Range<Long> range;
     private final Integer max;
 
     /**
      * Constructor
      *
-     * @param field
-     * @param fromId
-     * @param fromInclusive
-     * @param toId
-     * @param toInclusive
-     * @param max
+     * @param builder
      */
-    public RangeHeader(final String field, final Long fromId,
-            final Boolean fromInclusive, final Long toId,
-            final Boolean toInclusive, final Integer max) {
-        this.field = field;
-        this.fromId = fromId;
-        this.fromInclusive = fromInclusive;
-        this.toId = toId;
-        this.toInclusive = toInclusive;
-        this.max = max;
+    private RangeHeader(final Builder builder) {
+
+        this.field = builder.field;
+
+        if (builder.fromId != null && builder.toId != null) {
+            if (builder.fromInclusive && builder.toInclusive) {
+                range = Range.closed(builder.fromId, builder.toId);
+            } else if (builder.fromInclusive && !builder.toInclusive) {
+                range = Range.closedOpen(builder.fromId, builder.toId);
+            } else if (!builder.fromInclusive && builder.toInclusive) {
+                range = Range.openClosed(builder.fromId, builder.toId);
+            } else {
+                range = Range.open(builder.fromId, builder.toId);
+            }
+        } else if (builder.fromId != null && builder.toId == null) {
+            if (builder.fromInclusive) {
+                range = Range.atLeast(builder.fromId);
+            } else {
+                range = Range.greaterThan(builder.fromId);
+            }
+        } else if (builder.fromId == null && builder.toId != null) {
+            if (builder.toInclusive) {
+                range = Range.atMost(builder.toId);
+            } else {
+                range = Range.lessThan(builder.toId);
+            }
+        } else {
+            range = Range.all();
+        }
+
+        this.max = builder.max;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static RangeHeader create() {
+        return builder().build();
+    }
+
+    public static class Builder {
+        private String field;
+        private Long fromId;
+        private Boolean fromInclusive;
+        private Long toId;
+        private Boolean toInclusive;
+        private Integer max;
+
+        public Builder field(final String field) {
+            this.field = field;
+            return this;
+        }
+
+        public Builder fromId(final Long id) {
+            if (id == null) {
+                fromInclusive = null;
+            }
+            this.fromId = id;
+            return this;
+        }
+
+        public Builder fromInclusive(final Boolean inclusive) {
+            this.fromInclusive = inclusive;
+            return this;
+        }
+
+        public Builder toId(final Long id) {
+            if (id == null) {
+                toInclusive = null;
+            }
+            this.toId = id;
+            return this;
+        }
+
+        public Builder toInclusive(final Boolean inclusive) {
+            this.toInclusive = inclusive;
+            return this;
+        }
+
+        public Builder max(final Integer max) {
+            this.max = max;
+            return this;
+        }
+
+        public RangeHeader build() {
+            return new RangeHeader(this);
+        }
     }
 
     /**
@@ -71,17 +144,11 @@ public final class RangeHeader {
      * @return parsed range header
      */
     public static RangeHeader parse(@Nullable final String header) {
-        String field = null;
-        Long fromId = null;
-        Boolean fromInclusive = null;
-        Long toId = null;
-        Boolean toInclusive = null;
-        Integer max = null;
-
         if (header == null) {
-            return new RangeHeader(field, fromId, fromInclusive, toId,
-                    toInclusive, max);
+            return RangeHeader.create();
         }
+
+        final RangeHeader.Builder builder = RangeHeader.builder();
 
         final List<String> parts = ImmutableList
                 .copyOf(Splitter.on(';').trimResults().split(header));
@@ -90,16 +157,20 @@ public final class RangeHeader {
         if (count > 0) {
             final Matcher first = ID_PATTERN.matcher(parts.get(0));
             if (first.matches()) {
-                field = first.group("field");
-                fromId = Longs.tryParse(first.group("fromId"));
+
+                final Long fromId = Longs.tryParse(first.group("fromId"));
+                final Long toId = Longs.tryParse(first.group("toId"));
+
+                builder.field(first.group("field")).fromId(fromId).toId(toId);
+
                 if (fromId != null) {
-                    fromInclusive = Strings
-                            .isNullOrEmpty(first.group("fromInclusive"));
+                    builder.fromInclusive(Strings
+                            .isNullOrEmpty(first.group("fromInclusive")));
                 }
-                toId = Longs.tryParse(first.group("toId"));
+
                 if (toId != null) {
-                    toInclusive = Strings
-                            .isNullOrEmpty(first.group("toInclusive"));
+                    builder.toInclusive(
+                            Strings.isNullOrEmpty(first.group("toInclusive")));
                 }
             }
         }
@@ -107,15 +178,14 @@ public final class RangeHeader {
             final Matcher second = OPTIONS_PATTERN.matcher(parts.get(1));
             if (second.matches()) {
                 try {
-                    max = Integer.parseInt(second.group("max"));
+                    builder.max(Integer.parseInt(second.group("max")));
                 } catch (NumberFormatException ignore) {
                     // ignore
                 }
             }
         }
 
-        return new RangeHeader(field, fromId, fromInclusive, toId, toInclusive,
-                max);
+        return builder.build();
     }
 
     public Optional<String> getField() {
@@ -123,19 +193,31 @@ public final class RangeHeader {
     }
 
     public Optional<Long> getFromId() {
-        return Optional.ofNullable(fromId);
+        if (!range.hasLowerBound()) {
+            return Optional.empty();
+        }
+        return Optional.of(range.lowerEndpoint());
     }
 
     public Optional<Boolean> getFromInclusive() {
-        return Optional.ofNullable(fromInclusive);
+        if (!range.hasLowerBound()) {
+            return Optional.empty();
+        }
+        return Optional.of(range.lowerBoundType() == BoundType.CLOSED);
     }
 
     public Optional<Long> getToId() {
-        return Optional.ofNullable(toId);
+        if (!range.hasUpperBound()) {
+            return Optional.empty();
+        }
+        return Optional.of(range.upperEndpoint());
     }
 
     public Optional<Boolean> getToInclusive() {
-        return Optional.ofNullable(toInclusive);
+        if (!range.hasUpperBound()) {
+            return Optional.empty();
+        }
+        return Optional.of(range.upperBoundType() == BoundType.CLOSED);
     }
 
     public Optional<Integer> getMax() {
@@ -153,24 +235,18 @@ public final class RangeHeader {
 
         final RangeHeader other = (RangeHeader) obj;
         return Objects.equals(field, other.field)
-                && Objects.equals(fromId, other.fromId)
-                && Objects.equals(fromInclusive, other.fromInclusive)
-                && Objects.equals(toId, other.toId)
-                && Objects.equals(toInclusive, other.toInclusive)
+                && Objects.equals(range, other.range)
                 && Objects.equals(max, other.max);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(field, fromId, fromInclusive, toId, toInclusive,
-                max);
+        return Objects.hash(field, range, max);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("field", field)
-                .add("fromId", fromId).add("fromInclusive", fromInclusive)
-                .add("toId", toId).add("toInclusive", toInclusive)
-                .add("max", max).toString();
+                .add("range", range).add("max", max).toString();
     }
 }
