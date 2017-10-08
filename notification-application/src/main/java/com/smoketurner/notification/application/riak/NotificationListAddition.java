@@ -37,7 +37,8 @@ public class NotificationListAddition
      *            Notification to add
      */
     public NotificationListAddition(@Nonnull final Notification notification) {
-        this.notification = Objects.requireNonNull(notification);
+        this.notification = Objects.requireNonNull(notification,
+                "notification == null");
     }
 
     @Override

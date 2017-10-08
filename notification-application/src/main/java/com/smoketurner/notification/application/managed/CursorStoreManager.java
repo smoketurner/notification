@@ -31,7 +31,7 @@ public class CursorStoreManager implements Managed {
      *            Cursor store to manage
      */
     public CursorStoreManager(@Nonnull final CursorStore store) {
-        this.store = Objects.requireNonNull(store);
+        this.store = Objects.requireNonNull(store, "store == null");
     }
 
     @Override

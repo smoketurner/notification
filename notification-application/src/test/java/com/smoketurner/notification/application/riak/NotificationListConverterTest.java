@@ -16,7 +16,6 @@
 package com.smoketurner.notification.application.riak;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
@@ -30,23 +29,15 @@ public class NotificationListConverterTest {
 
     private final NotificationListConverter converter = new NotificationListConverter();
 
-    @Test
+    @Test(expected = ConversionException.class)
     public void testToDomainInvalidContentType() throws Exception {
-        try {
-            converter.toDomain(BinaryValue.create("test"), "text/plain");
-            failBecauseExceptionWasNotThrown(ConversionException.class);
-        } catch (ConversionException e) {
-        }
+        converter.toDomain(BinaryValue.create("test"), "text/plain");
     }
 
-    @Test
+    @Test(expected = ConversionException.class)
     public void testToDomainInvalidData() throws Exception {
-        try {
-            converter.toDomain(BinaryValue.create("test"),
-                    "application/x-protobuf");
-            failBecauseExceptionWasNotThrown(ConversionException.class);
-        } catch (ConversionException e) {
-        }
+        converter.toDomain(BinaryValue.create("test"),
+                "application/x-protobuf");
     }
 
     @Test

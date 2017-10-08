@@ -75,7 +75,7 @@ public final class CursorObject implements Comparable<CursorObject> {
     @JsonCreator
     public CursorObject(@JsonProperty("key") final String key,
             @JsonProperty("value") final long value) {
-        this.key = Objects.requireNonNull(key);
+        this.key = Objects.requireNonNull(key, "key == null");
         this.value = value;
     }
 

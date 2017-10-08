@@ -31,7 +31,7 @@ public class NotificationStoreManager implements Managed {
      *            Notification store to manage
      */
     public NotificationStoreManager(@Nonnull final NotificationStore store) {
-        this.store = Objects.requireNonNull(store);
+        this.store = Objects.requireNonNull(store, "store == null");
     }
 
     @Override

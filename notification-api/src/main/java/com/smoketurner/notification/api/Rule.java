@@ -58,7 +58,15 @@ public final class Rule {
             @JsonProperty(MATCH_ON) final Optional<String> matchOn) {
         this.maxSize = maxSize;
         this.maxDuration = maxDuration;
-        this.matchOn = matchOn;
+        if (matchOn.isPresent()) {
+            if (matchOn.get().isEmpty()) {
+                this.matchOn = Optional.empty();
+            } else {
+                this.matchOn = matchOn;
+            }
+        } else {
+            this.matchOn = Optional.empty();
+        }
     }
 
     public static Builder builder() {
@@ -81,7 +89,11 @@ public final class Rule {
         }
 
         public Builder withMatchOn(final String matchOn) {
-            this.matchOn = matchOn;
+            if (matchOn != null && matchOn.isEmpty()) {
+                this.matchOn = null;
+            } else {
+                this.matchOn = matchOn;
+            }
             return this;
         }
 

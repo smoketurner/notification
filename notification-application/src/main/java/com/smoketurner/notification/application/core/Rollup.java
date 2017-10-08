@@ -35,7 +35,7 @@ public class Rollup {
      *            Map of rules
      */
     public Rollup(@Nonnull final Map<String, Rule> rules) {
-        this.rules = Objects.requireNonNull(rules);
+        this.rules = Objects.requireNonNull(rules, "rules == null");
     }
 
     /**
@@ -48,7 +48,7 @@ public class Rollup {
      */
     public Stream<Notification> rollup(
             @Nonnull final Stream<Notification> notifications) {
-        Objects.requireNonNull(notifications);
+        Objects.requireNonNull(notifications, "notifications == null");
 
         if (rules.isEmpty()) {
             return notifications;

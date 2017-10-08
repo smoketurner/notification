@@ -16,7 +16,6 @@
 package com.smoketurner.notification.application.store;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -157,22 +156,14 @@ public class NotificationStoreTest {
                 .containsExactlyElementsOf(expected);
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testSplitNotificationsUserNull() throws Exception {
-        try {
-            store.splitNotifications(null, Sets.<Notification>newTreeSet());
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
+        store.splitNotifications(null, new TreeSet<Notification>());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testSplitNotificationsUserEmpty() throws Exception {
-        try {
-            store.splitNotifications("", Sets.<Notification>newTreeSet());
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
+        store.splitNotifications("", new TreeSet<Notification>());
     }
 
     @Test

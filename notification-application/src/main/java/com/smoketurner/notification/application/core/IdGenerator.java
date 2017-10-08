@@ -42,7 +42,7 @@ public class IdGenerator {
      */
     public IdGenerator(@Nonnull final IdWorker snowizard,
             final boolean enabled) {
-        this.snowizard = Objects.requireNonNull(snowizard);
+        this.snowizard = Objects.requireNonNull(snowizard, "snowizard == null");
         this.enabled = enabled;
     }
 

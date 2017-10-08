@@ -90,7 +90,7 @@ public class RuleStore {
         this.cacheMisses = registry
                 .meter(MetricRegistry.name(RuleStore.class, "cache-misses"));
 
-        this.client = Objects.requireNonNull(client);
+        this.client = Objects.requireNonNull(client, "client == null");
 
         // set up a cache for the rules
         this.cache = CacheBuilder.newBuilder()
@@ -252,10 +252,10 @@ public class RuleStore {
     public void store(@Nonnull final String category, @Nonnull final Rule rule)
             throws NotificationStoreException {
 
-        Objects.requireNonNull(category);
+        Objects.requireNonNull(category, "category == null");
         Preconditions.checkArgument(!category.isEmpty(),
                 "category cannot be empty");
-        Objects.requireNonNull(rule);
+        Objects.requireNonNull(rule, "rule == null");
         Preconditions.checkState(rule.isValid(), "rule is not valid");
 
         final Optional<Context> fetchContext = fetchContext();
@@ -318,7 +318,7 @@ public class RuleStore {
      */
     public void remove(@Nonnull final String category)
             throws NotificationStoreException {
-        Objects.requireNonNull(category);
+        Objects.requireNonNull(category, "category == null");
         Preconditions.checkArgument(!category.isEmpty(),
                 "category cannot be empty");
 

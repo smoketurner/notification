@@ -15,7 +15,6 @@
  */
 package com.smoketurner.notification.application.managed;
 
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import org.junit.Test;
@@ -25,13 +24,9 @@ public class NotificationStoreManagerTest {
 
     private final NotificationStore store = mock(NotificationStore.class);
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testNullManager() throws Exception {
-        try {
-            new NotificationStoreManager(null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
+        new NotificationStoreManager(null);
     }
 
     @Test

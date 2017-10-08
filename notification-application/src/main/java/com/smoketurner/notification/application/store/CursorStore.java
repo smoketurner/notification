@@ -66,7 +66,7 @@ public class CursorStore {
         this.deleteTimer = registry
                 .timer(MetricRegistry.name(CursorStore.class, "delete"));
 
-        this.client = Objects.requireNonNull(client);
+        this.client = Objects.requireNonNull(client, "client == null");
     }
 
     /**
@@ -108,10 +108,10 @@ public class CursorStore {
             @Nonnull final String cursorName)
             throws NotificationStoreException {
 
-        Objects.requireNonNull(username);
+        Objects.requireNonNull(username, "username == null");
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Objects.requireNonNull(cursorName);
+        Objects.requireNonNull(cursorName, "cursorName == null");
         Preconditions.checkArgument(!cursorName.isEmpty(),
                 "cursorName cannot be empty");
 
@@ -159,10 +159,10 @@ public class CursorStore {
     public void store(@Nonnull final String username,
             @Nonnull final String cursorName, final long value) {
 
-        Objects.requireNonNull(username);
+        Objects.requireNonNull(username, "username == null");
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Objects.requireNonNull(cursorName);
+        Objects.requireNonNull(cursorName, "cursorName == null");
         Preconditions.checkArgument(!cursorName.isEmpty(),
                 "cursorName cannot be empty");
 
@@ -191,10 +191,10 @@ public class CursorStore {
     public void delete(@Nonnull final String username,
             @Nonnull final String cursorName) {
 
-        Objects.requireNonNull(username);
+        Objects.requireNonNull(username, "username == null");
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Objects.requireNonNull(cursorName);
+        Objects.requireNonNull(cursorName, "cursorName == null");
         Preconditions.checkArgument(!cursorName.isEmpty(),
                 "cursorName cannot be empty");
 
@@ -220,6 +220,6 @@ public class CursorStore {
      */
     public String getCursorKey(@Nonnull final String username,
             @Nonnull final String cursorName) {
-        return String.format("%s-%s", username, cursorName);
+        return username + "-" + cursorName;
     }
 }

@@ -24,8 +24,6 @@ import org.junit.Test;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smoketurner.dropwizard.zipkin.LoggingZipkinFactory;
-import com.smoketurner.dropwizard.zipkin.ZipkinFactory;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
 import com.smoketurner.notification.application.resources.NotificationResource;
 import com.smoketurner.notification.application.resources.PingResource;
@@ -44,18 +42,11 @@ public class NotificationApplicationTest {
             LifecycleEnvironment.class);
     private final HealthCheckRegistry healthChecks = mock(
             HealthCheckRegistry.class);
-    private final LoggingZipkinFactory zipkin = new LoggingZipkinFactory();
     private final NotificationApplication application = new NotificationApplication();
-    private final NotificationConfiguration config = new NotificationConfiguration() {
-        @Override
-        public ZipkinFactory getZipkin() {
-            return zipkin;
-        }
-    };
+    private final NotificationConfiguration config = new NotificationConfiguration();
 
     @Before
     public void setup() throws Exception {
-        zipkin.setServiceName("notification");
         config.getSnowizard().setDatacenterId(1);
         config.getSnowizard().setWorkerId(1);
         when(environment.metrics()).thenReturn(registry);

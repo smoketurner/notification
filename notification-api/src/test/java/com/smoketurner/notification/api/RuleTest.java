@@ -17,7 +17,6 @@ package com.smoketurner.notification.api;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,23 +43,23 @@ public class RuleTest {
         assertThat(actual).isEqualTo(rule);
     }
 
-    @Test
+    @Test(expected = JsonMappingException.class)
     public void testInvalidDuration() throws Exception {
-        try {
-            MAPPER.readValue(fixture("fixtures/rule_invalid.json"), Rule.class);
-            failBecauseExceptionWasNotThrown(JsonMappingException.class);
-        } catch (JsonMappingException e) {
-        }
+        MAPPER.readValue(fixture("fixtures/rule_invalid_duration.json"),
+                Rule.class);
+    }
+
+    @Test(expected = JsonMappingException.class)
+    public void testInvalidTimeUnit() throws Exception {
+        MAPPER.readValue(fixture("fixtures/rule_invalid_timeunit.json"),
+                Rule.class);
     }
 
     @Test
-    public void testInvalidTimeUnit() throws Exception {
-        try {
-            MAPPER.readValue(fixture("fixtures/rule_invalid_timeunit.json"),
-                    Rule.class);
-            failBecauseExceptionWasNotThrown(JsonMappingException.class);
-        } catch (JsonMappingException e) {
-        }
+    public void testInvalidMatchOn() throws Exception {
+        final Rule actual = MAPPER.readValue(
+                fixture("fixtures/rule_invalid_matchon.json"), Rule.class);
+        assertThat(actual.getMatchOn().isPresent()).isFalse();
     }
 
     @Test
@@ -72,6 +71,9 @@ public class RuleTest {
         assertThat(rule.isValid()).isFalse();
 
         rule = Rule.builder().withMatchOn("").build();
+        assertThat(rule.isValid()).isFalse();
+
+        rule = Rule.builder().withMatchOn("like").build();
         assertThat(rule.isValid()).isTrue();
     }
 }
