@@ -37,7 +37,7 @@ public class NotificationListDeletion
      *            Notification IDs to delete
      */
     public NotificationListDeletion(@Nonnull final Collection<Long> ids) {
-        this.ids = Objects.requireNonNull(ids);
+        this.ids = Objects.requireNonNull(ids, "ids == null");
     }
 
     @Override

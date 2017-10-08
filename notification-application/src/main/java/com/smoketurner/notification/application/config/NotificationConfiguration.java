@@ -20,8 +20,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.smoketurner.dropwizard.riak.RiakFactory;
-import com.smoketurner.dropwizard.zipkin.LoggingZipkinFactory;
-import com.smoketurner.dropwizard.zipkin.ZipkinFactory;
 import io.dropwizard.Configuration;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
@@ -48,11 +46,6 @@ public class NotificationConfiguration extends Configuration {
     @JsonProperty
     private final SnowizardConfiguration snowizard = new SnowizardConfiguration();
 
-    @Valid
-    @NotNull
-    @JsonProperty
-    private final ZipkinFactory zipkin = new LoggingZipkinFactory();
-
     @JsonProperty
     public Duration getRuleCacheTimeout() {
         return ruleCacheTimeout;
@@ -76,10 +69,5 @@ public class NotificationConfiguration extends Configuration {
     @JsonProperty
     public SnowizardConfiguration getSnowizard() {
         return snowizard;
-    }
-
-    @JsonProperty
-    public ZipkinFactory getZipkin() {
-        return zipkin;
     }
 }

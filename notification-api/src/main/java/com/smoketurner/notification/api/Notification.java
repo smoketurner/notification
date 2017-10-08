@@ -135,17 +135,19 @@ public final class Notification implements Comparable<Notification> {
         }
 
         public Builder withCategory(@Nonnull final String category) {
-            this.category = Objects.requireNonNull(category);
+            this.category = Objects.requireNonNull(category,
+                    "category == null");
             return this;
         }
 
         public Builder withMessage(@Nonnull final String message) {
-            this.message = Objects.requireNonNull(message);
+            this.message = Objects.requireNonNull(message, "message == null");
             return this;
         }
 
         public Builder withCreatedAt(@Nonnull final DateTime createdAt) {
-            this.createdAt = Objects.requireNonNull(createdAt);
+            this.createdAt = Objects.requireNonNull(createdAt,
+                    "createdAt == null");
             return this;
         }
 
@@ -156,13 +158,15 @@ public final class Notification implements Comparable<Notification> {
 
         public Builder withProperties(
                 @Nonnull final Map<String, String> properties) {
-            this.properties = Objects.requireNonNull(properties);
+            this.properties = Objects.requireNonNull(properties,
+                    "properties == null");
             return this;
         }
 
         public Builder withNotifications(
                 @Nonnull final Collection<Notification> notifications) {
-            this.notifications = Objects.requireNonNull(notifications);
+            this.notifications = Objects.requireNonNull(notifications,
+                    "notifications == null");
             return this;
         }
 
@@ -240,6 +244,7 @@ public final class Notification implements Comparable<Notification> {
         }
 
         final Notification other = (Notification) obj;
+        // id is suppose to be globally unique, so only compare on it
         return Objects.equals(id, other.id);
     }
 

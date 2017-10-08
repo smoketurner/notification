@@ -95,10 +95,11 @@ public class NotificationStore {
         this.deleteTimer = registry
                 .timer(MetricRegistry.name(NotificationStore.class, "delete"));
 
-        this.client = Objects.requireNonNull(client);
-        this.idGenerator = Objects.requireNonNull(idGenerator);
-        this.cursors = Objects.requireNonNull(cursors);
-        this.ruleStore = Objects.requireNonNull(ruleStore);
+        this.client = Objects.requireNonNull(client, "client == null");
+        this.idGenerator = Objects.requireNonNull(idGenerator,
+                "idGenerator == null");
+        this.cursors = Objects.requireNonNull(cursors, "cursors == null");
+        this.ruleStore = Objects.requireNonNull(ruleStore, "ruleStore == null");
     }
 
     /**
@@ -137,7 +138,7 @@ public class NotificationStore {
     public Optional<UserNotifications> fetch(@Nonnull final String username)
             throws NotificationStoreException {
 
-        Objects.requireNonNull(username);
+        Objects.requireNonNull(username, "username == null");
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
 
@@ -189,7 +190,7 @@ public class NotificationStore {
             @Nonnull final SortedSet<Notification> notifications)
             throws NotificationStoreException {
 
-        Objects.requireNonNull(username);
+        Objects.requireNonNull(username, "username == null");
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
 
@@ -201,7 +202,8 @@ public class NotificationStore {
         // get the ID of the most recent notification (this should never be
         // zero)
         final long newestId = notifications.first().getId(0L);
-        LOGGER.debug("Newest notification ID: {}", newestId);
+        LOGGER.debug("User ({}) newest notification ID: {}", username,
+                newestId);
 
         // fetch rules from cache
         final Map<String, Rule> rules = ruleStore.fetchCached();
@@ -211,11 +213,10 @@ public class NotificationStore {
 
         final Optional<Long> cursor = cursors.fetch(username, CURSOR_NAME);
         if (!cursor.isPresent()) {
-            LOGGER.debug("User ({}) has no cursor", username);
-
             // if the user has no cursor, update the cursor to the newest
             // notification
-            LOGGER.debug("Updating cursor to {}", newestId);
+            LOGGER.debug("User ({}) has no cursor, setting to {}", username,
+                    newestId);
             cursors.store(username, CURSOR_NAME, newestId);
 
             // set all of the notifications to unseen=true
@@ -224,13 +225,14 @@ public class NotificationStore {
         }
 
         final long lastSeenId = cursor.orElse(0L);
-        LOGGER.debug("Last seen notification ID: {}", lastSeenId);
+        LOGGER.debug("User ({}) last seen notification ID: {}", username,
+                lastSeenId);
 
         // if the latest seen notification ID is less than the newest
         // notification ID, then update the cursor to the newest notification
         // ID.
         if (lastSeenId < newestId) {
-            LOGGER.debug("Updating cursor to {}", newestId);
+            LOGGER.debug("User ({}) updating cursor to {}", username, newestId);
             cursors.store(username, CURSOR_NAME, newestId);
         }
 
@@ -273,10 +275,10 @@ public class NotificationStore {
             @Nonnull final Notification notification)
             throws NotificationStoreException {
 
-        Objects.requireNonNull(username);
+        Objects.requireNonNull(username, "username == null");
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Objects.requireNonNull(notification);
+        Objects.requireNonNull(notification, "notification == null");
 
         final Notification updatedNotification = Notification
                 .builder(notification).withId(idGenerator.nextId())
@@ -313,7 +315,7 @@ public class NotificationStore {
      */
     public void removeAll(@Nonnull final String username) {
 
-        Objects.requireNonNull(username);
+        Objects.requireNonNull(username, "username == null");
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
 
@@ -340,10 +342,10 @@ public class NotificationStore {
     public void remove(@Nonnull final String username,
             @Nonnull final Collection<Long> ids) {
 
-        Objects.requireNonNull(username);
+        Objects.requireNonNull(username, "username == null");
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
-        Objects.requireNonNull(ids);
+        Objects.requireNonNull(ids, "ids == null");
 
         // if nothing to remove, return early
         if (ids.isEmpty()) {
@@ -472,7 +474,7 @@ public class NotificationStore {
     public Iterable<Notification> skip(
             @Nonnull final Iterable<Notification> notifications,
             final long startId, final boolean inclusive, final int limitSize) {
-        Objects.requireNonNull(notifications);
+        Objects.requireNonNull(notifications, "notifications == null");
         final int position = indexOf(notifications, startId);
         if (position == -1) {
             return Iterables.limit(notifications, limitSize);

@@ -43,8 +43,8 @@ public final class UserNotifications {
      */
     public UserNotifications(@Nonnull final Iterable<Notification> unseen,
             @Nonnull final Iterable<Notification> seen) {
-        this.unseen = Objects.requireNonNull(unseen);
-        this.seen = Objects.requireNonNull(seen);
+        this.unseen = Objects.requireNonNull(unseen, "unseen == null");
+        this.seen = Objects.requireNonNull(seen, "seen == null");
     }
 
     /**
@@ -57,8 +57,8 @@ public final class UserNotifications {
      */
     public UserNotifications(@Nonnull final Stream<Notification> unseen,
             @Nonnull final Stream<Notification> seen) {
-        Objects.requireNonNull(unseen);
-        Objects.requireNonNull(seen);
+        Objects.requireNonNull(unseen, "unseen == null");
+        Objects.requireNonNull(seen, "seen == null");
 
         this.unseen = unseen.collect(Collectors.toCollection(TreeSet::new));
         this.seen = seen.collect(Collectors.toCollection(TreeSet::new));
@@ -71,8 +71,8 @@ public final class UserNotifications {
      *            Unseen notifications
      */
     public UserNotifications(@Nonnull final Iterable<Notification> unseen) {
-        this.unseen = Objects.requireNonNull(unseen);
-        this.seen = Collections.<Notification> emptySortedSet();
+        this.unseen = Objects.requireNonNull(unseen, "unseen == null");
+        this.seen = Collections.<Notification>emptySortedSet();
     }
 
     /**
@@ -82,17 +82,17 @@ public final class UserNotifications {
      *            Unseen notifications
      */
     public UserNotifications(@Nonnull final Stream<Notification> unseen) {
-        Objects.requireNonNull(unseen);
+        Objects.requireNonNull(unseen, "unseen == null");
         this.unseen = unseen.collect(Collectors.toCollection(TreeSet::new));
-        this.seen = Collections.<Notification> emptySortedSet();
+        this.seen = Collections.<Notification>emptySortedSet();
     }
 
     /**
      * Constructor
      */
     public UserNotifications() {
-        this.unseen = Collections.<Notification> emptySortedSet();
-        this.seen = Collections.<Notification> emptySortedSet();
+        this.unseen = Collections.<Notification>emptySortedSet();
+        this.seen = Collections.<Notification>emptySortedSet();
     }
 
     public boolean isEmpty() {
@@ -108,7 +108,7 @@ public final class UserNotifications {
     }
 
     public ImmutableSortedSet<Notification> getNotifications() {
-        return ImmutableSortedSet.<Notification> naturalOrder().addAll(unseen)
+        return ImmutableSortedSet.<Notification>naturalOrder().addAll(unseen)
                 .addAll(seen).build();
     }
 

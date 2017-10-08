@@ -21,8 +21,6 @@ import com.basho.riak.client.api.convert.ConverterFactory;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.smoketurner.dropwizard.riak.RiakBundle;
 import com.smoketurner.dropwizard.riak.RiakFactory;
-import com.smoketurner.dropwizard.zipkin.ZipkinBundle;
-import com.smoketurner.dropwizard.zipkin.ZipkinFactory;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
 import com.smoketurner.notification.application.core.IdGenerator;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
@@ -90,24 +88,11 @@ public class NotificationApplication
                 return configuration.getRiak();
             }
         });
-
-        // add Zipkin bundle
-        bootstrap.addBundle(
-                new ZipkinBundle<NotificationConfiguration>(getName()) {
-                    @Override
-                    public ZipkinFactory getZipkinFactory(
-                            final NotificationConfiguration configuration) {
-                        return configuration.getZipkin();
-                    }
-                });
     }
 
     @Override
     public void run(final NotificationConfiguration configuration,
             final Environment environment) throws Exception {
-
-        // set up zipkin tracing
-        configuration.getZipkin().build(environment);
 
         // returns all DateTime objects as ISO8601 strings
         environment.getObjectMapper().configure(

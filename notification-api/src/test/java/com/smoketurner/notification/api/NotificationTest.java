@@ -118,7 +118,6 @@ public class NotificationTest {
 
         assertThat(n1.compareTo(n1b) == 0).isEqualTo(n1.equals(n1b));
         assertThat(n1.equals(null)).isFalse();
-        assertThat(n1.equals("")).isFalse();
     }
 
     @Test
