@@ -13,4 +13,3 @@ ratings:
 
 exclude_paths:
 - "notification-application/src/main/java/com/smoketurner/notification/application/protos/NotificationProtos.java"
-- "terraform/"

@@ -31,7 +31,8 @@ public class NotificationClientBuilder {
      *            Environment
      */
     public NotificationClientBuilder(@Nonnull final Environment environment) {
-        this.environment = Objects.requireNonNull(environment);
+        this.environment = Objects.requireNonNull(environment,
+                "environment == null");
     }
 
     /**

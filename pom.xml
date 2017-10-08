@@ -26,7 +26,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <file.encoding>UTF-8</file.encoding>
-        <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
         <dropwizard.version>1.2.0</dropwizard.version>
     </properties>
 
@@ -166,10 +165,15 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                     <optimize>true</optimize>
+                    <debug>true</debug>
                     <compilerId>javac-with-errorprone</compilerId>
                     <forceJavacCompilerUse>true</forceJavacCompilerUse>
                     <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <arg>-XepDisableWarningsInGeneratedCode</arg>
+                    </compilerArgs>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -239,7 +243,8 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.0.0-M1</version>
                 <configuration>
-                    <additionalparam>${javadoc.doclint.none}</additionalparam>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
                 </configuration>
                 <executions>
                     <execution>
@@ -388,7 +393,8 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.0.0-M1</version>
                 <configuration>
-                    <additionalparam>${javadoc.doclint.none}</additionalparam>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
                     <quiet>true</quiet>
                 </configuration>
                 <reportSets>

@@ -17,19 +17,19 @@ package com.smoketurner.notification.client;
 
 import java.net.URI;
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotEmpty;
 import io.dropwizard.client.JerseyClientConfiguration;
 
 public class NotificationClientConfiguration extends JerseyClientConfiguration {
 
-    @NotNull
-    private URI uri = URI.create("http://localhost:8080");
+    @NotEmpty
+    private String uri = "http://localhost:8080";
 
     public URI getUri() {
-        return uri;
+        return URI.create(uri);
     }
 
-    public void setUri(@Nonnull final URI uri) {
+    public void setUri(@Nonnull final String uri) {
         this.uri = uri;
     }
 }

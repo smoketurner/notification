@@ -61,14 +61,14 @@ public class NotificationClient implements Closeable {
      */
     public NotificationClient(@Nonnull final MetricRegistry registry,
             @Nonnull final Client client, @Nonnull final URI uri) {
-        this.client = Objects.requireNonNull(client);
+        this.client = Objects.requireNonNull(client, "client == null");
         this.fetchTimer = registry
                 .timer(name(NotificationClient.class, "fetch"));
         this.storeTimer = registry
                 .timer(name(NotificationClient.class, "store"));
         this.deleteTimer = registry
                 .timer(name(NotificationClient.class, "delete"));
-        this.rootUri = uri;
+        this.rootUri = Objects.requireNonNull(uri, "uri == null");
     }
 
     /**
@@ -130,7 +130,7 @@ public class NotificationClient implements Closeable {
      */
     public Optional<Notification> store(@Nonnull final String username,
             @Nonnull final Notification notification) {
-        Objects.requireNonNull(notification);
+        Objects.requireNonNull(notification, "notification == null");
         final URI uri = getTarget(username);
         LOGGER.debug("POST {}", uri);
 
@@ -153,7 +153,7 @@ public class NotificationClient implements Closeable {
      */
     public void delete(@Nonnull final String username,
             @Nonnull final Collection<Long> ids) {
-        Objects.requireNonNull(ids);
+        Objects.requireNonNull(ids, "ids == null");
         Preconditions.checkArgument(!ids.isEmpty(), "ids cannot be empty");
         final URI uri = UriBuilder.fromUri(getTarget(username))
                 .queryParam("ids", Joiner.on(",").join(ids)).build();
@@ -214,7 +214,7 @@ public class NotificationClient implements Closeable {
      * @return target URL
      */
     private URI getTarget(@Nonnull final String username) {
-        Objects.requireNonNull(username);
+        Objects.requireNonNull(username, "username == null");
         Preconditions.checkArgument(!username.isEmpty(),
                 "username cannot be empty");
         return UriBuilder.fromUri(rootUri).path("/v1/notifications/{username}")

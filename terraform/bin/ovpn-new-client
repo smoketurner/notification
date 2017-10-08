@@ -1,5 +1,0 @@
-#!/bin/bash
-
-ssh -t -i ssh/insecure-deployer \
-"ubuntu@$(terraform output nat.ip)" \
-sudo docker run --volumes-from ovpn-data --rm -it kylemanna/openvpn easyrsa build-client-full "${1}" nopass

@@ -14,7 +14,7 @@
     <properties>
         <package.name>notification</package.name>
         <protobuf.version>3.3.0</protobuf.version>
-        <jmh.version>1.17.4</jmh.version>
+        <jmh.version>1.19</jmh.version>
     </properties>
 
     <dependencies>
