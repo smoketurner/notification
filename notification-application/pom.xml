@@ -45,7 +45,7 @@
         <dependency>
             <groupId>com.smoketurner.dropwizard</groupId>
             <artifactId>dropwizard-riak</artifactId>
-            <version>1.1.0-1</version>
+            <version>1.2.0-1</version>
         </dependency>
         <dependency>
             <groupId>com.smoketurner</groupId>
@@ -100,7 +100,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <configuration>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <filters>

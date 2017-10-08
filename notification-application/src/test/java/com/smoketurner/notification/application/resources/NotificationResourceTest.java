@@ -44,10 +44,10 @@ import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.core.UserNotifications;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
-import com.smoketurner.notification.application.filter.CharsetResponseFilter;
 import com.smoketurner.notification.application.store.NotificationStore;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.errors.ErrorMessage;
+import io.dropwizard.jersey.filter.CharsetUtf8Filter;
 import io.dropwizard.jersey.validation.ValidationErrorMessage;
 import io.dropwizard.testing.junit.ResourceTestRule;
 
@@ -60,7 +60,7 @@ public class NotificationResourceTest {
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new NotificationResource(store))
-            .addProvider(new CharsetResponseFilter())
+            .addProvider(new CharsetUtf8Filter())
             .addProvider(new NotificationExceptionMapper()).build();
 
     @After

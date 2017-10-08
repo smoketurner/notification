@@ -81,7 +81,6 @@ public class CursorObjectTest {
         final CursorObject c2 = new CursorObject("test-notifications", 2L);
         final CursorObject c3 = new CursorObject("test-other", 2L);
         assertThat(c1.equals(c2)).isEqualTo(c1.compareTo(c2) == 0);
-        assertThat(c2.equals(c2)).isEqualTo(c2.compareTo(c2) == 0);
         assertThat(c2.equals(c3)).isEqualTo(c2.compareTo(c3) == 0);
         assertThat(c1.equals(c3)).isEqualTo(c1.compareTo(c3) == 0);
     }

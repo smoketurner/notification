@@ -26,9 +26,6 @@ import com.smoketurner.dropwizard.zipkin.ZipkinFactory;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
 import com.smoketurner.notification.application.core.IdGenerator;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
-import com.smoketurner.notification.application.filter.CharsetResponseFilter;
-import com.smoketurner.notification.application.filter.IdResponseFilter;
-import com.smoketurner.notification.application.filter.RuntimeFilter;
 import com.smoketurner.notification.application.managed.CursorStoreManager;
 import com.smoketurner.notification.application.managed.NotificationStoreManager;
 import com.smoketurner.notification.application.resources.NotificationResource;
@@ -47,6 +44,9 @@ import com.smoketurner.snowizard.core.IdWorker;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
+import io.dropwizard.jersey.filter.CharsetUtf8Filter;
+import io.dropwizard.jersey.filter.RequestIdFilter;
+import io.dropwizard.jersey.filter.RuntimeFilter;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
@@ -114,9 +114,9 @@ public class NotificationApplication
                 SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         environment.jersey().register(NotificationExceptionMapper.class);
         // adds charset=UTF-8 to the response headers
-        environment.jersey().register(CharsetResponseFilter.class);
+        environment.jersey().register(CharsetUtf8Filter.class);
         // adds a X-Request-Id response header
-        environment.jersey().register(IdResponseFilter.class);
+        environment.jersey().register(RequestIdFilter.class);
         // adds a X-Runtime response header
         environment.jersey().register(RuntimeFilter.class);
 

@@ -16,8 +16,8 @@
 package com.smoketurner.notification.application.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -39,10 +39,10 @@ import com.google.common.collect.ImmutableMap;
 import com.smoketurner.notification.api.Rule;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
-import com.smoketurner.notification.application.filter.CharsetResponseFilter;
 import com.smoketurner.notification.application.store.RuleStore;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.errors.ErrorMessage;
+import io.dropwizard.jersey.filter.CharsetUtf8Filter;
 import io.dropwizard.testing.junit.ResourceTestRule;
 
 public class RuleResourceTest {
@@ -53,7 +53,7 @@ public class RuleResourceTest {
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new RuleResource(store))
-            .addProvider(new CharsetResponseFilter())
+            .addProvider(new CharsetUtf8Filter())
             .addProvider(new NotificationExceptionMapper()).build();
 
     @After
