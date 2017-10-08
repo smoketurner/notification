@@ -154,7 +154,6 @@ public class MatcherTest {
         final Matcher m2 = new Matcher(rule1, n2);
         final Matcher m3 = new Matcher(rule2, n1);
         assertThat(m1.equals(m2)).isEqualTo(m1.compareTo(m2) == 0);
-        assertThat(m2.equals(m2)).isEqualTo(m2.compareTo(m2) == 0);
         assertThat(m2.equals(m3)).isEqualTo(m2.compareTo(m3) == 0);
         assertThat(m1.equals(m3)).isEqualTo(m1.compareTo(m3) == 0);
     }

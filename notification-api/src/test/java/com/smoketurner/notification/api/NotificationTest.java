@@ -103,7 +103,6 @@ public class NotificationTest {
         final Notification n2 = Notification.builder().withId(2L).build();
         final Notification n3 = Notification.builder().withId(3L).build();
 
-        assertThat(n1.compareTo(n1)).isZero();
         assertThat(n1.compareTo(n2)).isEqualTo(1);
         assertThat(n2.compareTo(n1)).isEqualTo(-1);
 
@@ -131,7 +130,6 @@ public class NotificationTest {
         final Notification n3 = Notification.builder().withId(1L)
                 .withCategory("other").build();
         assertThat(n1.equals(n2)).isEqualTo(n1.compareTo(n2) == 0);
-        assertThat(n2.equals(n2)).isEqualTo(n2.compareTo(n2) == 0);
         assertThat(n2.equals(n3)).isEqualTo(n2.compareTo(n3) == 0);
         assertThat(n1.equals(n3)).isEqualTo(n1.compareTo(n3) == 0);
     }
