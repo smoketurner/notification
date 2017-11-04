@@ -16,8 +16,7 @@
 package com.smoketurner.notification.application.riak;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import java.time.ZonedDateTime;
 import org.junit.Test;
 import com.basho.riak.client.api.convert.ConversionException;
 import com.basho.riak.client.core.util.BinaryValue;
@@ -42,8 +41,7 @@ public class NotificationListConverterTest {
 
     @Test
     public void testToDomain() throws Exception {
-        final DateTime now = new DateTime("2015-08-14T17:52:43Z",
-                DateTimeZone.UTC);
+        final ZonedDateTime now = ZonedDateTime.parse("2015-08-14T17:52:43Z");
 
         final Notification n1 = Notification.builder().withId(1L)
                 .withCategory("test-category").withMessage("this is a test")

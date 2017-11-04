@@ -16,11 +16,11 @@
 package com.smoketurner.notification.application.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
@@ -79,7 +79,7 @@ public class RollupTest {
 
     @Test
     public void testMatchDuration() {
-        final DateTime now = DateTime.now(DateTimeZone.UTC);
+        final ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
 
         final Notification n1 = Notification.builder()
                 .fromNotification(createNotification(1))

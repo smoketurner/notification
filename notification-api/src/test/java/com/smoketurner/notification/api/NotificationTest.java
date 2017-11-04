@@ -17,9 +17,8 @@ package com.smoketurner.notification.api;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
+import java.time.ZonedDateTime;
 import java.util.TreeSet;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,8 +36,7 @@ public class NotificationTest {
         final Notification notification2 = Notification.builder().withId(12346L)
                 .withCategory("new-follower")
                 .withMessage("you have a new follower")
-                .withCreatedAt(
-                        new DateTime("2015-06-29T21:04:12Z", DateTimeZone.UTC))
+                .withCreatedAt(ZonedDateTime.parse("2015-06-29T21:04:12Z"))
                 .withUnseen(true).withProperties(ImmutableMap.of("first_name",
                         "Test 2", "last_name", "User 2"))
                 .build();
@@ -46,8 +44,7 @@ public class NotificationTest {
         notification = Notification.builder().withId(12345L)
                 .withCategory("new-follower")
                 .withMessage("you have a new follower")
-                .withCreatedAt(
-                        new DateTime("2015-06-29T21:04:12Z", DateTimeZone.UTC))
+                .withCreatedAt(ZonedDateTime.parse("2015-06-29T21:04:12Z"))
                 .withUnseen(true)
                 .withProperties(ImmutableMap.of("first_name", "Test",
                         "last_name", "User"))
@@ -79,8 +76,8 @@ public class NotificationTest {
 
     @Test
     public void testToString() throws Exception {
-        final DateTime now = new DateTime("2015-08-14T21:25:19.533Z",
-                DateTimeZone.UTC);
+        final ZonedDateTime now = ZonedDateTime
+                .parse("2015-08-14T21:25:19.533Z");
         final Notification n1 = Notification.builder().withId(1L)
                 .withCategory("test-category").withCreatedAt(now).build();
         assertThat(n1.toString())

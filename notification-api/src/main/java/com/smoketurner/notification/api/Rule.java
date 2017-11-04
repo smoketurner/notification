@@ -17,6 +17,7 @@ package com.smoketurner.notification.api;
 
 import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -74,8 +75,13 @@ public final class Rule {
     }
 
     public static class Builder {
+        @Nullable
         private Integer maxSize;
+
+        @Nullable
         private Duration maxDuration;
+
+        @Nullable
         private String matchOn;
 
         public Builder withMaxSize(final Integer maxSize) {

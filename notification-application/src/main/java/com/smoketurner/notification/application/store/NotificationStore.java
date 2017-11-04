@@ -15,6 +15,8 @@
  */
 package com.smoketurner.notification.application.store;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -24,8 +26,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
@@ -493,7 +493,7 @@ public class NotificationStore {
      * @return the current date time
      */
     @VisibleForTesting
-    public DateTime now() {
-        return DateTime.now(DateTimeZone.UTC);
+    public ZonedDateTime now() {
+        return ZonedDateTime.now(Clock.systemUTC());
     }
 }

@@ -19,13 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import com.basho.riak.client.api.RiakClient;
 import com.google.common.collect.ImmutableList;
@@ -38,7 +38,8 @@ import com.smoketurner.notification.application.core.UserNotifications;
 public class NotificationStoreTest {
 
     private static final String TEST_USER = "test";
-    private static final DateTime NOW = new DateTime("2015-07-17T17:43:25Z");
+    private static final ZonedDateTime NOW = ZonedDateTime
+            .parse("2015-07-17T17:43:25Z");
     private final RiakClient client = mock(RiakClient.class);
     private final CursorStore cursors = mock(CursorStore.class);
     private final IdGenerator idGenerator = mock(IdGenerator.class);
@@ -46,7 +47,7 @@ public class NotificationStoreTest {
     private final NotificationStore store = new NotificationStore(client,
             idGenerator, cursors, rules) {
         @Override
-        public DateTime now() {
+        public ZonedDateTime now() {
             return NOW;
         }
     };

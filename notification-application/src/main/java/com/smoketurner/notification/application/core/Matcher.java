@@ -65,7 +65,8 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
         }
         if (rule.getMaxDuration().isPresent()) {
             this.maxDuration = rule.getMaxDuration().get().toMilliseconds();
-            this.firstMillis = notification.getCreatedAt().getMillis();
+            this.firstMillis = notification.getCreatedAt().toInstant()
+                    .toEpochMilli();
         } else {
             this.maxDuration = 0;
             this.firstMillis = 0;
@@ -132,7 +133,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
         if (maxDuration > 0 && firstMillis > 0) {
             final long delta = firstMillis
-                    - notification.getCreatedAt().getMillis();
+                    - notification.getCreatedAt().toInstant().toEpochMilli();
             if (delta >= 0 && delta <= maxDuration) {
                 return true;
             }

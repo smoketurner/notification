@@ -16,7 +16,7 @@
 package com.smoketurner.notification.application.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.joda.time.DateTime;
+import java.time.ZonedDateTime;
 import org.junit.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -30,7 +30,7 @@ public class MatcherTest {
             .withCategory("new-follower")
             .withProperties(
                     ImmutableMap.of("first_name", "Bob", "last_name", "Smith"))
-            .withCreatedAt(new DateTime("2015-07-31T23:21:35Z")).build();
+            .withCreatedAt(ZonedDateTime.parse("2015-07-31T23:21:35Z")).build();
 
     @Test
     public void testMatch() {
@@ -124,15 +124,20 @@ public class MatcherTest {
                 .build();
 
         final Notification future = Notification.builder()
-                .withCreatedAt(new DateTime("2015-07-31T23:31:35Z")).build();
+                .withCreatedAt(ZonedDateTime.parse("2015-07-31T23:31:35Z"))
+                .build();
         final Notification future2 = Notification.builder()
-                .withCreatedAt(new DateTime("2015-07-31T23:21:36Z")).build();
+                .withCreatedAt(ZonedDateTime.parse("2015-07-31T23:21:36Z"))
+                .build();
         final Notification present = Notification.builder()
-                .withCreatedAt(new DateTime("2015-07-31T23:21:35Z")).build();
+                .withCreatedAt(ZonedDateTime.parse("2015-07-31T23:21:35Z"))
+                .build();
         final Notification past = Notification.builder()
-                .withCreatedAt(new DateTime("2015-07-31T23:11:35Z")).build();
+                .withCreatedAt(ZonedDateTime.parse("2015-07-31T23:11:35Z"))
+                .build();
         final Notification past2 = Notification.builder()
-                .withCreatedAt(new DateTime("2015-07-31T23:11:34Z")).build();
+                .withCreatedAt(ZonedDateTime.parse("2015-07-31T23:11:34Z"))
+                .build();
 
         final Matcher matcher = new Matcher(rule, notification);
         assertThat(matcher.checkDuration(future)).isFalse();

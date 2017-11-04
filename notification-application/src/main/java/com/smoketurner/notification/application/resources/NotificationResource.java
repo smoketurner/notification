@@ -174,7 +174,7 @@ public class NotificationResource {
         builder.header(ACCEPT_RANGES_HEADER, RANGE_NAME);
 
         // Add the Last-Modified response header
-        builder.lastModified(new Date(newest.getCreatedAt().getMillis()));
+        builder.lastModified(Date.from(newest.getCreatedAt().toInstant()));
 
         final ImmutableSortedSet<Notification> subSet = notifications
                 .subSet(from, fromInclusive, to, toInclusive);

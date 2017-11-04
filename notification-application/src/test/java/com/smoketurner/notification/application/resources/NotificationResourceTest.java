@@ -23,6 +23,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,8 +33,6 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -98,7 +98,7 @@ public class NotificationResourceTest {
 
     @Test
     public void testFetchJSONP() throws Exception {
-        final DateTime now = DateTime.now(DateTimeZone.UTC);
+        final ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
         final Notification notification = Notification.builder()
                 .fromNotification(createNotification(1L)).withCreatedAt(now)
                 .build();
@@ -308,7 +308,7 @@ public class NotificationResourceTest {
     public void testStore() throws Exception {
         final Notification expected = Notification.builder().withId(1L)
                 .withCategory("test-category").withMessage("testing 1 2 3")
-                .withCreatedAt(DateTime.now(DateTimeZone.UTC)).build();
+                .withCreatedAt(ZonedDateTime.now(Clock.systemUTC())).build();
 
         final Notification notification = Notification.builder()
                 .withCategory("test-category").withMessage("testing 1 2 3")
