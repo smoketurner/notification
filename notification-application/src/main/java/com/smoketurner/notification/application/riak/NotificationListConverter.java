@@ -15,9 +15,10 @@
  */
 package com.smoketurner.notification.application.riak;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import javax.annotation.Nonnull;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.convert.ConversionException;
@@ -82,11 +83,12 @@ public class NotificationListConverter
 
     private static Notification convert(
             @Nonnull final NotificationPB notification) {
-        return Notification.builder().withId(notification.getId())
-                .withCategory(notification.getCategory())
-                .withMessage(notification.getMessage())
-                .withCreatedAt(new DateTime(notification.getCreatedAt(),
-                        DateTimeZone.UTC))
+        return Notification
+                .builder(notification.getCategory(), notification.getMessage())
+                .withId(notification.getId())
+                .withCreatedAt(ZonedDateTime.ofInstant(
+                        Instant.ofEpochMilli(notification.getCreatedAt()),
+                        ZoneOffset.UTC))
                 .withProperties(notification.getPropertyMap()).build();
     }
 
@@ -95,7 +97,8 @@ public class NotificationListConverter
         return NotificationPB.newBuilder().setId(notification.getId().get())
                 .setCategory(notification.getCategory())
                 .setMessage(notification.getMessage())
-                .setCreatedAt(notification.getCreatedAt().getMillis())
+                .setCreatedAt(
+                        notification.getCreatedAt().toInstant().toEpochMilli())
                 .putAllProperty(notification.getProperties()).build();
     }
 }

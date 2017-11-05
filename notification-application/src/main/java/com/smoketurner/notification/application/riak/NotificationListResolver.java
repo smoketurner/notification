@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.cap.ConflictResolver;
@@ -47,9 +48,11 @@ public class NotificationListResolver
     }
 
     @Override
+    @Nullable
     public NotificationListObject resolve(
             final List<NotificationListObject> siblings)
             throws UnresolvedConflictException {
+
         LOGGER.debug("Found {} siblings", siblings.size());
         siblingCounts.update(siblings.size());
         if (siblings.size() > 1) {

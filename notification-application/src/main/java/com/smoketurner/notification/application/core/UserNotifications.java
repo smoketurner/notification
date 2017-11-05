@@ -21,6 +21,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSortedSet;
@@ -113,7 +114,7 @@ public final class UserNotifications {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }

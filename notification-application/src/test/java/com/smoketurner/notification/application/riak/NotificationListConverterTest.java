@@ -43,15 +43,15 @@ public class NotificationListConverterTest {
     public void testToDomain() throws Exception {
         final ZonedDateTime now = ZonedDateTime.parse("2015-08-14T17:52:43Z");
 
-        final Notification n1 = Notification.builder().withId(1L)
-                .withCategory("test-category").withMessage("this is a test")
+        final Notification n1 = Notification
+                .builder("test-category", "this is a test").withId(1L)
                 .withCreatedAt(now).build();
         final NotificationListObject expected = new NotificationListObject();
         expected.addNotification(n1);
 
         final NotificationPB pb = NotificationPB.newBuilder().setId(1L)
                 .setCategory("test-category").setMessage("this is a test")
-                .setCreatedAt(now.getMillis()).build();
+                .setCreatedAt(now.toInstant().toEpochMilli()).build();
 
         final NotificationListPB list = NotificationListPB.newBuilder()
                 .addNotification(pb).build();

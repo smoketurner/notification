@@ -17,6 +17,7 @@ package com.smoketurner.notification.application.core;
 
 import java.util.Collections;
 import java.util.Set;
+import javax.annotation.Nullable;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -29,7 +30,7 @@ public class LongSetParam extends AbstractParam<Set<Long>> {
     }
 
     @Override
-    protected Set<Long> parse(final String input) throws Exception {
+    protected Set<Long> parse(@Nullable final String input) throws Exception {
         if (Strings.isNullOrEmpty(input)) {
             return Collections.emptySet();
         }

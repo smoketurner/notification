@@ -153,7 +153,7 @@ public class NotificationsIT {
     }
 
     private static Notification createNotification() {
-        return Notification.builder().withCategory("test-category")
-                .withMessage("this is only a test").build();
+        return Notification.builder("test-category", "this is only a test")
+                .build();
     }
 }

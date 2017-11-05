@@ -157,11 +157,6 @@ public class NotificationStoreTest {
                 .containsExactlyElementsOf(expected);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testSplitNotificationsUserNull() throws Exception {
-        store.splitNotifications(null, new TreeSet<Notification>());
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void testSplitNotificationsUserEmpty() throws Exception {
         store.splitNotifications("", new TreeSet<Notification>());

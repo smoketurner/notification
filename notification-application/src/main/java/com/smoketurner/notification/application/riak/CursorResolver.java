@@ -18,6 +18,7 @@ package com.smoketurner.notification.application.riak;
 import static com.codahale.metrics.MetricRegistry.name;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.cap.ConflictResolver;
@@ -42,6 +43,7 @@ public class CursorResolver implements ConflictResolver<CursorObject> {
                 .histogram(name(CursorResolver.class, "sibling-counts"));
     }
 
+    @Nullable
     @Override
     public CursorObject resolve(final List<CursorObject> siblings)
             throws UnresolvedConflictException {

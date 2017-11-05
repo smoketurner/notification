@@ -306,13 +306,12 @@ public class NotificationResourceTest {
 
     @Test
     public void testStore() throws Exception {
-        final Notification expected = Notification.builder().withId(1L)
-                .withCategory("test-category").withMessage("testing 1 2 3")
+        final Notification expected = Notification
+                .builder("test-category", "testing 1 2 3").withId(1L)
                 .withCreatedAt(ZonedDateTime.now(Clock.systemUTC())).build();
 
-        final Notification notification = Notification.builder()
-                .withCategory("test-category").withMessage("testing 1 2 3")
-                .build();
+        final Notification notification = Notification
+                .builder("test-category", "testing 1 2 3").build();
 
         when(store.store("test", notification)).thenReturn(expected);
 
@@ -331,9 +330,8 @@ public class NotificationResourceTest {
 
     @Test
     public void testStoreException() throws Exception {
-        final Notification notification = Notification.builder()
-                .withCategory("test-category").withMessage("testing 1 2 3")
-                .build();
+        final Notification notification = Notification
+                .builder("test-category", "testing 1 2 3").build();
         when(store.store("test", notification))
                 .thenThrow(new NotificationStoreException());
 
@@ -349,27 +347,9 @@ public class NotificationResourceTest {
     }
 
     @Test
-    public void testStoreMissingCategory() throws Exception {
-        final Notification notification = Notification.builder()
-                .withMessage("testing 1 2 3").build();
-
-        final Response response = resources.client()
-                .target("/v1/notifications/test")
-                .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(notification));
-
-        verify(store, never()).store(anyString(), any(Notification.class));
-        assertThat(response.getStatus()).isEqualTo(422);
-
-        final ValidationErrorMessage msg = response
-                .readEntity(ValidationErrorMessage.class);
-        assertThat(msg.getErrors()).containsOnly("category may not be empty");
-    }
-
-    @Test
     public void testStoreEmptyCategory() throws Exception {
-        final Notification notification = Notification.builder()
-                .withCategory("").withMessage("testing 1 2 3").build();
+        final Notification notification = Notification
+                .builder("", "testing 1 2 3").build();
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")
@@ -386,8 +366,8 @@ public class NotificationResourceTest {
 
     @Test
     public void testStoreMissingMessage() throws Exception {
-        final Notification notification = Notification.builder()
-                .withCategory("test-category").build();
+        final Notification notification = Notification.builder("test-category")
+                .build();
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")
@@ -404,8 +384,8 @@ public class NotificationResourceTest {
 
     @Test
     public void testStoreEmptyMessage() throws Exception {
-        final Notification notification = Notification.builder()
-                .withCategory("test-category").withMessage("").build();
+        final Notification notification = Notification
+                .builder("test-category", "").build();
 
         final Response response = resources.client()
                 .target("/v1/notifications/test")

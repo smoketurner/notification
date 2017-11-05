@@ -179,8 +179,9 @@
                     </annotationProcessorPaths>
                     <compilerArgs>
                         <arg>-XepDisableWarningsInGeneratedCode</arg>
-                        <arg>-Xep:NullAway:ERROR</arg>
+                        <!-- <arg>-Xep:NullAway:ERROR</arg> -->
                         <arg>-XepOpt:NullAway:AnnotatedPackages=com.smoketurner</arg>
+                        <arg>-XepOpt:NullAway:UnannotatedSubPackages=com.smoketurner.notification.application.protos</arg>
                     </compilerArgs>
                 </configuration>
                 <dependencies>
@@ -295,25 +296,6 @@
                     <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
-            <!-- <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.12</version>
-                <configuration>
-                    <path>${project.distributionManagement.site.url}</path>
-                    <message>Creating site for ${project.name} ${project.version}</message>
-                    <merge>true</merge>
-                    <noJekyll>true</noJekyll>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>site-deploy</phase>
-                    </execution>
-                </executions>
-            </plugin> -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>

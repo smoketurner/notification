@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+import javax.validation.constraints.NotNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -37,8 +38,14 @@ public final class RangeHeader {
             "(?<field>\\w+) (?<fromInclusive>\\]?)(?<fromId>\\d*)\\.\\.(?<toId>\\d*)(?<toInclusive>\\[?)");
     private static final Pattern OPTIONS_PATTERN = Pattern
             .compile("max=(?<max>\\d+)");
+
+    @Nullable
     private final String field;
+
+    @NotNull
     private final Range<Long> range;
+
+    @Nullable
     private final Integer max;
 
     /**
@@ -88,45 +95,55 @@ public final class RangeHeader {
     }
 
     public static class Builder {
+
+        @Nullable
         private String field;
+
+        @Nullable
         private Long fromId;
-        private Boolean fromInclusive;
+
+        private boolean fromInclusive = false;
+
+        @Nullable
         private Long toId;
-        private Boolean toInclusive;
+
+        private boolean toInclusive = false;
+
+        @Nullable
         private Integer max;
 
-        public Builder field(final String field) {
+        public Builder field(@Nullable final String field) {
             this.field = field;
             return this;
         }
 
-        public Builder fromId(final Long id) {
+        public Builder fromId(@Nullable final Long id) {
             if (id == null) {
-                fromInclusive = null;
+                fromInclusive = false;
             }
             this.fromId = id;
             return this;
         }
 
-        public Builder fromInclusive(final Boolean inclusive) {
+        public Builder fromInclusive(final boolean inclusive) {
             this.fromInclusive = inclusive;
             return this;
         }
 
-        public Builder toId(final Long id) {
+        public Builder toId(@Nullable final Long id) {
             if (id == null) {
-                toInclusive = null;
+                toInclusive = false;
             }
             this.toId = id;
             return this;
         }
 
-        public Builder toInclusive(final Boolean inclusive) {
+        public Builder toInclusive(final boolean inclusive) {
             this.toInclusive = inclusive;
             return this;
         }
 
-        public Builder max(final Integer max) {
+        public Builder max(@Nullable final Integer max) {
             this.max = max;
             return this;
         }

@@ -24,11 +24,6 @@ public class NotificationStoreManagerTest {
 
     private final NotificationStore store = mock(NotificationStore.class);
 
-    @Test(expected = NullPointerException.class)
-    public void testNullManager() throws Exception {
-        new NotificationStoreManager(null);
-    }
-
     @Test
     public void testStart() throws Exception {
         final NotificationStoreManager manager = new NotificationStoreManager(

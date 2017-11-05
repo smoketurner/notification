@@ -25,7 +25,6 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
-import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -92,12 +91,16 @@ public final class Notification implements Comparable<Notification> {
         return new Builder(category, message);
     }
 
+    public static Builder builder(final String category) {
+        return builder(category, "");
+    }
+
     public static Builder builder() {
         return builder("", "");
     }
 
     public static Builder builder(final Notification other) {
-        return builder().fromNotification(other);
+        return builder(other.category, other.message).fromNotification(other);
     }
 
     public static class Builder {
@@ -108,11 +111,8 @@ public final class Notification implements Comparable<Notification> {
         @Nullable
         private String idStr;
 
-        @NotNull
-        private String category;
-
-        @NotNull
-        private String message;
+        private final String category;
+        private final String message;
 
         @Nullable
         private ZonedDateTime createdAt;
@@ -143,8 +143,6 @@ public final class Notification implements Comparable<Notification> {
         public Builder fromNotification(@Nonnull final Notification other) {
             this.id = other.id.orElse(null);
             this.idStr = other.idStr.orElse(null);
-            this.category = other.category;
-            this.message = other.message;
             if (other.createdAt != null) {
                 this.createdAt = other.createdAt;
             }
@@ -166,17 +164,6 @@ public final class Notification implements Comparable<Notification> {
                 this.id = id;
                 this.idStr = String.valueOf(id);
             }
-            return this;
-        }
-
-        public Builder withCategory(@Nonnull final String category) {
-            this.category = Objects.requireNonNull(category,
-                    "category == null");
-            return this;
-        }
-
-        public Builder withMessage(@Nonnull final String message) {
-            this.message = Objects.requireNonNull(message, "message == null");
             return this;
         }
 
@@ -270,7 +257,7 @@ public final class Notification implements Comparable<Notification> {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }

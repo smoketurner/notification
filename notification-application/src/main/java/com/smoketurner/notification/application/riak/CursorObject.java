@@ -16,6 +16,7 @@
 package com.smoketurner.notification.application.riak;
 
 import java.util.Objects;
+import javax.annotation.Nullable;
 import com.basho.riak.client.api.annotations.RiakBucketName;
 import com.basho.riak.client.api.annotations.RiakContentType;
 import com.basho.riak.client.api.annotations.RiakKey;
@@ -40,24 +41,31 @@ public final class CursorObject implements Comparable<CursorObject> {
     private final String bucketName = "cursors";
 
     @RiakKey
+    @Nullable
     private String key;
 
     @RiakVClock
+    @Nullable
     private VClock vclock;
 
     @RiakTombstone
-    private boolean tombstone;
+    @Nullable
+    private Boolean tombstone;
 
     @RiakContentType
+    @Nullable
     private String contentType;
 
     @RiakLastModified
+    @Nullable
     private Long lastModified;
 
     @RiakVTag
+    @Nullable
     private String vtag;
 
-    private long value;
+    @Nullable
+    private Long value;
 
     /**
      * Constructor
@@ -79,13 +87,15 @@ public final class CursorObject implements Comparable<CursorObject> {
         this.value = value;
     }
 
+    @Nullable
     @JsonProperty
     public String getKey() {
         return key;
     }
 
+    @Nullable
     @JsonProperty
-    public long getValue() {
+    public Long getValue() {
         return value;
     }
 

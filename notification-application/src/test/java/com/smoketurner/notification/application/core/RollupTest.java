@@ -32,30 +32,22 @@ public class RollupTest {
 
     @Test
     public void testMatchOn() {
-        final Notification n1 = Notification.builder()
-                .fromNotification(createNotification(1))
+        final Notification n1 = Notification.builder(createNotification(1))
                 .withProperties(ImmutableMap.of("first_name", "Bob")).build();
-        final Notification n2 = Notification.builder()
-                .fromNotification(createNotification(2))
+        final Notification n2 = Notification.builder(createNotification(2))
                 .withProperties(ImmutableMap.of("first_name", "John")).build();
-        final Notification n3 = Notification.builder()
-                .fromNotification(createNotification(3))
+        final Notification n3 = Notification.builder(createNotification(3))
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
-        final Notification n4 = Notification.builder()
-                .fromNotification(createNotification(4))
+        final Notification n4 = Notification.builder(createNotification(4))
                 .withProperties(ImmutableMap.of("city", "Anytown")).build();
-        final Notification n5 = Notification.builder()
-                .fromNotification(createNotification(5))
+        final Notification n5 = Notification.builder(createNotification(5))
                 .withProperties(ImmutableMap.of("first_name", "Bob")).build();
         final Notification n6 = createNotification(6);
-        final Notification n7 = Notification.builder()
-                .fromNotification(createNotification(7))
+        final Notification n7 = Notification.builder(createNotification(7))
                 .withProperties(ImmutableMap.of("first_name", "Bob")).build();
-        final Notification n8 = Notification.builder()
-                .fromNotification(createNotification(8))
+        final Notification n8 = Notification.builder(createNotification(8))
                 .withProperties(ImmutableMap.of("last_name", "Smith")).build();
-        final Notification n9 = Notification.builder()
-                .fromNotification(createNotification(9))
+        final Notification n9 = Notification.builder(createNotification(9))
                 .withProperties(ImmutableMap.of("first_name", "Bob")).build();
 
         final ImmutableSortedSet<Notification> notifications = ImmutableSortedSet
@@ -81,33 +73,24 @@ public class RollupTest {
     public void testMatchDuration() {
         final ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
 
-        final Notification n1 = Notification.builder()
-                .fromNotification(createNotification(1))
+        final Notification n1 = Notification.builder(createNotification(1))
                 .withCreatedAt(now.minusMinutes(40)).build();
-        final Notification n2 = Notification.builder()
-                .fromNotification(createNotification(2))
+        final Notification n2 = Notification.builder(createNotification(2))
                 .withCreatedAt(now.minusMinutes(35)).build();
-        final Notification n3 = Notification.builder()
-                .fromNotification(createNotification(3))
+        final Notification n3 = Notification.builder(createNotification(3))
                 .withCreatedAt(now.minusMinutes(30)).build();
-        final Notification n4 = Notification.builder()
-                .fromNotification(createNotification(4))
+        final Notification n4 = Notification.builder(createNotification(4))
                 .withCreatedAt(now.minusMinutes(25)).build();
-        final Notification n5 = Notification.builder()
-                .fromNotification(createNotification(5))
+        final Notification n5 = Notification.builder(createNotification(5))
                 .withCreatedAt(now.minusMinutes(20)).build();
-        final Notification n6 = Notification.builder()
-                .fromNotification(createNotification(6))
+        final Notification n6 = Notification.builder(createNotification(6))
                 .withCreatedAt(now.minusMinutes(15)).build();
-        final Notification n7 = Notification.builder()
-                .fromNotification(createNotification(7))
+        final Notification n7 = Notification.builder(createNotification(7))
                 .withCreatedAt(now.minusMinutes(10)).build();
-        final Notification n8 = Notification.builder()
-                .fromNotification(createNotification(8))
+        final Notification n8 = Notification.builder(createNotification(8))
                 .withCreatedAt(now.minusMinutes(5)).build();
-        final Notification n9 = Notification.builder()
-                .fromNotification(createNotification(9)).withCreatedAt(now)
-                .build();
+        final Notification n9 = Notification.builder(createNotification(9))
+                .withCreatedAt(now).build();
 
         final ImmutableSortedSet<Notification> notifications = ImmutableSortedSet
                 .<Notification>naturalOrder()
@@ -169,7 +152,6 @@ public class RollupTest {
     }
 
     private Notification createNotification(final long id) {
-        return Notification.builder().withCategory("new-follower").withId(id)
-                .build();
+        return Notification.builder("new-follower").withId(id).build();
     }
 }

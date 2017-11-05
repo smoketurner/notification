@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
@@ -187,7 +188,7 @@ public class NotificationStore {
      *             if unable to update the cursor
      */
     public UserNotifications splitNotifications(@Nonnull final String username,
-            @Nonnull final SortedSet<Notification> notifications)
+            @Nullable final SortedSet<Notification> notifications)
             throws NotificationStoreException {
 
         Objects.requireNonNull(username, "username == null");

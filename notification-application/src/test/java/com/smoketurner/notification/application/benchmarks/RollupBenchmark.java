@@ -59,6 +59,6 @@ public class RollupBenchmark {
     }
 
     private Notification createNotification(final long id) {
-        return Notification.builder().withId(id).withCategory(CATEGORY).build();
+        return Notification.builder(CATEGORY).withId(id).build();
     }
 }

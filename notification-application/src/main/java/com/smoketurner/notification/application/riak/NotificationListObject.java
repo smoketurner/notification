@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.basho.riak.client.api.annotations.RiakBucketName;
 import com.basho.riak.client.api.annotations.RiakContentType;
 import com.basho.riak.client.api.annotations.RiakKey;
@@ -41,21 +42,27 @@ public class NotificationListObject {
     private final String bucketName = "notifications";
 
     @RiakKey
+    @Nullable
     private String key;
 
     @RiakVClock
+    @Nullable
     private VClock vclock;
 
     @RiakTombstone
-    private boolean tombstone;
+    @Nullable
+    private Boolean tombstone;
 
     @RiakContentType
+    @Nullable
     private String contentType;
 
     @RiakLastModified
+    @Nullable
     private Long lastModified;
 
     @RiakVTag
+    @Nullable
     private String vtag;
 
     private final TreeSet<Notification> notifications = new TreeSet<>();
@@ -99,6 +106,7 @@ public class NotificationListObject {
         deletedIds.addAll(ids);
     }
 
+    @Nullable
     public String getKey() {
         return key;
     }
@@ -112,7 +120,7 @@ public class NotificationListObject {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }

@@ -173,7 +173,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }

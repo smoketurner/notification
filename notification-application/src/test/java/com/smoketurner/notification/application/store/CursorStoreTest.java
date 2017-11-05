@@ -59,31 +59,11 @@ public class CursorStoreTest {
     }
 
     @Test
-    public void testFetchNullUsername() throws Exception {
-        try {
-            store.fetch(null, CURSOR_NAME);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-        verify(client, never()).execute(any(FetchValue.class));
-    }
-
-    @Test
     public void testFetchEmptyUsername() throws Exception {
         try {
             store.fetch("", CURSOR_NAME);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
         } catch (IllegalArgumentException e) {
-        }
-        verify(client, never()).execute(any(FetchValue.class));
-    }
-
-    @Test
-    public void testFetchNullCursor() throws Exception {
-        try {
-            store.fetch("test", null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
         }
         verify(client, never()).execute(any(FetchValue.class));
     }
@@ -105,31 +85,11 @@ public class CursorStoreTest {
     }
 
     @Test
-    public void testStoreNullUsername() throws Exception {
-        try {
-            store.store(null, CURSOR_NAME, 1L);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-        verify(client, never()).execute(any(UpdateValue.class));
-    }
-
-    @Test
     public void testStoreEmptyUsername() throws Exception {
         try {
             store.store("", CURSOR_NAME, 1L);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
         } catch (IllegalArgumentException e) {
-        }
-        verify(client, never()).execute(any(UpdateValue.class));
-    }
-
-    @Test
-    public void testStoreNullCursorName() throws Exception {
-        try {
-            store.store(TEST_USER, null, 1L);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
         }
         verify(client, never()).execute(any(UpdateValue.class));
     }
@@ -151,31 +111,11 @@ public class CursorStoreTest {
     }
 
     @Test
-    public void testDeleteNullUsername() throws Exception {
-        try {
-            store.delete(null, CURSOR_NAME);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-        verify(client, never()).execute(any(DeleteValue.class));
-    }
-
-    @Test
     public void testDeleteEmptyUsername() throws Exception {
         try {
             store.delete("", CURSOR_NAME);
             failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
         } catch (IllegalArgumentException e) {
-        }
-        verify(client, never()).execute(any(DeleteValue.class));
-    }
-
-    @Test
-    public void testDeleteNullCursorName() throws Exception {
-        try {
-            store.delete(TEST_USER, null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
         }
         verify(client, never()).execute(any(DeleteValue.class));
     }

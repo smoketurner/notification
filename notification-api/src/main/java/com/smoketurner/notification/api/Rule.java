@@ -84,17 +84,17 @@ public final class Rule {
         @Nullable
         private String matchOn;
 
-        public Builder withMaxSize(final Integer maxSize) {
+        public Builder withMaxSize(@Nullable final Integer maxSize) {
             this.maxSize = maxSize;
             return this;
         }
 
-        public Builder withMaxDuration(final Duration maxDuration) {
+        public Builder withMaxDuration(@Nullable final Duration maxDuration) {
             this.maxDuration = maxDuration;
             return this;
         }
 
-        public Builder withMatchOn(final String matchOn) {
+        public Builder withMatchOn(@Nullable final String matchOn) {
             if (matchOn != null && matchOn.isEmpty()) {
                 this.matchOn = null;
             } else {
@@ -132,7 +132,7 @@ public final class Rule {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }

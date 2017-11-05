@@ -33,17 +33,17 @@ public class NotificationTest {
 
     @Before
     public void setUp() throws Exception {
-        final Notification notification2 = Notification.builder().withId(12346L)
-                .withCategory("new-follower")
-                .withMessage("you have a new follower")
+        final Notification notification2 = Notification
+                .builder("new-follower", "you have a new follower")
+                .withId(12346L)
                 .withCreatedAt(ZonedDateTime.parse("2015-06-29T21:04:12Z"))
                 .withUnseen(true).withProperties(ImmutableMap.of("first_name",
                         "Test 2", "last_name", "User 2"))
                 .build();
 
-        notification = Notification.builder().withId(12345L)
-                .withCategory("new-follower")
-                .withMessage("you have a new follower")
+        notification = Notification
+                .builder("new-follower", "you have a new follower")
+                .withId(12345L)
                 .withCreatedAt(ZonedDateTime.parse("2015-06-29T21:04:12Z"))
                 .withUnseen(true)
                 .withProperties(ImmutableMap.of("first_name", "Test",
@@ -78,11 +78,11 @@ public class NotificationTest {
     public void testToString() throws Exception {
         final ZonedDateTime now = ZonedDateTime
                 .parse("2015-08-14T21:25:19.533Z");
-        final Notification n1 = Notification.builder().withId(1L)
-                .withCategory("test-category").withCreatedAt(now).build();
+        final Notification n1 = Notification.builder("test-category", "")
+                .withId(1L).withCreatedAt(now).build();
         assertThat(n1.toString())
                 .isEqualTo("Notification{id=Optional[1], idStr=Optional[1],"
-                        + " category=test-category, message=null,"
+                        + " category=test-category, message=,"
                         + " createdAt=2015-08-14T21:25:19.533Z, unseen=Optional.empty,"
                         + " properties={}, notifications=[]}");
     }
@@ -119,12 +119,9 @@ public class NotificationTest {
 
     @Test
     public void testNaturalOrdering() {
-        final Notification n1 = Notification.builder().withId(1L)
-                .withCategory("test").build();
-        final Notification n2 = Notification.builder().withId(2L)
-                .withCategory("test").build();
-        final Notification n3 = Notification.builder().withId(1L)
-                .withCategory("other").build();
+        final Notification n1 = Notification.builder("test").withId(1L).build();
+        final Notification n2 = Notification.builder("test").withId(2L).build();
+        final Notification n3 = Notification.builder("test").withId(1L).build();
         assertThat(n1.equals(n2)).isEqualTo(n1.compareTo(n2) == 0);
         assertThat(n2.equals(n3)).isEqualTo(n2.compareTo(n3) == 0);
         assertThat(n1.equals(n3)).isEqualTo(n1.compareTo(n3) == 0);

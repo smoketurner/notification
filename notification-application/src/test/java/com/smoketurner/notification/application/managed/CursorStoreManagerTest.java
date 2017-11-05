@@ -24,11 +24,6 @@ public class CursorStoreManagerTest {
 
     private final CursorStore store = mock(CursorStore.class);
 
-    @Test(expected = NullPointerException.class)
-    public void testNullManager() throws Exception {
-        new CursorStoreManager(null);
-    }
-
     @Test
     public void testStart() throws Exception {
         final CursorStoreManager manager = new CursorStoreManager(store);
