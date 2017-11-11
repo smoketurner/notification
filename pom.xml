@@ -27,6 +27,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <file.encoding>UTF-8</file.encoding>
         <dropwizard.version>1.2.0</dropwizard.version>
+        <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
     </properties>
 
     <modules>
@@ -402,6 +403,7 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <docencoding>UTF-8</docencoding>
+                    <additionalparam>${javadoc.doclint.none}</additionalparam>
                 </configuration>
                 <executions>
                     <execution>
@@ -517,6 +519,7 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <docencoding>UTF-8</docencoding>
+                    <additionalparam>${javadoc.doclint.none}</additionalparam>
                     <quiet>true</quiet>
                 </configuration>
                 <reportSets>

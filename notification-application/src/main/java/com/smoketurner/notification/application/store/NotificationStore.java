@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
@@ -69,6 +70,9 @@ public class NotificationStore {
     private final Timer fetchTimer;
     private final Timer updateTimer;
     private final Timer deleteTimer;
+
+    private Supplier<ZonedDateTime> currentTimeProvider = () -> ZonedDateTime
+            .now(Clock.systemUTC());
 
     /**
      * Constructor
@@ -283,7 +287,7 @@ public class NotificationStore {
 
         final Notification updatedNotification = Notification
                 .builder(notification).withId(idGenerator.nextId())
-                .withCreatedAt(now()).build();
+                .withCreatedAt(currentTimeProvider.get()).build();
 
         final NotificationListAddition update = new NotificationListAddition(
                 updatedNotification);
@@ -489,12 +493,10 @@ public class NotificationStore {
     }
 
     /**
-     * Return the current date time (overridden in tests)
-     *
-     * @return the current date time
+     * Set the current time provider for tests
      */
     @VisibleForTesting
-    public ZonedDateTime now() {
-        return ZonedDateTime.now(Clock.systemUTC());
+    void setCurrentTimeProvider(Supplier<ZonedDateTime> provider) {
+        currentTimeProvider = provider;
     }
 }

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import org.junit.Before;
 import org.junit.Test;
 import com.basho.riak.client.api.RiakClient;
 import com.google.common.collect.ImmutableList;
@@ -45,12 +46,12 @@ public class NotificationStoreTest {
     private final IdGenerator idGenerator = mock(IdGenerator.class);
     private final RuleStore rules = mock(RuleStore.class);
     private final NotificationStore store = new NotificationStore(client,
-            idGenerator, cursors, rules) {
-        @Override
-        public ZonedDateTime now() {
-            return NOW;
-        }
-    };
+            idGenerator, cursors, rules);
+
+    @Before
+    public void setUp() {
+        store.setCurrentTimeProvider(() -> NOW);
+    }
 
     @Test
     public void testSplitNotifications() throws Exception {

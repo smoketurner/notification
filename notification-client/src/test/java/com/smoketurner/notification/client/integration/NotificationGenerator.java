@@ -52,10 +52,9 @@ public class NotificationGenerator {
                 message = String.format("%s is now following you",
                         USERS.get(userId));
 
-                notification = Notification.builder()
-                        .withCategory("new-follower")
-                        .withMessage(message).withProperties(ImmutableMap
-                                .of("follower_id", String.valueOf(userId)))
+                notification = Notification.builder("new-follower", message)
+                        .withProperties(ImmutableMap.of("follower_id",
+                                String.valueOf(userId)))
                         .build();
 
                 client.store(USERNAME, notification);
@@ -79,8 +78,7 @@ public class NotificationGenerator {
                         USERS.get(userId));
                 messageId = RANDOM.nextInt(5);
 
-                notification = Notification.builder().withCategory("like")
-                        .withMessage(message)
+                notification = Notification.builder("like", message)
                         .withProperties(ImmutableMap.of("message_id",
                                 String.valueOf(messageId), "liker_id",
                                 String.valueOf(userId)))
@@ -107,8 +105,7 @@ public class NotificationGenerator {
                         USERS.get(userId));
                 messageId = RANDOM.nextInt(5);
 
-                notification = Notification.builder().withCategory("mention")
-                        .withMessage(message)
+                notification = Notification.builder("mention", message)
                         .withProperties(ImmutableMap.of("message_id",
                                 String.valueOf(messageId), "user_id",
                                 String.valueOf(userId)))

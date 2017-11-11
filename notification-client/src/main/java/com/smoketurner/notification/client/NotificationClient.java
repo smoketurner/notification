@@ -103,8 +103,10 @@ public class NotificationClient implements Closeable {
                     paginate = false;
                 }
 
-                if (response.getStatus() == 200
-                        || response.getStatus() == 206) {
+                if (response.getStatus() == Response.Status.OK.getStatusCode()
+                        || response
+                                .getStatus() == Response.Status.PARTIAL_CONTENT
+                                        .getStatusCode()) {
                     results.addAll(response
                             .readEntity(new GenericType<List<Notification>>() {
                             }));

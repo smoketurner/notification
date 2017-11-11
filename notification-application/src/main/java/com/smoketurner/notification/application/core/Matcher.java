@@ -159,8 +159,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
     }
 
     @VisibleForTesting
-    protected boolean add(
-            @Nonnull final Collection<Notification> notifications) {
+    boolean add(@Nonnull final Collection<Notification> notifications) {
         return this.notifications.addAll(notifications);
     }
 
