@@ -12,10 +12,8 @@
 target
 *.class
 CONTRIBUTING.md
-findbugs-exclude.xml
 maven_deploy_settings.xml
 Procfile
 setup.sh
 system.properties
 Dockerfile
-terraform

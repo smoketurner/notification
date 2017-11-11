@@ -313,23 +313,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.3.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.5</version>
-                <configuration>
-                    <effort>Max</effort>
-                    <threshold>Default</threshold>
-                    <onlyAnalyze>com.smoketurner.notification.*</onlyAnalyze>
-                    <xmlOutput>true</xmlOutput>
-                    <excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>3.0.0-M1</version>

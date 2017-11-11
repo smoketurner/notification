@@ -3,7 +3,6 @@
 *.java text eol=lf
 *.yml text eol=lf
 *.xml text eol=lf
-*.tf text eol=lf
-
-*.png binary
-*.jpg binary
+*.cmd text eol=lf
+*.md text eol=lf
+*.sh text eol=lf

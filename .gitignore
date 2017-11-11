@@ -9,8 +9,3 @@
 hs_err_pid*
 target
 dependency-reduced-pom.xml
-*.ovpn
-*.tfstate
-*.backup
-terraform.tfvars
-insecure-deployer*
