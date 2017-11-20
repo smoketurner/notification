@@ -12,8 +12,6 @@
     <name>Notification Application</name>
 
     <properties>
-        <package.name>notification</package.name>
-        <protobuf.version>3.3.0</protobuf.version>
         <jmh.version>1.19</jmh.version>
     </properties>
 
@@ -35,7 +33,7 @@
         <dependency>
             <groupId>io.dropwizard.modules</groupId>
             <artifactId>dropwizard-protobuf</artifactId>
-            <version>1.1.1-1</version>
+            <version>1.2.0-1</version>
         </dependency>
         <dependency>
             <groupId>com.smoketurner.snowizard</groupId>
