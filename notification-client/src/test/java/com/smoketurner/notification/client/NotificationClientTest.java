@@ -16,7 +16,6 @@
 package com.smoketurner.notification.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.Consumes;
@@ -27,26 +26,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.glassfish.jersey.client.ClientConfig;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import com.codahale.metrics.MetricRegistry;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import com.smoketurner.notification.api.Notification;
-import io.dropwizard.jackson.Jackson;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.junit.DropwizardClientRule;
 
 public class NotificationClientTest {
-
-    private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
 
     @Path("/v1/notifications/{username}")
     public static class NotificationResource {
@@ -93,19 +86,18 @@ public class NotificationClientTest {
             new NotificationResource(), new PingResource(),
             new VersionResource());
 
-    private final MetricRegistry registry = new MetricRegistry();
-    private NotificationClient client;
+    private static NotificationClient client;
 
-    @Before
-    public void setUp() {
-        final ClientConfig config = new ClientConfig();
-        config.register(new JacksonMessageBodyProvider(MAPPER));
-        client = new NotificationClient(registry,
-                ClientBuilder.newClient(config), resources.baseUri());
+    @BeforeClass
+    public static void setUp() {
+        final Client jerseyClient = new JerseyClientBuilder(
+                resources.getEnvironment()).build("test");
+        client = new NotificationClient(resources.getEnvironment().metrics(),
+                jerseyClient, resources.baseUri());
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void tearDown() throws Exception {
         client.close();
     }
 
@@ -119,22 +111,9 @@ public class NotificationClientTest {
         assertThat(notifications.first().getId().isPresent()).isTrue();
     }
 
-    @Test
-    public void testFetchNullUsername() throws Exception {
-        try {
-            client.fetch(null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-    }
-
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testFetchEmptyUsername() throws Exception {
-        try {
-            client.fetch("");
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
+        client.fetch("");
     }
 
     @Test
@@ -145,33 +124,10 @@ public class NotificationClientTest {
         assertThat(actual.get()).isEqualTo(expected);
     }
 
-    @Test
-    public void testStoreNullNotification() throws Exception {
-        try {
-            client.store("test", null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-    }
-
-    @Test
-    public void testStoreNullUsername() throws Exception {
-        final Notification expected = Notification.builder().withId(1L).build();
-        try {
-            client.store(null, expected);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-    }
-
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testStoreEmptyUsername() throws Exception {
         final Notification expected = Notification.builder().withId(1L).build();
-        try {
-            client.store("", expected);
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
+        client.store("", expected);
     }
 
     @Test
@@ -179,22 +135,9 @@ public class NotificationClientTest {
         client.delete("test");
     }
 
-    @Test
-    public void testDeleteAllNullUsername() throws Exception {
-        try {
-            client.delete(null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-    }
-
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testDeleteAllEmptyUsername() throws Exception {
-        try {
-            client.delete("");
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
+        client.delete("");
     }
 
     @Test
@@ -202,40 +145,14 @@ public class NotificationClientTest {
         client.delete("test", ImmutableList.of(1L, 2L));
     }
 
-    @Test
-    public void testDeleteNullUsername() throws Exception {
-        try {
-            client.delete(null, ImmutableList.of(1L));
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-    }
-
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testDeleteEmptyUsername() throws Exception {
-        try {
-            client.delete("", ImmutableList.of(1L));
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
+        client.delete("", ImmutableList.of(1L));
     }
 
-    @Test
-    public void testDeleteNullIds() throws Exception {
-        try {
-            client.delete("test", null);
-            failBecauseExceptionWasNotThrown(NullPointerException.class);
-        } catch (NullPointerException e) {
-        }
-    }
-
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testDeleteEmptyIds() throws Exception {
-        try {
-            client.delete("test", ImmutableList.<Long>of());
-            failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
-        } catch (IllegalArgumentException e) {
-        }
+        client.delete("test", ImmutableList.<Long>of());
     }
 
     @Test

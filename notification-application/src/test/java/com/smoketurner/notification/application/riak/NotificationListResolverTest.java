@@ -23,6 +23,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 import com.smoketurner.notification.api.Notification;
 
+@SuppressWarnings("NullAway")
 public class NotificationListResolverTest {
 
     private final NotificationListResolver resolver = new NotificationListResolver();

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
+@SuppressWarnings("NullAway")
 public class CursorResolverTest {
 
     private final CursorResolver resolver = new CursorResolver();
