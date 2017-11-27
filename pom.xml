@@ -213,7 +213,8 @@
                             <compilerArgs>
                                 <arg>-XepDisableWarningsInGeneratedCode</arg>
                                 <arg>-Xep:NullAway:ERROR</arg>
-                                <arg>-XepOpt:NullAway:AnnotatedPackages=io.smoketurner.notification</arg>
+                                <arg>-XepOpt:NullAway:AnnotatedPackages=com.smoketurner.notification</arg>
+                                <arg>-XepOpt:NullAway:UnannotatedSubPackages=com.smoketurner.notification.application.protos</arg>
                             </compilerArgs>
                         </configuration>
                         <dependencies>
