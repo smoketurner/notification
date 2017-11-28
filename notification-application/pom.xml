@@ -33,7 +33,7 @@
         <dependency>
             <groupId>io.dropwizard.modules</groupId>
             <artifactId>dropwizard-protobuf</artifactId>
-            <version>1.2.0-1</version>
+            <version>1.2.2-1</version>
         </dependency>
         <dependency>
             <groupId>com.smoketurner.snowizard</groupId>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>com.smoketurner.dropwizard</groupId>
             <artifactId>dropwizard-riak</artifactId>
-            <version>1.2.0-1</version>
+            <version>1.2.2-1</version>
         </dependency>
         <dependency>
             <groupId>com.smoketurner</groupId>
