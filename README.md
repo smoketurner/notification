@@ -4,6 +4,7 @@ Notification
 [![Coverage Status](https://coveralls.io/repos/smoketurner/notification/badge.svg)](https://coveralls.io/r/smoketurner/notification)
 [![Maven Central](https://img.shields.io/maven-central/v/com.smoketurner.notification/notification-parent.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.smoketurner.notification/notification-parent/)
 [![GitHub license](https://img.shields.io/github/license/smoketurner/notification.svg?style=flat-square)](https://github.com/smoketurner/notification/tree/master)
+[![Become a Patron](https://img.shields.io/badge/Patron-Patreon-red.svg)](https://www.patreon.com/jplock)
 
 Notification is an implementation of an HTTP-based notification web service, based on Yammer's [Streamie](http://basho.com/posts/business/riak-and-scala-at-yammer/) service. This project was developed using:
 
