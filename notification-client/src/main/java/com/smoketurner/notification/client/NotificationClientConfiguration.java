@@ -1,11 +1,11 @@
-/**
- * Copyright 2018 Smoke Turner, LLC.
+/*
+ * Copyright © 2018 Smoke Turner, LLC (contact@smoketurner.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,21 +15,20 @@
  */
 package com.smoketurner.notification.client;
 
+import io.dropwizard.client.JerseyClientConfiguration;
 import java.net.URI;
 import javax.annotation.Nonnull;
 import org.hibernate.validator.constraints.NotEmpty;
-import io.dropwizard.client.JerseyClientConfiguration;
 
 public class NotificationClientConfiguration extends JerseyClientConfiguration {
 
-    @NotEmpty
-    private String uri = "http://localhost:8080";
+  @NotEmpty private String uri = "http://localhost:8080";
 
-    public URI getUri() {
-        return URI.create(uri);
-    }
+  public URI getUri() {
+    return URI.create(uri);
+  }
 
-    public void setUri(@Nonnull final String uri) {
-        this.uri = uri;
-    }
+  public void setUri(@Nonnull final String uri) {
+    this.uri = uri;
+  }
 }
