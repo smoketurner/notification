@@ -1,11 +1,11 @@
-/**
- * Copyright 2018 Smoke Turner, LLC.
+/*
+ * Copyright © 2018 Smoke Turner, LLC (contact@smoketurner.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,16 +16,17 @@
 package com.smoketurner.notification.application.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import org.junit.Test;
-import com.google.common.collect.ImmutableSet;
 
 public class LongSetParamTest {
 
-    @Test
-    public void testParse() throws Exception {
-        final LongSetParam param = new LongSetParam("1,3, 2 ,asdf,   3");
-        final Set<Long> expected = ImmutableSet.of(1L, 2L, 3L);
-        assertThat(param.parse("1,2,asdf,3")).containsAll(expected);
-    }
+  @Test
+  public void testParse() throws Exception {
+    final LongSetParam param = new LongSetParam("1,3, 2 ,asdf,   3");
+    final Set<Long> expected = ImmutableSet.of(1L, 2L, 3L);
+    assertThat(param.parse("1,2,asdf,3")).containsAll(expected);
+  }
 }

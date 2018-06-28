@@ -1,11 +1,11 @@
-/**
- * Copyright 2018 Smoke Turner, LLC.
+/*
+ * Copyright © 2018 Smoke Turner, LLC (contact@smoketurner.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,12 @@
 package com.smoketurner.notification.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.smoketurner.notification.api.Notification;
+import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.testing.junit.DropwizardClientRule;
 import java.util.List;
 import java.util.Optional;
 import javax.ws.rs.Consumes;
@@ -33,135 +39,126 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.smoketurner.notification.api.Notification;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.junit.DropwizardClientRule;
 
 public class NotificationClientTest {
 
-    @Path("/v1/notifications/{username}")
-    public static class NotificationResource {
-        @GET
-        @Produces(MediaType.APPLICATION_JSON)
-        public List<Notification> fetch(
-                @PathParam("username") String username) {
-            return ImmutableList.of(Notification.builder().withId(1L).build());
-        }
-
-        @POST
-        @Consumes(MediaType.APPLICATION_JSON)
-        @Produces(MediaType.APPLICATION_JSON)
-        public Notification store(@PathParam("username") String username,
-                Notification notification) {
-            return notification;
-        }
-
-        @DELETE
-        public Response delete(@PathParam("username") String username,
-                @QueryParam("ids") String ids) {
-            return Response.noContent().build();
-        }
+  @Path("/v1/notifications/{username}")
+  public static class NotificationResource {
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Notification> fetch(@PathParam("username") String username) {
+      return ImmutableList.of(Notification.builder().withId(1L).build());
     }
 
-    @Path("/ping")
-    public static class PingResource {
-        @GET
-        public String ping() {
-            return "pong";
-        }
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Notification store(@PathParam("username") String username, Notification notification) {
+      return notification;
     }
 
-    @Path("/version")
-    public static class VersionResource {
-        @GET
-        public String version() {
-            return "1.0.0";
-        }
+    @DELETE
+    public Response delete(@PathParam("username") String username, @QueryParam("ids") String ids) {
+      return Response.noContent().build();
     }
+  }
 
-    @ClassRule
-    public final static DropwizardClientRule resources = new DropwizardClientRule(
-            new NotificationResource(), new PingResource(),
-            new VersionResource());
-
-    private static NotificationClient client;
-
-    @BeforeClass
-    public static void setUp() {
-        final Client jerseyClient = new JerseyClientBuilder(
-                resources.getEnvironment()).build("test");
-        client = new NotificationClient(resources.getEnvironment().metrics(),
-                jerseyClient, resources.baseUri());
+  @Path("/ping")
+  public static class PingResource {
+    @GET
+    public String ping() {
+      return "pong";
     }
+  }
 
-    @AfterClass
-    public static void tearDown() throws Exception {
-        client.close();
+  @Path("/version")
+  public static class VersionResource {
+    @GET
+    public String version() {
+      return "1.0.0";
     }
+  }
 
-    @Test
-    public void testFetch() throws Exception {
-        final Optional<ImmutableSortedSet<Notification>> actual = client
-                .fetch("test");
-        assertThat(actual.isPresent()).isTrue();
-        final ImmutableSortedSet<Notification> notifications = actual.get();
-        assertThat(notifications.size()).isEqualTo(1);
-        assertThat(notifications.first().getId().isPresent()).isTrue();
-    }
+  @ClassRule
+  public static final DropwizardClientRule resources =
+      new DropwizardClientRule(
+          new NotificationResource(), new PingResource(), new VersionResource());
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testFetchEmptyUsername() throws Exception {
-        client.fetch("");
-    }
+  private static NotificationClient client;
 
-    @Test
-    public void testStore() throws Exception {
-        final Notification expected = Notification.builder().withId(1L).build();
-        final Optional<Notification> actual = client.store("test", expected);
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(expected);
-    }
+  @BeforeClass
+  public static void setUp() {
+    final Client jerseyClient = new JerseyClientBuilder(resources.getEnvironment()).build("test");
+    client =
+        new NotificationClient(
+            resources.getEnvironment().metrics(), jerseyClient, resources.baseUri());
+  }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testStoreEmptyUsername() throws Exception {
-        final Notification expected = Notification.builder().withId(1L).build();
-        client.store("", expected);
-    }
+  @AfterClass
+  public static void tearDown() throws Exception {
+    client.close();
+  }
 
-    @Test
-    public void testDeleteAll() throws Exception {
-        client.delete("test");
-    }
+  @Test
+  public void testFetch() throws Exception {
+    final Optional<ImmutableSortedSet<Notification>> actual = client.fetch("test");
+    assertThat(actual.isPresent()).isTrue();
+    final ImmutableSortedSet<Notification> notifications = actual.get();
+    assertThat(notifications.size()).isEqualTo(1);
+    assertThat(notifications.first().getId().isPresent()).isTrue();
+  }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testDeleteAllEmptyUsername() throws Exception {
-        client.delete("");
-    }
+  @Test(expected = IllegalArgumentException.class)
+  public void testFetchEmptyUsername() throws Exception {
+    client.fetch("");
+  }
 
-    @Test
-    public void testDelete() throws Exception {
-        client.delete("test", ImmutableList.of(1L, 2L));
-    }
+  @Test
+  public void testStore() throws Exception {
+    final Notification expected = Notification.builder().withId(1L).build();
+    final Optional<Notification> actual = client.store("test", expected);
+    assertThat(actual.isPresent()).isTrue();
+    assertThat(actual.get()).isEqualTo(expected);
+  }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testDeleteEmptyUsername() throws Exception {
-        client.delete("", ImmutableList.of(1L));
-    }
+  @Test(expected = IllegalArgumentException.class)
+  public void testStoreEmptyUsername() throws Exception {
+    final Notification expected = Notification.builder().withId(1L).build();
+    client.store("", expected);
+  }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testDeleteEmptyIds() throws Exception {
-        client.delete("test", ImmutableList.<Long>of());
-    }
+  @Test
+  public void testDeleteAll() throws Exception {
+    client.delete("test");
+  }
 
-    @Test
-    public void testPing() throws Exception {
-        assertThat(client.ping()).isTrue();
-    }
+  @Test(expected = IllegalArgumentException.class)
+  public void testDeleteAllEmptyUsername() throws Exception {
+    client.delete("");
+  }
 
-    @Test
-    public void testVersion() throws Exception {
-        assertThat(client.version()).isEqualTo("1.0.0");
-    }
+  @Test
+  public void testDelete() throws Exception {
+    client.delete("test", ImmutableList.of(1L, 2L));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testDeleteEmptyUsername() throws Exception {
+    client.delete("", ImmutableList.of(1L));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testDeleteEmptyIds() throws Exception {
+    client.delete("test", ImmutableList.<Long>of());
+  }
+
+  @Test
+  public void testPing() throws Exception {
+    assertThat(client.ping()).isTrue();
+  }
+
+  @Test
+  public void testVersion() throws Exception {
+    assertThat(client.version()).isEqualTo("1.0.0");
+  }
 }

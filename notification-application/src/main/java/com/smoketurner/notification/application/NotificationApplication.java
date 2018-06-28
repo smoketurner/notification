@@ -1,11 +1,11 @@
-/**
- * Copyright 2018 Smoke Turner, LLC.
+/*
+ * Copyright © 2018 Smoke Turner, LLC (contact@smoketurner.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -50,90 +50,87 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
-public class NotificationApplication
-        extends Application<NotificationConfiguration> {
+public class NotificationApplication extends Application<NotificationConfiguration> {
 
-    public static void main(final String[] args) throws Exception {
-        // http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/java-dg-jvm-ttl.html
-        java.security.Security.setProperty("networkaddress.cache.ttl", "60");
-        new NotificationApplication().run(args);
-    }
+  public static void main(final String[] args) throws Exception {
+    // http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/java-dg-jvm-ttl.html
+    java.security.Security.setProperty("networkaddress.cache.ttl", "60");
+    new NotificationApplication().run(args);
+  }
 
-    @Override
-    public String getName() {
-        return "notification";
-    }
+  @Override
+  public String getName() {
+    return "notification";
+  }
 
-    @Override
-    public void initialize(Bootstrap<NotificationConfiguration> bootstrap) {
-        // Enable variable substitution with environment variables
-        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
-                bootstrap.getConfigurationSourceProvider(),
-                new EnvironmentVariableSubstitutor(false)));
+  @Override
+  public void initialize(Bootstrap<NotificationConfiguration> bootstrap) {
+    // Enable variable substitution with environment variables
+    bootstrap.setConfigurationSourceProvider(
+        new SubstitutingSourceProvider(
+            bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
 
-        // add Swagger bundle
-        bootstrap.addBundle(new SwaggerBundle<NotificationConfiguration>() {
-            @Override
-            protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(
-                    final NotificationConfiguration configuration) {
-                return configuration.getSwagger();
-            }
+    // add Swagger bundle
+    bootstrap.addBundle(
+        new SwaggerBundle<NotificationConfiguration>() {
+          @Override
+          protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(
+              final NotificationConfiguration configuration) {
+            return configuration.getSwagger();
+          }
         });
 
-        // add Riak bundle
-        bootstrap.addBundle(new RiakBundle<NotificationConfiguration>() {
-            @Override
-            public RiakFactory getRiakFactory(
-                    final NotificationConfiguration configuration) {
-                return configuration.getRiak();
-            }
+    // add Riak bundle
+    bootstrap.addBundle(
+        new RiakBundle<NotificationConfiguration>() {
+          @Override
+          public RiakFactory getRiakFactory(final NotificationConfiguration configuration) {
+            return configuration.getRiak();
+          }
         });
-    }
+  }
 
-    @Override
-    public void run(final NotificationConfiguration configuration,
-            final Environment environment) throws Exception {
+  @Override
+  public void run(final NotificationConfiguration configuration, final Environment environment)
+      throws Exception {
 
-        // returns all DateTime objects as ISO8601 strings
-        environment.getObjectMapper().configure(
-                SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        environment.jersey().register(NotificationExceptionMapper.class);
-        // adds charset=UTF-8 to the response headers
-        environment.jersey().register(CharsetUtf8Filter.class);
-        // adds a X-Request-Id response header
-        environment.jersey().register(RequestIdFilter.class);
-        // adds a X-Runtime response header
-        environment.jersey().register(RuntimeFilter.class);
+    // returns all DateTime objects as ISO8601 strings
+    environment.getObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    environment.jersey().register(NotificationExceptionMapper.class);
+    // adds charset=UTF-8 to the response headers
+    environment.jersey().register(CharsetUtf8Filter.class);
+    // adds a X-Request-Id response header
+    environment.jersey().register(RequestIdFilter.class);
+    // adds a X-Runtime response header
+    environment.jersey().register(RuntimeFilter.class);
 
-        // snowizard
-        final IdWorker snowizard = configuration.getSnowizard()
-                .build(environment);
-        final IdGenerator idGenerator = new IdGenerator(snowizard,
-                configuration.getSnowizard().isEnabled());
+    // snowizard
+    final IdWorker snowizard = configuration.getSnowizard().build(environment);
+    final IdGenerator idGenerator =
+        new IdGenerator(snowizard, configuration.getSnowizard().isEnabled());
 
-        // riak
-        final RiakClient client = configuration.getRiak().build();
+    // riak
+    final RiakClient client = configuration.getRiak().build();
 
-        ConflictResolverFactory.INSTANCE.registerConflictResolver(
-                NotificationListObject.class, new NotificationListResolver());
-        ConflictResolverFactory.INSTANCE.registerConflictResolver(
-                CursorObject.class, new CursorResolver());
-        ConverterFactory.INSTANCE.registerConverterForClass(
-                NotificationListObject.class, new NotificationListConverter());
+    ConflictResolverFactory.INSTANCE.registerConflictResolver(
+        NotificationListObject.class, new NotificationListResolver());
+    ConflictResolverFactory.INSTANCE.registerConflictResolver(
+        CursorObject.class, new CursorResolver());
+    ConverterFactory.INSTANCE.registerConverterForClass(
+        NotificationListObject.class, new NotificationListConverter());
 
-        // data stores
-        final RuleStore ruleStore = new RuleStore(client,
-                configuration.getRuleCacheTimeout());
-        final CursorStore cursorStore = new CursorStore(client);
-        final NotificationStore store = new NotificationStore(client,
-                idGenerator, cursorStore, ruleStore);
-        environment.lifecycle().manage(new CursorStoreManager(cursorStore));
-        environment.lifecycle().manage(new NotificationStoreManager(store));
+    // data stores
+    final RuleStore ruleStore = new RuleStore(client, configuration.getRuleCacheTimeout());
+    final CursorStore cursorStore = new CursorStore(client);
+    final NotificationStore store =
+        new NotificationStore(client, idGenerator, cursorStore, ruleStore);
+    environment.lifecycle().manage(new CursorStoreManager(cursorStore));
+    environment.lifecycle().manage(new NotificationStoreManager(store));
 
-        // resources
-        environment.jersey().register(new NotificationResource(store));
-        environment.jersey().register(new RuleResource(ruleStore));
-        environment.jersey().register(new PingResource());
-        environment.jersey().register(new VersionResource());
-    }
+    // resources
+    environment.jersey().register(new NotificationResource(store));
+    environment.jersey().register(new RuleResource(ruleStore));
+    environment.jersey().register(new PingResource());
+    environment.jersey().register(new VersionResource());
+  }
 }
