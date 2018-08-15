@@ -63,7 +63,7 @@ public class NotificationListObject {
   /**
    * Constructor
    *
-   * @param key
+   * @param key Notification key
    */
   public NotificationListObject(@Nonnull final String key) {
     this.key = Objects.requireNonNull(key, "key == null");

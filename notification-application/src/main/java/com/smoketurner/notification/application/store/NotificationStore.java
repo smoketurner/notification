@@ -78,7 +78,7 @@ public class NotificationStore {
    * @param client Riak client
    * @param idGenerator ID Generator
    * @param cursors Cursor data store
-   * @param rules Rule data store
+   * @param ruleStore Rule data store
    */
   public NotificationStore(
       @Nonnull final RiakClient client,

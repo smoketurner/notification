@@ -31,8 +31,8 @@ public class CursorUpdate extends UpdateValue.Update<CursorObject> {
   /**
    * Constructor
    *
-   * @param key
-   * @param value
+   * @param key Cursor key
+   * @param value Cursor value
    */
   public CursorUpdate(@Nonnull final String key, final long value) {
     this.key = Objects.requireNonNull(key, "key == null");

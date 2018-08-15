@@ -61,8 +61,8 @@ public final class CursorObject implements Comparable<CursorObject> {
   /**
    * Constructor
    *
-   * @param key
-   * @param value
+   * @param key Cursor key
+   * @param value Cursor value
    */
   @JsonCreator
   public CursorObject(
