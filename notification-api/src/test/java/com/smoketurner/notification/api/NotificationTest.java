@@ -17,15 +17,16 @@ package com.smoketurner.notification.api;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
-import java.time.ZonedDateTime;
-import java.util.TreeSet;
-import org.junit.Before;
-import org.junit.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import io.dropwizard.jackson.Jackson;
+import java.time.ZonedDateTime;
+import java.util.TreeSet;
+import org.junit.Before;
+import org.junit.Test;
 
 public class NotificationTest {
   private final ObjectMapper MAPPER = Jackson.newObjectMapper();

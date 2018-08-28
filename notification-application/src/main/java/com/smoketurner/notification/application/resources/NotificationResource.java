@@ -242,10 +242,15 @@ public class NotificationResource {
       @ApiParam(value = "username", required = true) @PathParam("username") final String username,
       @ApiParam(value = "ids", required = false) @QueryParam("ids") final LongSetParam idsParam) {
 
-    if (idsParam != null) {
-      store.remove(username, idsParam.get());
-    } else {
-      store.removeAll(username);
+    try {
+      if (idsParam != null) {
+        store.remove(username, idsParam.get());
+      } else {
+        store.removeAll(username);
+      }
+    } catch (NotificationStoreException e) {
+      throw new NotificationException(
+          Response.Status.INTERNAL_SERVER_ERROR, "Unable to delete notifications", e);
     }
 
     return Response.noContent().build();

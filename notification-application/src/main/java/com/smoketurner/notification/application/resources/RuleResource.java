@@ -152,7 +152,12 @@ public class RuleResource {
       })
   public Response delete() {
 
-    store.removeAll();
+    try {
+      store.removeAll();
+    } catch (NotificationStoreException e) {
+      throw new NotificationException(
+          Response.Status.INTERNAL_SERVER_ERROR, "Unable to remove rules", e);
+    }
     return Response.noContent().build();
   }
 }

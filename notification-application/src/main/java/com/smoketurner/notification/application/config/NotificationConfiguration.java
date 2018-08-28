@@ -31,6 +31,14 @@ public class NotificationConfiguration extends Configuration {
   @MinDuration(value = 1, unit = TimeUnit.SECONDS)
   private Duration ruleCacheTimeout = Duration.seconds(30);
 
+  @NotNull
+  @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
+  private Duration riakTimeout = Duration.seconds(60);
+
+  @NotNull
+  @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
+  private Duration riakRequestTimeout = Duration.seconds(5);
+
   @Valid @NotNull @JsonProperty
   public final SwaggerBundleConfiguration swagger = new SwaggerBundleConfiguration();
 
@@ -38,6 +46,26 @@ public class NotificationConfiguration extends Configuration {
 
   @Valid @NotNull @JsonProperty
   private final SnowizardConfiguration snowizard = new SnowizardConfiguration();
+
+  @JsonProperty
+  public Duration getRiakTimeout() {
+    return riakTimeout;
+  }
+
+  @JsonProperty
+  public void setRiakTimeout(final Duration timeout) {
+    this.riakTimeout = timeout;
+  }
+
+  @JsonProperty
+  public Duration getRiakRequestTimeout() {
+    return riakRequestTimeout;
+  }
+
+  @JsonProperty
+  public void setRiakRequestTimeout(final Duration timeout) {
+    this.riakRequestTimeout = timeout;
+  }
 
   @JsonProperty
   public Duration getRuleCacheTimeout() {

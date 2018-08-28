@@ -120,17 +120,33 @@ public class NotificationApplication extends Application<NotificationConfigurati
         NotificationListObject.class, new NotificationListConverter());
 
     // data stores
-    final RuleStore ruleStore = new RuleStore(client, configuration.getRuleCacheTimeout());
-    final CursorStore cursorStore = new CursorStore(client);
+    final RuleStore ruleStore =
+        new RuleStore(
+            client,
+            configuration.getRuleCacheTimeout(),
+            configuration.getRiakTimeout(),
+            configuration.getRiakRequestTimeout());
+
+    final CursorStore cursorStore =
+        new CursorStore(
+            client, configuration.getRiakTimeout(), configuration.getRiakRequestTimeout());
+
     final NotificationStore store =
-        new NotificationStore(client, idGenerator, cursorStore, ruleStore);
+        new NotificationStore(
+            client,
+            idGenerator,
+            cursorStore,
+            ruleStore,
+            configuration.getRiakTimeout(),
+            configuration.getRiakRequestTimeout());
+
     environment.lifecycle().manage(new CursorStoreManager(cursorStore));
     environment.lifecycle().manage(new NotificationStoreManager(store));
 
     // resources
     environment.jersey().register(new NotificationResource(store));
     environment.jersey().register(new RuleResource(ruleStore));
-    environment.jersey().register(PingResource.class);
-    environment.jersey().register(VersionResource.class);
+    environment.jersey().register(new PingResource());
+    environment.jersey().register(new VersionResource());
   }
 }

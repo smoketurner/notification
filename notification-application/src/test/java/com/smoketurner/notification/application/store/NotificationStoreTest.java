@@ -27,6 +27,7 @@ import com.google.common.collect.Sets;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.core.IdGenerator;
 import com.smoketurner.notification.application.core.UserNotifications;
+import io.dropwizard.util.Duration;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,7 +47,8 @@ public class NotificationStoreTest {
   private final IdGenerator idGenerator = mock(IdGenerator.class);
   private final RuleStore rules = mock(RuleStore.class);
   private final NotificationStore store =
-      new NotificationStore(client, idGenerator, cursors, rules);
+      new NotificationStore(
+          client, idGenerator, cursors, rules, Duration.seconds(60), Duration.seconds(5));
 
   @Before
   public void setUp() {

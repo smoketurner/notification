@@ -23,6 +23,7 @@ import com.basho.riak.client.api.commands.datatypes.MapUpdate;
 import com.basho.riak.client.api.commands.datatypes.RegisterUpdate;
 import com.basho.riak.client.api.commands.datatypes.UpdateMap;
 import com.basho.riak.client.api.commands.kv.DeleteValue;
+import com.basho.riak.client.core.RiakFuture;
 import com.basho.riak.client.core.query.Location;
 import com.basho.riak.client.core.query.Namespace;
 import com.basho.riak.client.core.query.crdt.types.RiakMap;
@@ -60,6 +61,10 @@ public class RuleStore {
   private final RiakClient client;
   private final LoadingCache<String, Map<String, Rule>> cache;
 
+  // timeouts
+  private final int timeout;
+  private final Duration requestTimeout;
+
   // metrics
   private final Timer fetchTimer;
   private final Timer storeTimer;
@@ -71,8 +76,14 @@ public class RuleStore {
    *
    * @param client Riak client
    * @param cacheTimeout Rule cache refresh timeout
+   * @param timeout Riak server-side timeout
+   * @param requestTimeout Riak client-side timeout
    */
-  public RuleStore(@NotNull final RiakClient client, @NotNull final Duration cacheTimeout) {
+  public RuleStore(
+      @NotNull final RiakClient client,
+      @NotNull final Duration cacheTimeout,
+      @NotNull final Duration timeout,
+      @NotNull final Duration requestTimeout) {
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(RuleStore.class, "fetch"));
     this.storeTimer = registry.timer(MetricRegistry.name(RuleStore.class, "store"));
@@ -80,6 +91,10 @@ public class RuleStore {
     this.cacheMisses = registry.meter(MetricRegistry.name(RuleStore.class, "cache-misses"));
 
     this.client = Objects.requireNonNull(client, "client == null");
+
+    Objects.requireNonNull(timeout, "riakTimeout == null");
+    this.timeout = Ints.checkedCast(timeout.toMilliseconds());
+    this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
 
     // set up a cache for the rules
     this.cache =
@@ -123,9 +138,10 @@ public class RuleStore {
     final FetchMap fetchMap =
         new FetchMap.Builder(LOCATION)
             .withOption(FetchDatatype.Option.INCLUDE_CONTEXT, false)
+            .withTimeout(timeout)
             .build();
 
-    LOGGER.debug("Fetching key: {}", LOCATION);
+    LOGGER.debug("Fetching key (sync): {}", LOCATION);
 
     try (Timer.Context context = fetchTimer.time()) {
       final FetchMap.Response response = client.execute(fetchMap);
@@ -152,9 +168,9 @@ public class RuleStore {
    * @throws NotificationStoreException if unable to fetch the rule context
    */
   public Optional<Context> fetchContext() throws NotificationStoreException {
-    final FetchMap fetchMap = new FetchMap.Builder(LOCATION).build();
+    final FetchMap fetchMap = new FetchMap.Builder(LOCATION).withTimeout(timeout).build();
 
-    LOGGER.debug("Fetching key: {}", LOCATION);
+    LOGGER.debug("Fetching key (sync): {}", LOCATION);
 
     try (Timer.Context context = fetchTimer.time()) {
       final FetchMap.Response response = client.execute(fetchMap);
@@ -243,7 +259,7 @@ public class RuleStore {
     final MapUpdate op = new MapUpdate();
     op.update(category, getUpdate(rule, fetchContext));
 
-    final UpdateMap.Builder builder = new UpdateMap.Builder(LOCATION, op);
+    final UpdateMap.Builder builder = new UpdateMap.Builder(LOCATION, op).withTimeout(timeout);
     if (fetchContext.isPresent()) {
       builder.withContext(fetchContext.get());
     }
@@ -251,7 +267,15 @@ public class RuleStore {
     LOGGER.debug("Storing key (async): {}", LOCATION);
 
     try (Timer.Context context = storeTimer.time()) {
-      client.executeAsync(builder.build());
+      final RiakFuture<UpdateMap.Response, Location> future = client.executeAsync(builder.build());
+      future.await(requestTimeout.getQuantity(), requestTimeout.getUnit());
+      if (future.isSuccess()) {
+        LOGGER.debug("Successfully stored key: {}", LOCATION);
+      }
+    } catch (InterruptedException e) {
+      LOGGER.warn("Store request was interrupted", e);
+      Thread.currentThread().interrupt();
+      throw new NotificationStoreException(e);
     }
   }
 
@@ -304,22 +328,42 @@ public class RuleStore {
     op.removeMap(category);
 
     final UpdateMap.Builder builder =
-        new UpdateMap.Builder(LOCATION, op).withContext(fetchContext.get());
+        new UpdateMap.Builder(LOCATION, op).withTimeout(timeout).withContext(fetchContext.get());
 
     LOGGER.debug("Storing key (async): {}", LOCATION);
 
     try (Timer.Context context = storeTimer.time()) {
-      client.executeAsync(builder.build());
+      final RiakFuture<UpdateMap.Response, Location> future = client.executeAsync(builder.build());
+      future.await(requestTimeout.getQuantity(), requestTimeout.getUnit());
+      if (future.isSuccess()) {
+        LOGGER.debug("Successfully stored key: {}", LOCATION);
+      }
+    } catch (InterruptedException e) {
+      LOGGER.warn("Store request was interrupted", e);
+      Thread.currentThread().interrupt();
+      throw new NotificationStoreException(e);
     }
   }
 
-  /** Asynchronously delete all of the rules */
-  public void removeAll() {
-    final DeleteValue deleteValue = new DeleteValue.Builder(LOCATION).build();
+  /**
+   * Asynchronously delete all of the rules
+   *
+   * @throws NotificationStoreException if unable to delete the rules
+   */
+  public void removeAll() throws NotificationStoreException {
+    final DeleteValue deleteValue = new DeleteValue.Builder(LOCATION).withTimeout(timeout).build();
 
     LOGGER.debug("Deleting key (async): {}", LOCATION);
     try (Timer.Context context = deleteTimer.time()) {
-      client.executeAsync(deleteValue);
+      final RiakFuture<Void, Location> future = client.executeAsync(deleteValue);
+      future.await(requestTimeout.getQuantity(), requestTimeout.getUnit());
+      if (future.isSuccess()) {
+        LOGGER.debug("Successfully deleted key: {}", LOCATION);
+      }
+    } catch (InterruptedException e) {
+      LOGGER.warn("Delete request was interrupted", e);
+      Thread.currentThread().interrupt();
+      throw new NotificationStoreException(e);
     }
   }
 }

@@ -15,6 +15,15 @@
  */
 package com.smoketurner.notification.api;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
+import io.dropwizard.jackson.JsonSnakeCase;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -26,15 +35,6 @@ import javax.annotation.concurrent.Immutable;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Ordering;
-import io.dropwizard.jackson.JsonSnakeCase;
 
 @Immutable
 @JsonSnakeCase
@@ -324,7 +324,7 @@ public final class Notification implements Comparable<Notification> {
    * Always sort notifications in descending order (largest IDs first)
    *
    * @param that Notification to compare to
-   * @return 1 if this > that, 0 if this == that, or -1 if this < that
+   * @return 1 if this greater than that, 0 if this equal to that, or -1 if this less than that
    */
   @Override
   public int compareTo(final Notification that) {

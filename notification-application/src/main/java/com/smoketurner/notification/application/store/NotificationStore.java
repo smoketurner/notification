@@ -22,6 +22,7 @@ import com.basho.riak.client.api.commands.kv.DeleteValue;
 import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.StoreValue;
 import com.basho.riak.client.api.commands.kv.UpdateValue;
+import com.basho.riak.client.core.RiakFuture;
 import com.basho.riak.client.core.query.Location;
 import com.basho.riak.client.core.query.Namespace;
 import com.codahale.metrics.MetricRegistry;
@@ -30,6 +31,7 @@ import com.codahale.metrics.Timer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import com.google.common.primitives.Ints;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.api.Rule;
 import com.smoketurner.notification.application.core.IdGenerator;
@@ -39,6 +41,7 @@ import com.smoketurner.notification.application.exceptions.NotificationStoreExce
 import com.smoketurner.notification.application.riak.NotificationListAddition;
 import com.smoketurner.notification.application.riak.NotificationListDeletion;
 import com.smoketurner.notification.application.riak.NotificationListObject;
+import io.dropwizard.util.Duration;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -65,6 +68,10 @@ public class NotificationStore {
   private final CursorStore cursors;
   private final RuleStore ruleStore;
 
+  // timeouts
+  private final int timeout;
+  private final Duration requestTimeout;
+
   // timers
   private final Timer fetchTimer;
   private final Timer updateTimer;
@@ -84,7 +91,9 @@ public class NotificationStore {
       @NotNull final RiakClient client,
       @NotNull final IdGenerator idGenerator,
       @NotNull final CursorStore cursors,
-      @NotNull final RuleStore ruleStore) {
+      @NotNull final RuleStore ruleStore,
+      @NotNull final Duration timeout,
+      @NotNull final Duration requestTimeout) {
 
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(NotificationStore.class, "fetch"));
@@ -95,6 +104,10 @@ public class NotificationStore {
     this.idGenerator = Objects.requireNonNull(idGenerator, "idGenerator == null");
     this.cursors = Objects.requireNonNull(cursors, "cursors == null");
     this.ruleStore = Objects.requireNonNull(ruleStore, "ruleStore == null");
+
+    Objects.requireNonNull(timeout, "riakTimeout == null");
+    this.timeout = Ints.checkedCast(timeout.toMilliseconds());
+    this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
   }
 
   /** Internal method to set the allow_multi to true */
@@ -131,10 +144,10 @@ public class NotificationStore {
 
     final Location location = new Location(NAMESPACE, username);
 
-    LOGGER.debug("Fetching key: {}", location);
+    LOGGER.debug("Fetching key (sync): {}", location);
 
     final NotificationListObject list;
-    final FetchValue fv = new FetchValue.Builder(location).build();
+    final FetchValue fv = new FetchValue.Builder(location).withTimeout(timeout).build();
     try (Timer.Context context = fetchTimer.time()) {
       final FetchValue.Response response = client.execute(fv);
       if (response.isNotFound()) {
@@ -263,9 +276,10 @@ public class NotificationStore {
         new UpdateValue.Builder(location)
             .withUpdate(update)
             .withStoreOption(StoreValue.Option.RETURN_BODY, false)
+            .withTimeout(timeout)
             .build();
 
-    LOGGER.debug("Updating key: {}", location);
+    LOGGER.debug("Updating key (sync): {}", location);
 
     try (Timer.Context context = updateTimer.time()) {
       client.execute(updateValue);
@@ -284,18 +298,27 @@ public class NotificationStore {
    * Asynchronously delete all of the notifications for a given user
    *
    * @param username User to delete all the notifications
+   * @throws NotificationStoreException if unable to delete the notifications
    */
-  public void removeAll(@NotNull final String username) {
+  public void removeAll(@NotNull final String username) throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
 
     final Location location = new Location(NAMESPACE, username);
-    final DeleteValue deleteValue = new DeleteValue.Builder(location).build();
+    final DeleteValue deleteValue = new DeleteValue.Builder(location).withTimeout(timeout).build();
 
     LOGGER.debug("Deleting key (async): {}", location);
     try (Timer.Context context = deleteTimer.time()) {
-      client.executeAsync(deleteValue);
+      final RiakFuture<Void, Location> future = client.executeAsync(deleteValue);
+      future.await(requestTimeout.getQuantity(), requestTimeout.getUnit());
+      if (future.isSuccess()) {
+        LOGGER.debug("Successfully deleted key: {}", location);
+      }
+    } catch (InterruptedException e) {
+      LOGGER.warn("Delete request was interrupted", e);
+      Thread.currentThread().interrupt();
+      throw new NotificationStoreException(e);
     }
 
     cursors.delete(username, CURSOR_NAME);
@@ -306,8 +329,10 @@ public class NotificationStore {
    *
    * @param username User to remove notifications from
    * @param ids Notification IDs to remove
+   * @throws NotificationStoreException if unable to remove the notifications
    */
-  public void remove(@NotNull final String username, @NotNull final Collection<Long> ids) {
+  public void remove(@NotNull final String username, @NotNull final Collection<Long> ids)
+      throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
@@ -324,11 +349,20 @@ public class NotificationStore {
         new UpdateValue.Builder(location)
             .withUpdate(delete)
             .withStoreOption(StoreValue.Option.RETURN_BODY, false)
+            .withTimeout(timeout)
             .build();
 
     LOGGER.debug("Updating key (async): {}", location);
     try (Timer.Context context = updateTimer.time()) {
-      client.executeAsync(updateValue);
+      final RiakFuture<UpdateValue.Response, Location> future = client.executeAsync(updateValue);
+      future.await(requestTimeout.getQuantity(), requestTimeout.getUnit());
+      if (future.isSuccess()) {
+        LOGGER.debug("Successfully updated key: {}", location);
+      }
+    } catch (InterruptedException e) {
+      LOGGER.warn("Update request was interrupted", e);
+      Thread.currentThread().interrupt();
+      throw new NotificationStoreException(e);
     }
   }
 

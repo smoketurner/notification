@@ -22,15 +22,18 @@ import com.basho.riak.client.api.commands.kv.DeleteValue;
 import com.basho.riak.client.api.commands.kv.FetchValue;
 import com.basho.riak.client.api.commands.kv.StoreValue;
 import com.basho.riak.client.api.commands.kv.UpdateValue;
+import com.basho.riak.client.core.RiakFuture;
 import com.basho.riak.client.core.query.Location;
 import com.basho.riak.client.core.query.Namespace;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 import com.google.common.base.Preconditions;
+import com.google.common.primitives.Ints;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.riak.CursorObject;
 import com.smoketurner.notification.application.riak.CursorUpdate;
+import io.dropwizard.util.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -44,6 +47,10 @@ public class CursorStore {
   private static final Namespace NAMESPACE = new Namespace("cursors");
   private final RiakClient client;
 
+  // timeouts
+  private final int timeout;
+  private final Duration requestTimeout;
+
   // timers
   private final Timer fetchTimer;
   private final Timer storeTimer;
@@ -53,14 +60,23 @@ public class CursorStore {
    * Constructor
    *
    * @param client Riak client
+   * @param timeout Riak server-side timeout
+   * @param requestTimeout Riak client-side timeout
    */
-  public CursorStore(@NotNull final RiakClient client) {
+  public CursorStore(
+      @NotNull final RiakClient client,
+      @NotNull final Duration timeout,
+      @NotNull final Duration requestTimeout) {
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(CursorStore.class, "fetch"));
     this.storeTimer = registry.timer(MetricRegistry.name(CursorStore.class, "store"));
     this.deleteTimer = registry.timer(MetricRegistry.name(CursorStore.class, "delete"));
 
     this.client = Objects.requireNonNull(client, "client == null");
+
+    Objects.requireNonNull(timeout, "riakTimeout == null");
+    this.timeout = Ints.checkedCast(timeout.toMilliseconds());
+    this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
   }
 
   /** Internal method to set the allow_multi to true */
@@ -101,10 +117,10 @@ public class CursorStore {
     final String key = getCursorKey(username, cursorName);
     final Location location = new Location(NAMESPACE, key);
 
-    LOGGER.debug("Fetching key: {}", location);
+    LOGGER.debug("Fetching key (sync): {}", location);
 
     final CursorObject cursor;
-    final FetchValue fv = new FetchValue.Builder(location).build();
+    final FetchValue fv = new FetchValue.Builder(location).withTimeout(timeout).build();
     try (Timer.Context context = fetchTimer.time()) {
       final FetchValue.Response response = client.execute(fv);
       if (response.isNotFound()) {
@@ -135,9 +151,11 @@ public class CursorStore {
    * @param username Username to update the cursor for
    * @param cursorName Name of the cursor to store
    * @param value Value to set
+   * @throws NotificationStoreException if unable to update the cursor
    */
   public void store(
-      @NotNull final String username, @NotNull final String cursorName, final long value) {
+      @NotNull final String username, @NotNull final String cursorName, final long value)
+      throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
@@ -152,11 +170,20 @@ public class CursorStore {
         new UpdateValue.Builder(location)
             .withUpdate(update)
             .withStoreOption(StoreValue.Option.RETURN_BODY, false)
+            .withTimeout(timeout)
             .build();
 
-    LOGGER.debug("Updating key ({}) to value (async): {}", location, value);
+    LOGGER.debug("Updating cursor ({}) to value (async): {}", location, value);
     try (Timer.Context context = storeTimer.time()) {
-      client.executeAsync(updateValue);
+      final RiakFuture<UpdateValue.Response, Location> future = client.executeAsync(updateValue);
+      future.await(requestTimeout.getQuantity(), requestTimeout.getUnit());
+      if (future.isSuccess()) {
+        LOGGER.debug("Successfully updated cursor: {}", location);
+      }
+    } catch (InterruptedException e) {
+      LOGGER.warn("Update request was interrupted", e);
+      Thread.currentThread().interrupt();
+      throw new NotificationStoreException(e);
     }
   }
 
@@ -165,8 +192,10 @@ public class CursorStore {
    *
    * @param username User delete their cursor
    * @param cursorName Name of the cursor
+   * @throws NotificationStoreException if unable to delete the cursor
    */
-  public void delete(@NotNull final String username, @NotNull final String cursorName) {
+  public void delete(@NotNull final String username, @NotNull final String cursorName)
+      throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
@@ -175,11 +204,19 @@ public class CursorStore {
 
     final String key = getCursorKey(username, cursorName);
     final Location location = new Location(NAMESPACE, key);
-    final DeleteValue deleteValue = new DeleteValue.Builder(location).build();
+    final DeleteValue deleteValue = new DeleteValue.Builder(location).withTimeout(timeout).build();
 
     LOGGER.debug("Deleting key (async): {}", location);
     try (Timer.Context context = deleteTimer.time()) {
-      client.executeAsync(deleteValue);
+      final RiakFuture<Void, Location> future = client.executeAsync(deleteValue);
+      future.await(requestTimeout.getQuantity(), requestTimeout.getUnit());
+      if (future.isSuccess()) {
+        LOGGER.debug("Successfully deleted key: {}", location);
+      }
+    } catch (InterruptedException e) {
+      LOGGER.warn("Delete request was interrupted", e);
+      Thread.currentThread().interrupt();
+      throw new NotificationStoreException(e);
     }
   }
 
