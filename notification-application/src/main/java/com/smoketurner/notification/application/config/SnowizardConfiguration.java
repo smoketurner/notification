@@ -23,7 +23,6 @@ import com.smoketurner.notification.application.NotificationApplication;
 import com.smoketurner.snowizard.core.IdWorker;
 import io.dropwizard.setup.Environment;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import org.slf4j.Logger;
@@ -74,7 +73,7 @@ public class SnowizardConfiguration {
   }
 
   @JsonIgnore
-  public IdWorker build(@Nonnull final Environment environment) {
+  public IdWorker build(final Environment environment) {
     Objects.requireNonNull(environment);
     final MetricRegistry registry = environment.metrics();
 

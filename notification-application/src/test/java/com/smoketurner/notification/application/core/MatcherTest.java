@@ -114,8 +114,8 @@ public class MatcherTest {
   public void testCheckSize() {
     final Rule rule = Rule.builder().withMaxSize(2).build();
 
-    final Notification n2 = Notification.builder().withId(2L).build();
-    final Notification n3 = Notification.builder().withId(3L).build();
+    final Notification n2 = Notification.create(2L);
+    final Notification n3 = Notification.create(3L);
 
     final Matcher matcher = new Matcher(rule, notification);
     assertThat(matcher.isFull()).isFalse();
@@ -151,8 +151,8 @@ public class MatcherTest {
     final Rule rule1 = Rule.builder().withMatchOn("first_name").build();
     final Rule rule2 = Rule.builder().withMatchOn("last_name").build();
 
-    final Notification n1 = Notification.builder().withId(1L).build();
-    final Notification n2 = Notification.builder().withId(2L).build();
+    final Notification n1 = Notification.create(1L);
+    final Notification n2 = Notification.create(2L);
 
     final Matcher m1 = new Matcher(rule1, n1);
     final Matcher m2 = new Matcher(rule1, n2);

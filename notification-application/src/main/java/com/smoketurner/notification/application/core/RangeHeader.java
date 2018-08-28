@@ -27,9 +27,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Immutable
 public final class RangeHeader {

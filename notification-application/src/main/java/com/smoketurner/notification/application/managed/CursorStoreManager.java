@@ -18,7 +18,7 @@ package com.smoketurner.notification.application.managed;
 import com.smoketurner.notification.application.store.CursorStore;
 import io.dropwizard.lifecycle.Managed;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CursorStoreManager implements Managed {
 
@@ -29,7 +29,7 @@ public class CursorStoreManager implements Managed {
    *
    * @param store Cursor store to manage
    */
-  public CursorStoreManager(@Nonnull final CursorStore store) {
+  public CursorStoreManager(@NotNull final CursorStore store) {
     this.store = Objects.requireNonNull(store, "store == null");
   }
 

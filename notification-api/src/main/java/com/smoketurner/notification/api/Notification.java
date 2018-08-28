@@ -15,6 +15,17 @@
  */
 package com.smoketurner.notification.api;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import javax.annotation.concurrent.Immutable;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -24,17 +35,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import io.dropwizard.jackson.JsonSnakeCase;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @Immutable
 @JsonSnakeCase
@@ -86,20 +86,62 @@ public final class Notification implements Comparable<Notification> {
     this.notifications = notifications.orElse(Collections.emptyList());
   }
 
+  /**
+   * Create a new notification builder with a category and message.
+   *
+   * @param category Notification category
+   * @param message Notification message
+   * @return a notification builder
+   */
   public static Builder builder(final String category, final String message) {
     return new Builder(category, message);
   }
 
+  /**
+   * Create a new notification builder with a category and an empty message.
+   *
+   * <p>Primarily used in the tests.
+   *
+   * @param category Notification category
+   * @return a notification builder
+   */
   public static Builder builder(final String category) {
     return builder(category, "");
   }
 
+  /**
+   * Create a new notification builder with an empty category and an empty message.
+   *
+   * <p>Primarily used in the tests.
+   *
+   * @return a notification builder
+   */
   public static Builder builder() {
     return builder("", "");
   }
 
+  /**
+   * Create a new notification builder from an existing notification.
+   *
+   * <p>Primarily used in the tests.
+   *
+   * @param other Notification to copy from
+   * @return a notification builder
+   */
   public static Builder builder(final Notification other) {
     return builder(other.category, other.message).fromNotification(other);
+  }
+
+  /**
+   * Creates a new notification with only an ID.
+   *
+   * <p>Primarily used in the tests.
+   *
+   * @param id Notification ID
+   * @return Notification
+   */
+  public static Notification create(final long id) {
+    return builder().withId(id).build();
   }
 
   public static class Builder {
@@ -108,8 +150,9 @@ public final class Notification implements Comparable<Notification> {
 
     @Nullable private String idStr;
 
-    private final String category;
-    private final String message;
+    @NotNull private final String category;
+
+    @NotNull private final String message;
 
     @Nullable private ZonedDateTime createdAt;
 
@@ -122,15 +165,15 @@ public final class Notification implements Comparable<Notification> {
     /**
      * Constructor
      *
-     * @param category Category
-     * @param message Message
+     * @param category Notification category
+     * @param message Notification message
      */
-    public Builder(@Nonnull final String category, @Nonnull final String message) {
+    public Builder(@NotNull final String category, @NotNull final String message) {
       this.category = Objects.requireNonNull(category);
       this.message = Objects.requireNonNull(message);
     }
 
-    public Builder fromNotification(@Nonnull final Notification other) {
+    public Builder fromNotification(@NotNull final Notification other) {
       this.id = other.id.orElse(null);
       this.idStr = other.idStr.orElse(null);
       if (other.createdAt != null) {
@@ -157,7 +200,7 @@ public final class Notification implements Comparable<Notification> {
       return this;
     }
 
-    public Builder withCreatedAt(@Nonnull final ZonedDateTime createdAt) {
+    public Builder withCreatedAt(@NotNull final ZonedDateTime createdAt) {
       this.createdAt = Objects.requireNonNull(createdAt, "createdAt == null");
       return this;
     }
@@ -167,12 +210,12 @@ public final class Notification implements Comparable<Notification> {
       return this;
     }
 
-    public Builder withProperties(@Nonnull final Map<String, String> properties) {
+    public Builder withProperties(@NotNull final Map<String, String> properties) {
       this.properties = Objects.requireNonNull(properties, "properties == null");
       return this;
     }
 
-    public Builder withNotifications(@Nonnull final Collection<Notification> notifications) {
+    public Builder withNotifications(@NotNull final Collection<Notification> notifications) {
       this.notifications = Objects.requireNonNull(notifications, "notifications == null");
       return this;
     }
@@ -277,6 +320,12 @@ public final class Notification implements Comparable<Notification> {
         .toString();
   }
 
+  /**
+   * Always sort notifications in descending order (largest IDs first)
+   *
+   * @param that Notification to compare to
+   * @return 1 if this > that, 0 if this == that, or -1 if this < that
+   */
   @Override
   public int compareTo(final Notification that) {
     return ComparisonChain.start()

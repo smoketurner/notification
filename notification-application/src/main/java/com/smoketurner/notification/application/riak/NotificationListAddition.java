@@ -18,8 +18,8 @@ package com.smoketurner.notification.application.riak;
 import com.basho.riak.client.api.commands.kv.UpdateValue;
 import com.smoketurner.notification.api.Notification;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class NotificationListAddition extends UpdateValue.Update<NotificationLis
    *
    * @param notification Notification to add
    */
-  public NotificationListAddition(@Nonnull final Notification notification) {
+  public NotificationListAddition(@NotNull final Notification notification) {
     this.notification = Objects.requireNonNull(notification, "notification == null");
   }
 

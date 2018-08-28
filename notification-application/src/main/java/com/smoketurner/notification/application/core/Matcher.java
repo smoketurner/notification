@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.function.Predicate;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
@@ -46,7 +46,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @param rule Rule for this match
    * @param notification First notification to match the rule
    */
-  public Matcher(@Nonnull final Rule rule, @Nonnull final Notification notification) {
+  public Matcher(@NotNull final Rule rule, @NotNull final Notification notification) {
     this.rule = Objects.requireNonNull(rule, "rule == null");
     this.notification = Objects.requireNonNull(notification, "notification == null");
 
@@ -73,7 +73,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @param notification Notification to match
    * @return true if the notification matches, otherwise false
    */
-  public boolean checkMatch(@Nonnull final Notification notification) {
+  public boolean checkMatch(@NotNull final Notification notification) {
     if (!rule.getMatchOn().isPresent()) {
       return true;
     }
@@ -101,7 +101,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @param notification Notification to check
    * @return true if the notification category matches, otherwise false
    */
-  public boolean checkCategory(@Nonnull final Notification notification) {
+  public boolean checkCategory(@NotNull final Notification notification) {
     return Objects.equals(this.notification.getCategory(), notification.getCategory());
   }
 
@@ -111,7 +111,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @param notification Notification to check
    * @return true if the notification is within the maximum duration, otherwise false.
    */
-  public boolean checkDuration(@Nonnull final Notification notification) {
+  public boolean checkDuration(@NotNull final Notification notification) {
     if (!rule.getMaxDuration().isPresent()) {
       return true;
     }
@@ -132,7 +132,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @return true if the notification can be added, otherwise false.
    */
   @Override
-  public boolean test(@Nonnull final Notification notification) {
+  public boolean test(@NotNull final Notification notification) {
     if (notification != null
         && notification.getId().isPresent()
         && checkCategory(notification)
@@ -145,7 +145,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
   }
 
   @VisibleForTesting
-  boolean add(@Nonnull final Collection<Notification> notifications) {
+  boolean add(@NotNull final Collection<Notification> notifications) {
     return this.notifications.addAll(notifications);
   }
 

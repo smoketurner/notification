@@ -36,7 +36,6 @@ import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -74,7 +73,7 @@ public class NotificationResource {
    *
    * @param store Notification data store
    */
-  public NotificationResource(@Nonnull final NotificationStore store) {
+  public NotificationResource(final NotificationStore store) {
     this.store = Objects.requireNonNull(store);
   }
 
@@ -154,8 +153,7 @@ public class NotificationResource {
       }
       try {
         if (range.getFromId().isPresent()) {
-          from =
-              notifications.floor(Notification.builder().withId(range.getFromId().get()).build());
+          from = notifications.floor(Notification.create(range.getFromId().get()));
           if (from == null) {
             from = newest;
           }

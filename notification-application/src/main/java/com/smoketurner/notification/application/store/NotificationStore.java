@@ -50,8 +50,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,10 +81,10 @@ public class NotificationStore {
    * @param ruleStore Rule data store
    */
   public NotificationStore(
-      @Nonnull final RiakClient client,
-      @Nonnull final IdGenerator idGenerator,
-      @Nonnull final CursorStore cursors,
-      @Nonnull final RuleStore ruleStore) {
+      @NotNull final RiakClient client,
+      @NotNull final IdGenerator idGenerator,
+      @NotNull final CursorStore cursors,
+      @NotNull final RuleStore ruleStore) {
 
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(NotificationStore.class, "fetch"));
@@ -123,7 +123,7 @@ public class NotificationStore {
    * @return Optional list of notifications or absent
    * @throws NotificationStoreException if unable to fetch the notifications
    */
-  public Optional<UserNotifications> fetch(@Nonnull final String username)
+  public Optional<UserNotifications> fetch(@NotNull final String username)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -169,7 +169,7 @@ public class NotificationStore {
    * @throws NotificationStoreException if unable to update the cursor
    */
   public UserNotifications splitNotifications(
-      @Nonnull final String username, @Nullable final SortedSet<Notification> notifications)
+      @NotNull final String username, @Nullable final SortedSet<Notification> notifications)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -243,7 +243,7 @@ public class NotificationStore {
    * @throws NotificationStoreException if unable to store the notification
    */
   public Notification store(
-      @Nonnull final String username, @Nonnull final Notification notification)
+      @NotNull final String username, @NotNull final Notification notification)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -285,7 +285,7 @@ public class NotificationStore {
    *
    * @param username User to delete all the notifications
    */
-  public void removeAll(@Nonnull final String username) {
+  public void removeAll(@NotNull final String username) {
 
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
@@ -307,7 +307,7 @@ public class NotificationStore {
    * @param username User to remove notifications from
    * @param ids Notification IDs to remove
    */
-  public void remove(@Nonnull final String username, @Nonnull final Collection<Long> ids) {
+  public void remove(@NotNull final String username, @NotNull final Collection<Long> ids) {
 
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
@@ -340,7 +340,7 @@ public class NotificationStore {
    * @return the updated notifications
    */
   public static Stream<Notification> setUnseenState(
-      @Nonnull final Iterable<Notification> notifications, final boolean unseen) {
+      @NotNull final Iterable<Notification> notifications, final boolean unseen) {
 
     return StreamSupport.stream(notifications.spliterator(), false)
         .map(notification -> Notification.builder(notification).withUnseen(unseen).build());
@@ -355,7 +355,7 @@ public class NotificationStore {
    * @return the notification
    */
   public static Optional<Notification> tryFind(
-      @Nonnull final Iterable<Notification> notifications, final long id) {
+      @NotNull final Iterable<Notification> notifications, final long id) {
 
     final com.google.common.base.Optional<Notification> result =
         Iterables.tryFind(
@@ -391,7 +391,7 @@ public class NotificationStore {
    * @param id Notification ID to find
    * @return the position of the notification or -1 if not found
    */
-  public static int indexOf(@Nonnull final Iterable<Notification> notifications, final long id) {
+  public static int indexOf(@NotNull final Iterable<Notification> notifications, final long id) {
 
     return Iterables.indexOf(
         notifications,
@@ -425,7 +425,7 @@ public class NotificationStore {
    * @return Iterable containing the subset of the original notifications
    */
   public Iterable<Notification> skip(
-      @Nonnull final Iterable<Notification> notifications,
+      @NotNull final Iterable<Notification> notifications,
       final long startId,
       final boolean inclusive,
       final int limitSize) {

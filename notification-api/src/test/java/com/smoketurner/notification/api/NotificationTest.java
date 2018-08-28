@@ -17,16 +17,15 @@ package com.smoketurner.notification.api;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
-
+import java.time.ZonedDateTime;
+import java.util.TreeSet;
+import org.junit.Before;
+import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import io.dropwizard.jackson.Jackson;
-import java.time.ZonedDateTime;
-import java.util.TreeSet;
-import org.junit.Before;
-import org.junit.Test;
 
 public class NotificationTest {
   private final ObjectMapper MAPPER = Jackson.newObjectMapper();
@@ -72,7 +71,7 @@ public class NotificationTest {
   public void testGetId() throws Exception {
     final Notification n1 = Notification.builder().build();
     assertThat(n1.getId(5L)).isEqualTo(5L);
-    final Notification n2 = Notification.builder().withId(1000L).build();
+    final Notification n2 = Notification.create(1000L);
     assertThat(n2.getId(6L)).isEqualTo(1000L);
   }
 
@@ -91,16 +90,16 @@ public class NotificationTest {
 
   @Test
   public void testBuilder() throws Exception {
-    final Notification n1 = Notification.builder().withId(1L).build();
+    final Notification n1 = Notification.create(1L);
     final Notification n2 = Notification.builder(n1).build();
     assertThat(n1).isEqualTo(n2);
   }
 
   @Test
   public void testComparison() throws Exception {
-    final Notification n1 = Notification.builder().withId(1L).build();
-    final Notification n2 = Notification.builder().withId(2L).build();
-    final Notification n3 = Notification.builder().withId(3L).build();
+    final Notification n1 = Notification.create(1L);
+    final Notification n2 = Notification.create(2L);
+    final Notification n3 = Notification.create(3L);
 
     assertThat(n1.compareTo(n2)).isEqualTo(1);
     assertThat(n2.compareTo(n1)).isEqualTo(-1);

@@ -25,8 +25,8 @@ import io.dropwizard.jackson.JsonSnakeCase;
 import io.dropwizard.util.Duration;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+import org.jetbrains.annotations.Nullable;
 
 @Immutable
 @JsonSnakeCase

@@ -42,7 +42,7 @@ public class NotificationStoreBenchmark {
   @Setup
   public void setUp() {
     for (long i = 0; i < 1000000; i++) {
-      notifications.add(createNotification(i));
+      notifications.add(Notification.create(i));
     }
   }
 
@@ -70,9 +70,5 @@ public class NotificationStoreBenchmark {
                 .measurementIterations(5)
                 .build())
         .run();
-  }
-
-  private Notification createNotification(final long id) {
-    return Notification.builder().withId(id).build();
   }
 }

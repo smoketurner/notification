@@ -30,7 +30,6 @@ import io.swagger.annotations.ApiResponses;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -55,7 +54,7 @@ public class RuleResource {
    *
    * @param store Rule data store
    */
-  public RuleResource(@Nonnull final RuleStore store) {
+  public RuleResource(final RuleStore store) {
     this.store = Objects.requireNonNull(store);
   }
 

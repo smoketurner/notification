@@ -18,7 +18,7 @@ package com.smoketurner.notification.application.managed;
 import com.smoketurner.notification.application.store.NotificationStore;
 import io.dropwizard.lifecycle.Managed;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class NotificationStoreManager implements Managed {
 
@@ -29,7 +29,7 @@ public class NotificationStoreManager implements Managed {
    *
    * @param store Notification store to manage
    */
-  public NotificationStoreManager(@Nonnull final NotificationStore store) {
+  public NotificationStoreManager(@NotNull final NotificationStore store) {
     this.store = Objects.requireNonNull(store, "store == null");
   }
 

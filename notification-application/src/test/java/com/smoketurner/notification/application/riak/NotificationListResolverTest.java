@@ -47,7 +47,7 @@ public class NotificationListResolverTest {
   @Test
   public void testSingleSiblingWithDelete() throws Exception {
     final NotificationListObject list = new NotificationListObject("test");
-    list.addNotification(createNotification(1L));
+    list.addNotification(Notification.create(1L));
     list.deleteNotification(1L);
     final List<NotificationListObject> siblings = Collections.singletonList(list);
     final NotificationListObject actual = resolver.resolve(siblings);
@@ -57,12 +57,12 @@ public class NotificationListResolverTest {
 
   @Test
   public void testMultipleSibling() throws Exception {
-    final Notification n1 = createNotification(1L);
-    final Notification n2 = createNotification(2L);
-    final Notification n3 = createNotification(3L);
-    final Notification n4 = createNotification(4L);
-    final Notification n5 = createNotification(5L);
-    final Notification n6 = createNotification(6L);
+    final Notification n1 = Notification.create(1L);
+    final Notification n2 = Notification.create(2L);
+    final Notification n3 = Notification.create(3L);
+    final Notification n4 = Notification.create(4L);
+    final Notification n5 = Notification.create(5L);
+    final Notification n6 = Notification.create(6L);
 
     final NotificationListObject list1 = new NotificationListObject("test");
     list1.addNotification(n1);
@@ -98,12 +98,12 @@ public class NotificationListResolverTest {
 
   @Test
   public void testMultipleSiblingWithDeletes() throws Exception {
-    final Notification n1 = createNotification(1L);
-    final Notification n2 = createNotification(2L);
-    final Notification n3 = createNotification(3L);
-    final Notification n4 = createNotification(4L);
-    final Notification n5 = createNotification(5L);
-    final Notification n6 = createNotification(6L);
+    final Notification n1 = Notification.create(1L);
+    final Notification n2 = Notification.create(2L);
+    final Notification n3 = Notification.create(3L);
+    final Notification n4 = Notification.create(4L);
+    final Notification n5 = Notification.create(5L);
+    final Notification n6 = Notification.create(6L);
 
     final NotificationListObject list1 = new NotificationListObject("test");
     list1.addNotification(n1);
@@ -141,11 +141,11 @@ public class NotificationListResolverTest {
   public void testRemoveNotifications() throws Exception {
     final List<Notification> notifications =
         Lists.newArrayList(
-            createNotification(1L), createNotification(2L),
-            createNotification(3L), Notification.builder().build());
+            Notification.create(1L), Notification.create(2L),
+            Notification.create(3L), Notification.builder().build());
 
     final List<Notification> expected =
-        Arrays.asList(createNotification(2L), createNotification(3L));
+        Arrays.asList(Notification.create(2L), Notification.create(3L));
 
     NotificationListResolver.removeNotifications(notifications, Lists.newArrayList(1L));
     assertThat(notifications).containsExactlyElementsOf(expected);
@@ -155,17 +155,13 @@ public class NotificationListResolverTest {
   public void testRemoveNotificationsEmpty() throws Exception {
     final List<Notification> notifications =
         Lists.newArrayList(
-            createNotification(1L), createNotification(2L),
-            createNotification(3L), Notification.builder().build());
+            Notification.create(1L), Notification.create(2L),
+            Notification.create(3L), Notification.builder().build());
 
     final List<Notification> expected =
-        Arrays.asList(createNotification(1L), createNotification(2L), createNotification(3L));
+        Arrays.asList(Notification.create(1L), Notification.create(2L), Notification.create(3L));
 
     NotificationListResolver.removeNotifications(notifications, Lists.newArrayList());
     assertThat(notifications).containsExactlyElementsOf(expected);
-  }
-
-  private Notification createNotification(final long id) {
-    return Notification.builder().withId(id).build();
   }
 }

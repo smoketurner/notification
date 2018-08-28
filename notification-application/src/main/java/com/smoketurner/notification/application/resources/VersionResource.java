@@ -22,7 +22,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
@@ -45,7 +44,7 @@ public class VersionResource {
    * @param version Version to expose in the endpoint
    */
   @VisibleForTesting
-  public VersionResource(@Nonnull final String version) {
+  public VersionResource(final String version) {
     this.version = Objects.requireNonNull(version);
   }
 

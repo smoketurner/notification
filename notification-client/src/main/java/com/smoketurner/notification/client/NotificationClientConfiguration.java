@@ -17,7 +17,6 @@ package com.smoketurner.notification.client;
 
 import io.dropwizard.client.JerseyClientConfiguration;
 import java.net.URI;
-import javax.annotation.Nonnull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class NotificationClientConfiguration extends JerseyClientConfiguration {
@@ -28,7 +27,7 @@ public class NotificationClientConfiguration extends JerseyClientConfiguration {
     return URI.create(uri);
   }
 
-  public void setUri(@Nonnull final String uri) {
+  public void setUri(final String uri) {
     this.uri = uri;
   }
 }

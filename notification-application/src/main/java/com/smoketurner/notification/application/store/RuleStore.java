@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,7 @@ public class RuleStore {
    * @param client Riak client
    * @param cacheTimeout Rule cache refresh timeout
    */
-  public RuleStore(@Nonnull final RiakClient client, @Nonnull final Duration cacheTimeout) {
+  public RuleStore(@NotNull final RiakClient client, @NotNull final Duration cacheTimeout) {
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(RuleStore.class, "fetch"));
     this.storeTimer = registry.timer(MetricRegistry.name(RuleStore.class, "store"));
@@ -175,7 +175,7 @@ public class RuleStore {
    * @param map the map from Riak to convert
    * @return a map of rule objects where the key is the category
    */
-  private static Map<String, Rule> getRules(@Nonnull final RiakMap map) {
+  private static Map<String, Rule> getRules(@NotNull final RiakMap map) {
     final ImmutableMap.Builder<String, Rule> rules = ImmutableMap.builder();
 
     for (BinaryValue category : map.view().keySet()) {
@@ -230,7 +230,7 @@ public class RuleStore {
    * @param rule Rule to store
    * @throws NotificationStoreException if unable to store the rule
    */
-  public void store(@Nonnull final String category, @Nonnull final Rule rule)
+  public void store(@NotNull final String category, @NotNull final Rule rule)
       throws NotificationStoreException {
 
     Objects.requireNonNull(category, "category == null");
@@ -263,7 +263,7 @@ public class RuleStore {
    * @return Riak Map update operation
    */
   private static MapUpdate getUpdate(
-      @Nonnull final Rule rule, @Nonnull final Optional<Context> context) {
+      @NotNull final Rule rule, @NotNull final Optional<Context> context) {
     final MapUpdate op = new MapUpdate();
     if (rule.getMaxSize().isPresent()) {
       op.update(Rule.MAX_SIZE, new RegisterUpdate(String.valueOf(rule.getMaxSize().get())));
@@ -289,7 +289,7 @@ public class RuleStore {
    * @param category Rule category to delete
    * @throws NotificationStoreException if unable to delete the rule
    */
-  public void remove(@Nonnull final String category) throws NotificationStoreException {
+  public void remove(@NotNull final String category) throws NotificationStoreException {
     Objects.requireNonNull(category, "category == null");
     Preconditions.checkArgument(!category.isEmpty(), "category cannot be empty");
 

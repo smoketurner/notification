@@ -18,7 +18,6 @@ package com.smoketurner.notification.client;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Environment;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import javax.ws.rs.client.Client;
 
 public class NotificationClientBuilder {
@@ -29,7 +28,7 @@ public class NotificationClientBuilder {
    *
    * @param environment Environment
    */
-  public NotificationClientBuilder(@Nonnull final Environment environment) {
+  public NotificationClientBuilder(final Environment environment) {
     this.environment = Objects.requireNonNull(environment, "environment == null");
   }
 
@@ -39,7 +38,7 @@ public class NotificationClientBuilder {
    * @param configuration Configuration to use for the client
    * @return new NotificationClient
    */
-  public NotificationClient build(@Nonnull final NotificationClientConfiguration configuration) {
+  public NotificationClient build(final NotificationClientConfiguration configuration) {
     final Client client =
         new JerseyClientBuilder(environment).using(configuration).build("notification");
     return build(configuration, client);
@@ -53,7 +52,7 @@ public class NotificationClientBuilder {
    * @return new NotificationClient
    */
   public NotificationClient build(
-      @Nonnull final NotificationClientConfiguration configuration, @Nonnull final Client client) {
+      final NotificationClientConfiguration configuration, final Client client) {
     return new NotificationClient(environment.metrics(), client, configuration.getUri());
   }
 }

@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import java.util.SortedSet;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -56,10 +56,7 @@ public class NotificationClient implements Closeable {
    * @param client Jersey Client
    * @param uri API endpoint
    */
-  public NotificationClient(
-      @Nonnull final MetricRegistry registry,
-      @Nonnull final Client client,
-      @Nonnull final URI uri) {
+  public NotificationClient(final MetricRegistry registry, final Client client, final URI uri) {
     this.client = Objects.requireNonNull(client, "client == null");
     this.fetchTimer = registry.timer(name(NotificationClient.class, "fetch"));
     this.storeTimer = registry.timer(name(NotificationClient.class, "store"));
@@ -74,7 +71,7 @@ public class NotificationClient implements Closeable {
    * @param username User to fetch notifications
    * @return Sorted set of all notifications for the user
    */
-  public Optional<ImmutableSortedSet<Notification>> fetch(@Nonnull final String username) {
+  public Optional<SortedSet<Notification>> fetch(final String username) {
 
     final URI uri = getTarget(username);
     final ImmutableSortedSet.Builder<Notification> results = ImmutableSortedSet.naturalOrder();
@@ -116,8 +113,7 @@ public class NotificationClient implements Closeable {
    * @param notification Notification to store
    * @return the newly stored notification
    */
-  public Optional<Notification> store(
-      @Nonnull final String username, @Nonnull final Notification notification) {
+  public Optional<Notification> store(final String username, final Notification notification) {
     Objects.requireNonNull(notification, "notification == null");
     final URI uri = getTarget(username);
     LOGGER.debug("POST {}", uri);
@@ -140,7 +136,7 @@ public class NotificationClient implements Closeable {
    * @param username User to delete notifications from
    * @param ids Notification IDs to delete
    */
-  public void delete(@Nonnull final String username, @Nonnull final Collection<Long> ids) {
+  public void delete(final String username, final Collection<Long> ids) {
     Objects.requireNonNull(ids, "ids == null");
     Preconditions.checkArgument(!ids.isEmpty(), "ids cannot be empty");
     final URI uri =
@@ -159,7 +155,7 @@ public class NotificationClient implements Closeable {
    *
    * @param username User to delete notifications from
    */
-  public void delete(@Nonnull final String username) {
+  public void delete(final String username) {
     final URI uri = getTarget(username);
     LOGGER.debug("DELETE {}", uri);
 
@@ -199,7 +195,7 @@ public class NotificationClient implements Closeable {
    * @param username Username
    * @return target URL
    */
-  private URI getTarget(@Nonnull final String username) {
+  private URI getTarget(final String username) {
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
     return UriBuilder.fromUri(rootUri).path("/v1/notifications/{username}").build(username);

@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableSet;
 import io.dropwizard.jersey.params.AbstractParam;
 import java.util.Collections;
 import java.util.Set;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class LongSetParam extends AbstractParam<Set<Long>> {
 

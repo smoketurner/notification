@@ -18,12 +18,12 @@ package com.smoketurner.notification.client;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
 import com.smoketurner.notification.api.Notification;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.junit.DropwizardClientRule;
 import java.util.List;
 import java.util.Optional;
+import java.util.SortedSet;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -101,9 +101,9 @@ public class NotificationClientTest {
 
   @Test
   public void testFetch() throws Exception {
-    final Optional<ImmutableSortedSet<Notification>> actual = client.fetch("test");
+    final Optional<SortedSet<Notification>> actual = client.fetch("test");
     assertThat(actual.isPresent()).isTrue();
-    final ImmutableSortedSet<Notification> notifications = actual.get();
+    final SortedSet<Notification> notifications = actual.get();
     assertThat(notifications.size()).isEqualTo(1);
     assertThat(notifications.first().getId().isPresent()).isTrue();
   }

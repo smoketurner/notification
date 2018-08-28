@@ -72,7 +72,8 @@ public class NotificationResourceTest {
 
   @Test
   public void testFetch() throws Exception {
-    final ImmutableSortedSet<Notification> expected = ImmutableSortedSet.of(createNotification(1L));
+    final ImmutableSortedSet<Notification> expected =
+        ImmutableSortedSet.of(Notification.create(1L));
     final UserNotifications notifications = new UserNotifications(expected);
     when(store.fetch("test")).thenReturn(Optional.of(notifications));
     when(store.skip(notifications.getNotifications(), 1L, true, 20)).thenReturn(expected);
@@ -100,7 +101,7 @@ public class NotificationResourceTest {
   public void testFetchJSONP() throws Exception {
     final ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
     final Notification notification =
-        Notification.builder().fromNotification(createNotification(1L)).withCreatedAt(now).build();
+        Notification.builder().fromNotification(Notification.create(1L)).withCreatedAt(now).build();
     final ImmutableSortedSet<Notification> expected = ImmutableSortedSet.of(notification);
     final UserNotifications notifications = new UserNotifications(expected);
     when(store.fetch("test")).thenReturn(Optional.of(notifications));
@@ -125,12 +126,12 @@ public class NotificationResourceTest {
   public void testFetchRange() throws Exception {
     final ImmutableList.Builder<Notification> builder = ImmutableList.builder();
     for (long i = 20; i > 0; i--) {
-      builder.add(createNotification(i));
+      builder.add(Notification.create(i));
     }
     final List<Notification> all = builder.build();
 
     final Set<Notification> expected =
-        ImmutableSortedSet.of(createNotification(19L), createNotification(18L));
+        ImmutableSortedSet.of(Notification.create(19L), Notification.create(18L));
 
     final UserNotifications notifications = new UserNotifications(all);
     when(store.fetch("test")).thenReturn(Optional.of(notifications));
@@ -160,7 +161,7 @@ public class NotificationResourceTest {
   public void testFetchRangeEmpty() throws Exception {
     final ImmutableList.Builder<Notification> builder = ImmutableList.builder();
     for (long i = 30; i > 0; i--) {
-      builder.add(createNotification(i));
+      builder.add(Notification.create(i));
     }
     final List<Notification> all = builder.build();
 
@@ -194,7 +195,7 @@ public class NotificationResourceTest {
   public void testFetchRangeInvalidId() throws Exception {
     final ImmutableList.Builder<Notification> builder = ImmutableList.builder();
     for (long i = 30; i > 0; i--) {
-      builder.add(createNotification(i));
+      builder.add(Notification.create(i));
     }
     final List<Notification> all = builder.build();
 
@@ -228,7 +229,7 @@ public class NotificationResourceTest {
   public void testFetchRangeMax() throws Exception {
     final ImmutableList.Builder<Notification> builder = ImmutableList.builder();
     for (long i = 20; i > 0; i--) {
-      builder.add(createNotification(i));
+      builder.add(Notification.create(i));
     }
     final List<Notification> all = builder.build();
 
@@ -425,9 +426,5 @@ public class NotificationResourceTest {
     verify(store).remove("test", ImmutableSet.of(1L, 2L, 3L));
     verify(store, never()).removeAll(anyString());
     assertThat(response.getStatus()).isEqualTo(204);
-  }
-
-  private Notification createNotification(final long id) {
-    return Notification.builder().withId(id).build();
   }
 }

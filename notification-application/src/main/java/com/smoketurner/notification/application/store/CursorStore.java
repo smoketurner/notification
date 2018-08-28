@@ -34,7 +34,7 @@ import com.smoketurner.notification.application.riak.CursorUpdate;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +54,7 @@ public class CursorStore {
    *
    * @param client Riak client
    */
-  public CursorStore(@Nonnull final RiakClient client) {
+  public CursorStore(@NotNull final RiakClient client) {
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(CursorStore.class, "fetch"));
     this.storeTimer = registry.timer(MetricRegistry.name(CursorStore.class, "store"));
@@ -90,7 +90,7 @@ public class CursorStore {
    * @return the last seen notification ID
    * @throws NotificationStoreException if unable to fetch the cursor
    */
-  public Optional<Long> fetch(@Nonnull final String username, @Nonnull final String cursorName)
+  public Optional<Long> fetch(@NotNull final String username, @NotNull final String cursorName)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -137,7 +137,7 @@ public class CursorStore {
    * @param value Value to set
    */
   public void store(
-      @Nonnull final String username, @Nonnull final String cursorName, final long value) {
+      @NotNull final String username, @NotNull final String cursorName, final long value) {
 
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
@@ -166,7 +166,7 @@ public class CursorStore {
    * @param username User delete their cursor
    * @param cursorName Name of the cursor
    */
-  public void delete(@Nonnull final String username, @Nonnull final String cursorName) {
+  public void delete(@NotNull final String username, @NotNull final String cursorName) {
 
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
@@ -190,7 +190,7 @@ public class CursorStore {
    * @param cursorName Name of the cursor to fetch
    * @return the key name
    */
-  public String getCursorKey(@Nonnull final String username, @Nonnull final String cursorName) {
+  public String getCursorKey(@NotNull final String username, @NotNull final String cursorName) {
     return username + "-" + cursorName;
   }
 }

@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class Rollup {
 
@@ -33,7 +33,7 @@ public class Rollup {
    *
    * @param rules Map of rules
    */
-  public Rollup(@Nonnull final Map<String, Rule> rules) {
+  public Rollup(@NotNull final Map<String, Rule> rules) {
     this.rules = Objects.requireNonNull(rules, "rules == null");
   }
 
@@ -44,7 +44,7 @@ public class Rollup {
    * @param notifications Notifications to roll up
    * @return Rolled up notifications
    */
-  public Stream<Notification> rollup(@Nonnull final Stream<Notification> notifications) {
+  public Stream<Notification> rollup(@NotNull final Stream<Notification> notifications) {
     Objects.requireNonNull(notifications, "notifications == null");
 
     if (rules.isEmpty()) {
