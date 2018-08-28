@@ -130,7 +130,7 @@ public class NotificationApplication extends Application<NotificationConfigurati
     // resources
     environment.jersey().register(new NotificationResource(store));
     environment.jersey().register(new RuleResource(ruleStore));
-    environment.jersey().register(new PingResource());
-    environment.jersey().register(new VersionResource());
+    environment.jersey().register(PingResource.class);
+    environment.jersey().register(VersionResource.class);
   }
 }
