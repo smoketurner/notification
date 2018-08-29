@@ -15,8 +15,6 @@
  */
 package com.smoketurner.notification.application.benchmarks;
 
-import com.smoketurner.notification.api.Notification;
-import com.smoketurner.notification.application.store.NotificationStore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,18 +29,20 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.store.NotificationStore;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
 public class NotificationStoreBenchmark {
 
-  private final List<Notification> notifications = new ArrayList<>(1000000);
+  private final List<Notification> notifications = new ArrayList<>(100000);
 
   @Setup
   public void setUp() {
-    for (long i = 0; i < 1000000; i++) {
-      notifications.add(Notification.create(String.valueOf(i)));
+    for (int i = 0; i < 100000; i++) {
+      notifications.add(Notification.create(String.format("%05d", i)));
     }
   }
 
