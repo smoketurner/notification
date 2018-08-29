@@ -41,7 +41,7 @@ public class NotificationStoreTest {
 
   private static final String TEST_USER = "test";
   private static final ZonedDateTime NOW = ZonedDateTime.parse("2015-07-17T17:43:25Z");
-  private static final String CURSOR_NAME = "cursors";
+  private static final String CURSOR_NAME = "notifications";
 
   private final RiakClient client = mock(RiakClient.class);
   private final CursorStore cursors = mock(CursorStore.class);
