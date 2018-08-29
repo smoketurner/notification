@@ -21,12 +21,6 @@ import com.smoketurner.notification.application.exceptions.NotificationException
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.store.RuleStore;
 import io.dropwizard.jersey.caching.CacheControl;
-import io.dropwizard.jersey.errors.ErrorMessage;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,7 +38,6 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.JSONP;
 
 @Path("/v1/rules")
-@Api(value = "rules")
 public class RuleResource {
 
   private final RuleStore store;
@@ -63,16 +56,6 @@ public class RuleResource {
   @Timed
   @Produces({MediaType.APPLICATION_JSON, "application/javascript"})
   @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
-  @ApiOperation(
-      value = "Fetch Rules",
-      notes = "Return all of the rules",
-      responseContainer = "Map",
-      response = Rule.class)
-  @ApiResponses(
-      value = {
-        @ApiResponse(code = 500, message = "Unable to fetch rules", response = ErrorMessage.class),
-        @ApiResponse(code = 404, message = "No rules found", response = ErrorMessage.class)
-      })
   public Response fetch() {
 
     final Optional<Map<String, Rule>> rules;
@@ -95,15 +78,8 @@ public class RuleResource {
   @Path("/{category}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Store Rule", notes = "Add a new rule", response = Rule.class)
-  @ApiResponses(
-      value = {
-        @ApiResponse(code = 204, message = "Successfully stored rule"),
-        @ApiResponse(code = 500, message = "Unable to store rule", response = ErrorMessage.class)
-      })
   public Response store(
-      @ApiParam(value = "category", required = true) @PathParam("category") final String category,
-      @ApiParam(value = "rule", required = true) @NotNull @Valid final Rule rule) {
+      @PathParam("category") final String category, @NotNull @Valid final Rule rule) {
 
     if (!rule.isValid()) {
       throw new NotificationException(
@@ -124,14 +100,7 @@ public class RuleResource {
   @DELETE
   @Timed
   @Path("/{category}")
-  @ApiOperation(value = "Delete Rule", notes = "Delete a rule")
-  @ApiResponses(
-      value = {
-        @ApiResponse(code = 204, message = "Successfully deleted rule"),
-        @ApiResponse(code = 500, message = "Unable to delete rule", response = ErrorMessage.class)
-      })
-  public Response delete(
-      @ApiParam(value = "category", required = true) @PathParam("category") final String category) {
+  public Response delete(@PathParam("category") final String category) {
 
     try {
       store.remove(category);
@@ -144,12 +113,6 @@ public class RuleResource {
 
   @DELETE
   @Timed
-  @ApiOperation(value = "Delete All Rules", notes = "Delete all rules")
-  @ApiResponses(
-      value = {
-        @ApiResponse(code = 204, message = "Successfully deleted rules"),
-        @ApiResponse(code = 500, message = "Unable to delete rules", response = ErrorMessage.class)
-      })
   public Response delete() {
 
     try {

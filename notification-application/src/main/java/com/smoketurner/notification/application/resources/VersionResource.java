@@ -17,10 +17,6 @@ package com.smoketurner.notification.application.resources;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.jersey.caching.CacheControl;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.Objects;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,7 +24,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/version")
-@Api("version")
 public class VersionResource {
 
   private final String version;
@@ -50,8 +45,6 @@ public class VersionResource {
 
   @GET
   @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
-  @ApiOperation(value = "Get Version", notes = "Returns the service version")
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "Service Version")})
   public Response getVersion() {
     return Response.ok(version).type(MediaType.TEXT_PLAIN).build();
   }

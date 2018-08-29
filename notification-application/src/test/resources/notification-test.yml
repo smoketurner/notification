@@ -4,11 +4,6 @@ snowizard:
   datacenterId: 1
   workerId: 1
 
-# Swagger-specific options.
-swagger:
-
-  resourcePackage: com.smoketurner.notification.application.resources
-
 # Riak-specific options.
 riak:
 
