@@ -67,6 +67,7 @@ public class CursorStore {
    */
   public CursorStore(
       final RiakClient client, final Duration timeout, final Duration requestTimeout) {
+
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(CursorStore.class, "fetch"));
     this.storeTimer = registry.timer(MetricRegistry.name(CursorStore.class, "store"));

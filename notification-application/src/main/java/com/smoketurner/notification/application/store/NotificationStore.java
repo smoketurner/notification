@@ -90,6 +90,8 @@ public class NotificationStore {
    * @param idGenerator ID Generator
    * @param cursors Cursor data store
    * @param ruleStore Rule data store
+   * @param timeout Riak server-side timeout
+   * @param requestTimeout Riak client-side timeout
    */
   public NotificationStore(
       final RiakClient client,
