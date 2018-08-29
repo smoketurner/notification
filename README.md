@@ -14,15 +14,15 @@ Notification is an implementation of an HTTP-based notification web service, bas
 
 Design
 ------
-Similar to Yammer's implementation, the Notification service relies on monitonically increasing identifiers (using [Snowizard](https://github.com/smoketurner/snowizard) which is an implementation of Twitter's [Snowflake](https://github.com/twitter/snowflake/releases/tag/snowflake-2010) ID generation service) that are used to resolve conflicts within Riak. The IDs are also used to provide a sorting order for the notifications so the newest notifications always appear at the top of a user's notification list. Every unique username can store up to 1000 notifications before the older notifications are aged out of the system.
+Similar to Yammer's implementation, the Notification service relies on K-Sortable Unique Identifers ([KSUID](https://segment.com/blog/a-brief-history-of-the-uuid/)) that are used to resolve conflicts within Riak. The IDs are also used to provide a sorting order for the notifications so the newest notifications always appear at the top of a user's notification list. Every unique username can store up to 1000 notifications before the older notifications are aged out of the system.
 
 Notifications are stored in the `notifications` bucket in Riak. The service also stores a cursor representing the most recent seen notification for that user. Cursors are stored in the `cursors` bucket in Riak. A cursor looks like:
 
 ```
-{"key": "test-notifications", "value": 625336317638742016}
+{"key": "test-notifications", "value": "0ujsszwN8NRY24YaXiTIE2VWDTS"}
 ```
 
-Where the username is `test`, the cursor name is `notifications` and the value of the cursor is `625336317638742016`.
+Where the username is `test`, the cursor name is `notifications` and the value of the cursor is `0ujsszwN8NRY24YaXiTIE2VWDTS`.
 
 When a user retrieves their list of notifications, the service will update the value of their cursor to the most recent notification.
 
@@ -51,22 +51,14 @@ To build this code locally, clone the repository then build the jar:
 git clone https://github.com/smoketurner/notification.git
 cd notification
 ./mvnw package
-java -jar notification-application/target/notification-application-1.2.2-SNAPSHOT.jar server config.yml
+java -jar notification-application/target/notification-application-1.3.1-SNAPSHOT.jar server config.yml
 ```
 
 The Notification service should be listening on port `8080` (with the Dropwizard administrative interface available at /admin).
 
 Production
 ----------
-To deploy the Notification service into production, it can safely sit behind any HTTP-based load balancer (nginx, haproxy, F5, etc.). You must modify the `notification.yml` file on each server to specify a unique `datacenterId` and `workerId` combination to ensure unique notification IDs are being generated.
-
-```
-# Snowizard-specific options.
-snowizard:
-
-  datacenterId: 1
-  workerId: 1
-```
+To deploy the Notification service into production, it can safely sit behind any HTTP-based load balancer (nginx, haproxy, F5, etc.).
 
 To connect to Riak, [configure the cluster behind a load-balancer](http://docs.basho.com/riak/kv/latest/configuring/load-balancing-proxy/) as generally recommended. In order to support the Notification service automatically retrying Riak requests to separate nodes in the cluster, it is recommended to list each Riak node individually in the configuration file.
 
@@ -97,8 +89,7 @@ X-Request-Id: 9a3ec8d0-1e00-47de-bb78-609a499849c4
 Content-Length: 157
 
 {
-  "id":625336317638742016,
-  "id_str":"625336317638742016",
+  "id":"0ujsszwN8NRY24YaXiTIE2VWDTS",
   "category":"new-follower",
   "message":"You have a new follower",
   "created_at":"2015-07-26T16:06:10.970Z"
@@ -116,7 +107,7 @@ HTTP/1.1 200 OK
 Date: Sun, 26 Jul 2015 16:12:11 GMT
 Last-Modified: Sun, 26 Jul 2015 16:06:10 GMT
 Accept-Ranges: id
-Content-Range: id 625336317638742016..625336317638742016
+Content-Range: id 0ujsszwN8NRY24YaXiTIE2VWDTS..0ujsszwN8NRY24YaXiTIE2VWDTS
 Content-Type: application/json;charset=UTF-8
 X-Request-Id: ce32a162-483d-4c34-9524-02b7f667704f
 Cache-Control: no-cache, no-store, no-transform, must-revalidate
@@ -124,8 +115,7 @@ Content-Length: 190
 
 [
   {
-    "id": 625336317638742016,
-    "id_str": "625336317638742016",
+    "id": "0ujsszwN8NRY24YaXiTIE2VWDTS",
     "category": "new-follower",
     "message": "You have a new follower",
     "created_at": "2015-07-26T16:06:10.970Z",
@@ -148,7 +138,7 @@ If there are more notifications available, the service will include a `Next-Rang
 To delete individual notifications, you can execute a `DELETE` request specifying the notification ID's to delete.
 
 ```
-curl -X DELETE "http://localhost:8080/v1/notifications/test?ids=625336317638742016,625336317638742015" -i
+curl -X DELETE "http://localhost:8080/v1/notifications/test?ids=0ujsszwN8NRY24YaXiTIE2VWDTS,0ujsswThIGTUYm2K8FjOOfXtY1K" -i
 
 HTTP/1.1 204 No Content
 Date: Sun, 26 Jul 2015 16:34:15 GMT

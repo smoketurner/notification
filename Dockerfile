@@ -36,7 +36,7 @@ RUN ./mvnw clean package -DskipTests=true -Dmaven.javadoc.skip=true -Dmaven.sour
 
 FROM openjdk:8-jre-alpine
 
-ARG VERSION="1.2.2-SNAPSHOT"
+ARG VERSION="1.3.1-SNAPSHOT"
 
 LABEL name="notification" version=$VERSION
 
