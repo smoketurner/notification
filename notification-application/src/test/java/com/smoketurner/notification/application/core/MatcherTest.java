@@ -29,7 +29,7 @@ public class MatcherTest {
 
   private final Notification notification =
       Notification.builder("new-follower")
-          .withId(1L)
+          .withId("1")
           .withProperties(ImmutableMap.of("first_name", "Bob", "last_name", "Smith"))
           .withCreatedAt(ZonedDateTime.parse("2015-07-31T23:21:35Z"))
           .build();
@@ -42,21 +42,21 @@ public class MatcherTest {
 
     final Notification n1 =
         Notification.builder("new-follower")
-            .withId(2L)
+            .withId("2")
             .withProperties(ImmutableMap.of("first_name", "Bob"))
             .build();
     final Notification n2 =
         Notification.builder("new-follower")
-            .withId(3L)
+            .withId("3")
             .withProperties(ImmutableMap.of("first_name", "Ted"))
             .build();
     final Notification n3 =
         Notification.builder("new-follower")
-            .withId(4L)
+            .withId("4")
             .withProperties(ImmutableMap.of("last_name", "Smith"))
             .build();
     final Notification n4 = Notification.builder().build();
-    final Notification n5 = Notification.builder("like").withId(5L).build();
+    final Notification n5 = Notification.builder("like").withId("5").build();
 
     assertThat(matcher.test(n1)).isTrue();
     assertThat(matcher.test(n2)).isFalse();
@@ -114,8 +114,8 @@ public class MatcherTest {
   public void testCheckSize() {
     final Rule rule = Rule.builder().withMaxSize(2).build();
 
-    final Notification n2 = Notification.create(2L);
-    final Notification n3 = Notification.create(3L);
+    final Notification n2 = Notification.create("2");
+    final Notification n3 = Notification.create("3");
 
     final Matcher matcher = new Matcher(rule, notification);
     assertThat(matcher.isFull()).isFalse();
@@ -151,8 +151,8 @@ public class MatcherTest {
     final Rule rule1 = Rule.builder().withMatchOn("first_name").build();
     final Rule rule2 = Rule.builder().withMatchOn("last_name").build();
 
-    final Notification n1 = Notification.create(1L);
-    final Notification n2 = Notification.create(2L);
+    final Notification n1 = Notification.create("1");
+    final Notification n2 = Notification.create("2");
 
     final Matcher m1 = new Matcher(rule1, n1);
     final Matcher m2 = new Matcher(rule1, n2);

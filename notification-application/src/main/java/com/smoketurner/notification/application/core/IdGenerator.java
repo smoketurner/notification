@@ -15,30 +15,20 @@
  */
 package com.smoketurner.notification.application.core;
 
+import com.amirkhawaja.Ksuid;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
-import com.smoketurner.snowizard.core.IdWorker;
-import com.smoketurner.snowizard.exceptions.InvalidSystemClock;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IdGenerator {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(IdGenerator.class);
-  private final AtomicLong nextId = new AtomicLong(0L);
-  private final IdWorker snowizard;
-  private final boolean enabled;
+  private final Ksuid ksuid;
 
-  /**
-   * Constructor
-   *
-   * @param snowizard Snowizard instance
-   * @param enabled whether snowizard is enabled or not
-   */
-  public IdGenerator(final IdWorker snowizard, final boolean enabled) {
-    this.snowizard = Objects.requireNonNull(snowizard, "snowizard == null");
-    this.enabled = enabled;
+  /** Constructor */
+  public IdGenerator() {
+    this.ksuid = new Ksuid();
   }
 
   /**
@@ -47,15 +37,12 @@ public class IdGenerator {
    * @return the new notification ID
    * @throws NotificationStoreException if unable to generate an ID
    */
-  public long nextId() throws NotificationStoreException {
-    if (enabled) {
-      try {
-        return snowizard.nextId();
-      } catch (InvalidSystemClock e) {
-        LOGGER.error("Clock is moving backward to generate IDs", e);
-        throw new NotificationStoreException(e);
-      }
+  public String nextId() throws NotificationStoreException {
+    try {
+      return ksuid.generate();
+    } catch (IOException e) {
+      LOGGER.error("Unable to generate new ID", e);
+      throw new NotificationStoreException(e);
     }
-    return nextId.getAndIncrement();
   }
 }

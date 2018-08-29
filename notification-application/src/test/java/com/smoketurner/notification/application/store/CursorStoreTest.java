@@ -56,7 +56,7 @@ public class CursorStoreTest {
 
     when(client.execute(any(FetchValue.class))).thenReturn(response);
 
-    final Optional<Long> actual = store.fetch(TEST_USER, CURSOR_NAME);
+    final Optional<String> actual = store.fetch(TEST_USER, CURSOR_NAME);
     verify(client).execute(any(FetchValue.class));
     assertThat(actual).isEqualTo(expected);
   }
@@ -84,14 +84,14 @@ public class CursorStoreTest {
   @Test
   @Ignore
   public void testStore() throws Exception {
-    store.store(TEST_USER, CURSOR_NAME, 1L);
+    store.store(TEST_USER, CURSOR_NAME, "1");
     verify(client).executeAsync(any(UpdateValue.class));
   }
 
   @Test
   public void testStoreEmptyUsername() throws Exception {
     try {
-      store.store("", CURSOR_NAME, 1L);
+      store.store("", CURSOR_NAME, "1");
       failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
     } catch (IllegalArgumentException e) {
     }
@@ -101,7 +101,7 @@ public class CursorStoreTest {
   @Test
   public void testStoreEmptyCursorName() throws Exception {
     try {
-      store.store(TEST_USER, "", 1L);
+      store.store(TEST_USER, "", "1");
       failBecauseExceptionWasNotThrown(IllegalArgumentException.class);
     } catch (IllegalArgumentException e) {
     }

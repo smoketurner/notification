@@ -40,8 +40,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class Notification implements Comparable<Notification> {
 
-  private final Optional<Long> id;
-  private final Optional<String> idStr;
+  private final Optional<String> id;
 
   @NotEmpty private final String category;
 
@@ -56,7 +55,6 @@ public final class Notification implements Comparable<Notification> {
    * Constructor
    *
    * @param id
-   * @param idStr
    * @param category
    * @param message
    * @param createdAt
@@ -66,8 +64,7 @@ public final class Notification implements Comparable<Notification> {
    */
   @JsonCreator
   private Notification(
-      @JsonProperty("id") @Nullable final Long id,
-      @JsonProperty("id_str") @Nullable final String idStr,
+      @JsonProperty("id") @Nullable final String id,
       @JsonProperty("category") final String category,
       @JsonProperty("message") final String message,
       @JsonProperty("created_at") @Nullable final ZonedDateTime createdAt,
@@ -75,7 +72,6 @@ public final class Notification implements Comparable<Notification> {
       @JsonProperty("properties") @Nullable final Map<String, String> properties,
       @JsonProperty("notifications") @Nullable final Collection<Notification> notifications) {
     this.id = Optional.ofNullable(id);
-    this.idStr = Optional.ofNullable(idStr);
     this.category = category;
     this.message = message;
     if (createdAt != null) {
@@ -150,15 +146,13 @@ public final class Notification implements Comparable<Notification> {
    * @param id Notification ID
    * @return Notification
    */
-  public static Notification create(final long id) {
+  public static Notification create(final String id) {
     return builder().withId(id).build();
   }
 
   public static class Builder {
 
-    @Nullable private Long id;
-
-    @Nullable private String idStr;
+    @Nullable private String id;
 
     @NotNull private final String category;
 
@@ -185,7 +179,6 @@ public final class Notification implements Comparable<Notification> {
 
     public Builder fromNotification(@NotNull final Notification other) {
       this.id = other.id.orElse(null);
-      this.idStr = other.idStr.orElse(null);
       if (other.createdAt != null) {
         this.createdAt = other.createdAt;
       }
@@ -199,14 +192,8 @@ public final class Notification implements Comparable<Notification> {
       return this;
     }
 
-    public Builder withId(@Nullable final Long id) {
-      if (id == null) {
-        this.id = null;
-        this.idStr = null;
-      } else {
-        this.id = id;
-        this.idStr = String.valueOf(id);
-      }
+    public Builder withId(@Nullable final String id) {
+      this.id = id;
       return this;
     }
 
@@ -231,13 +218,12 @@ public final class Notification implements Comparable<Notification> {
     }
 
     public Notification build() {
-      return new Notification(
-          id, idStr, category, message, createdAt, unseen, properties, notifications);
+      return new Notification(id, category, message, createdAt, unseen, properties, notifications);
     }
   }
 
   @JsonProperty
-  public Optional<Long> getId() {
+  public Optional<String> getId() {
     return id;
   }
 
@@ -251,13 +237,8 @@ public final class Notification implements Comparable<Notification> {
    * @return Notification ID or zero if not set
    */
   @JsonIgnore
-  public long getId(final long value) {
+  public String getId(final String value) {
     return id.orElse(value);
-  }
-
-  @JsonProperty
-  public Optional<String> getIdStr() {
-    return idStr;
   }
 
   @JsonProperty
@@ -313,7 +294,6 @@ public final class Notification implements Comparable<Notification> {
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("id", id)
-        .add("idStr", idStr)
         .add("category", category)
         .add("message", message)
         .add("createdAt", createdAt)
@@ -332,7 +312,7 @@ public final class Notification implements Comparable<Notification> {
   @Override
   public int compareTo(final Notification that) {
     return ComparisonChain.start()
-        .compare(this.getId(0), that.getId(0), Ordering.natural().reverse())
+        .compare(this.getId(""), that.getId(""), Ordering.natural().reverse())
         .result();
   }
 }

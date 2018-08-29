@@ -47,8 +47,8 @@ public class NotificationListResolverTest {
   @SuppressWarnings("NullAway")
   public void testSingleSiblingWithDelete() throws Exception {
     final NotificationListObject list = new NotificationListObject("test");
-    list.addNotification(Notification.create(1L));
-    list.deleteNotification(1L);
+    list.addNotification(Notification.create("1"));
+    list.deleteNotification("1");
     final List<NotificationListObject> siblings = Collections.singletonList(list);
     final NotificationListObject actual = resolver.resolve(siblings);
     assertThat(actual.getDeletedIds()).isEmpty();
@@ -58,12 +58,12 @@ public class NotificationListResolverTest {
   @Test
   @SuppressWarnings("NullAway")
   public void testMultipleSibling() throws Exception {
-    final Notification n1 = Notification.create(1L);
-    final Notification n2 = Notification.create(2L);
-    final Notification n3 = Notification.create(3L);
-    final Notification n4 = Notification.create(4L);
-    final Notification n5 = Notification.create(5L);
-    final Notification n6 = Notification.create(6L);
+    final Notification n1 = Notification.create("1");
+    final Notification n2 = Notification.create("2");
+    final Notification n3 = Notification.create("3");
+    final Notification n4 = Notification.create("4");
+    final Notification n5 = Notification.create("5");
+    final Notification n6 = Notification.create("6");
 
     final NotificationListObject list1 = new NotificationListObject("test");
     list1.addNotification(n1);
@@ -100,31 +100,31 @@ public class NotificationListResolverTest {
   @Test
   @SuppressWarnings("NullAway")
   public void testMultipleSiblingWithDeletes() throws Exception {
-    final Notification n1 = Notification.create(1L);
-    final Notification n2 = Notification.create(2L);
-    final Notification n3 = Notification.create(3L);
-    final Notification n4 = Notification.create(4L);
-    final Notification n5 = Notification.create(5L);
-    final Notification n6 = Notification.create(6L);
+    final Notification n1 = Notification.create("1");
+    final Notification n2 = Notification.create("2");
+    final Notification n3 = Notification.create("3");
+    final Notification n4 = Notification.create("4");
+    final Notification n5 = Notification.create("5");
+    final Notification n6 = Notification.create("6");
 
     final NotificationListObject list1 = new NotificationListObject("test");
     list1.addNotification(n1);
     list1.addNotification(n4);
     list1.addNotification(n2);
     list1.addNotification(n3);
-    list1.deleteNotification(3L);
+    list1.deleteNotification("3");
 
     final NotificationListObject list2 = new NotificationListObject("test");
     list2.addNotification(n2);
     list2.addNotification(n3);
     list2.addNotification(n5);
-    list2.deleteNotification(4L);
+    list2.deleteNotification("4");
 
     final NotificationListObject list3 = new NotificationListObject("test");
     list3.addNotification(n6);
     list3.addNotification(n2);
     list3.addNotification(n5);
-    list3.deleteNotifications(Arrays.asList(3L, 6L));
+    list3.deleteNotifications(Arrays.asList("3", "6"));
 
     final List<NotificationListObject> siblings = Arrays.asList(list1, list2, list3);
 
@@ -143,13 +143,13 @@ public class NotificationListResolverTest {
   public void testRemoveNotifications() throws Exception {
     final List<Notification> notifications =
         Lists.newArrayList(
-            Notification.create(1L), Notification.create(2L),
-            Notification.create(3L), Notification.builder().build());
+            Notification.create("1"), Notification.create("2"),
+            Notification.create("3"), Notification.builder().build());
 
     final List<Notification> expected =
-        Arrays.asList(Notification.create(2L), Notification.create(3L));
+        Arrays.asList(Notification.create("2"), Notification.create("3"));
 
-    NotificationListResolver.removeNotifications(notifications, Lists.newArrayList(1L));
+    NotificationListResolver.removeNotifications(notifications, Lists.newArrayList("1"));
     assertThat(notifications).containsExactlyElementsOf(expected);
   }
 
@@ -157,11 +157,11 @@ public class NotificationListResolverTest {
   public void testRemoveNotificationsEmpty() throws Exception {
     final List<Notification> notifications =
         Lists.newArrayList(
-            Notification.create(1L), Notification.create(2L),
-            Notification.create(3L), Notification.builder().build());
+            Notification.create("1"), Notification.create("2"),
+            Notification.create("3"), Notification.builder().build());
 
     final List<Notification> expected =
-        Arrays.asList(Notification.create(1L), Notification.create(2L), Notification.create(3L));
+        Arrays.asList(Notification.create("1"), Notification.create("2"), Notification.create("3"));
 
     NotificationListResolver.removeNotifications(notifications, Lists.newArrayList());
     assertThat(notifications).containsExactlyElementsOf(expected);

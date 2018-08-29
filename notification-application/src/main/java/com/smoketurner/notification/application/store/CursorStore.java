@@ -37,7 +37,6 @@ import io.dropwizard.util.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +103,7 @@ public class CursorStore {
    * @return the last seen notification ID
    * @throws NotificationStoreException if unable to fetch the cursor
    */
-  public Optional<Long> fetch(@NotNull final String username, @NotNull final String cursorName)
+  public Optional<String> fetch(final String username, final String cursorName)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -151,8 +150,7 @@ public class CursorStore {
    * @param value Value to set
    * @throws NotificationStoreException if unable to update the cursor
    */
-  public void store(
-      @NotNull final String username, @NotNull final String cursorName, final long value)
+  public void store(final String username, final String cursorName, final String value)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -192,7 +190,7 @@ public class CursorStore {
    * @param cursorName Name of the cursor
    * @throws NotificationStoreException if unable to delete the cursor
    */
-  public void delete(@NotNull final String username, @NotNull final String cursorName)
+  public void delete(final String username, final String cursorName)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -225,7 +223,7 @@ public class CursorStore {
    * @param cursorName Name of the cursor to fetch
    * @return the key name
    */
-  public String getCursorKey(@NotNull final String username, @NotNull final String cursorName) {
+  public String getCursorKey(final String username, final String cursorName) {
     return username + "-" + cursorName;
   }
 }

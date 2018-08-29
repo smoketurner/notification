@@ -45,7 +45,7 @@ public class RollupBenchmark {
   @Setup
   public void setUp() {
     for (long i = 0; i < 1000; i++) {
-      notifications.add(Notification.builder(CATEGORY).withId(i).build());
+      notifications.add(Notification.builder(CATEGORY).withId(String.valueOf(i)).build());
     }
   }
 

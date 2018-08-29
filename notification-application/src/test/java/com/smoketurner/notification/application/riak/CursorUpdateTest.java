@@ -23,11 +23,11 @@ public class CursorUpdateTest {
 
   @Test
   public void testUpdatesCursor() {
-    final CursorUpdate update = new CursorUpdate("test-notifications", 12345L);
+    final CursorUpdate update = new CursorUpdate("test-notifications", "12345");
 
-    final CursorObject original = new CursorObject("test-notifications", 1L);
+    final CursorObject original = new CursorObject("test-notifications", "1");
 
-    final CursorObject expected = new CursorObject("test-notifications", 12345L);
+    final CursorObject expected = new CursorObject("test-notifications", "12345");
 
     final CursorObject actual = update.apply(original);
     assertThat(actual).isEqualTo(expected);
@@ -35,9 +35,9 @@ public class CursorUpdateTest {
 
   @Test
   public void testNoOriginal() {
-    final CursorUpdate update = new CursorUpdate("test-notifications", 12345L);
+    final CursorUpdate update = new CursorUpdate("test-notifications", "12345");
 
-    final CursorObject expected = new CursorObject("test-notifications", 12345L);
+    final CursorObject expected = new CursorObject("test-notifications", "12345");
 
     final CursorObject actual = update.apply(null);
     assertThat(actual).isEqualTo(expected);

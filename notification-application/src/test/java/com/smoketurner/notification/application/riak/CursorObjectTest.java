@@ -17,12 +17,11 @@ package com.smoketurner.notification.application.riak;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.jackson.Jackson;
 import java.util.TreeSet;
 import org.junit.Before;
 import org.junit.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.jackson.Jackson;
 
 public class CursorObjectTest {
 
@@ -31,7 +30,7 @@ public class CursorObjectTest {
 
   @Before
   public void setUp() {
-    cursor = new CursorObject("test-notifications", 1234567L);
+    cursor = new CursorObject("test-notifications", "3");
   }
 
   @Test
@@ -57,18 +56,18 @@ public class CursorObjectTest {
 
   @Test
   public void testGetValue() {
-    assertThat(cursor.getValue()).isEqualTo(1234567L);
+    assertThat(cursor.getValue()).isEqualTo("3");
   }
 
   @Test
   public void testToString() {
-    assertThat(cursor.toString()).isEqualTo("CursorObject{key=test-notifications, value=1234567}");
+    assertThat(cursor.toString()).isEqualTo("CursorObject{key=test-notifications, value=3}");
   }
 
   @Test
   public void testCursorSorting() {
-    final CursorObject c2 = new CursorObject("test-notifications", 1L);
-    final CursorObject c3 = new CursorObject("test-notifications", 2L);
+    final CursorObject c2 = new CursorObject("test-notifications", "1");
+    final CursorObject c3 = new CursorObject("test-notifications", "2");
     final TreeSet<CursorObject> cursors = new TreeSet<>();
     cursors.add(cursor);
     cursors.add(c2);
@@ -78,9 +77,9 @@ public class CursorObjectTest {
 
   @Test
   public void testNaturalOrdering() {
-    final CursorObject c1 = new CursorObject("test-notifications", 1L);
-    final CursorObject c2 = new CursorObject("test-notifications", 2L);
-    final CursorObject c3 = new CursorObject("test-other", 2L);
+    final CursorObject c1 = new CursorObject("test-notifications", "1");
+    final CursorObject c2 = new CursorObject("test-notifications", "2");
+    final CursorObject c3 = new CursorObject("test-other", "2");
     assertThat(c1.equals(c2)).isEqualTo(c1.compareTo(c2) == 0);
     assertThat(c2.equals(c3)).isEqualTo(c2.compareTo(c3) == 0);
     assertThat(c1.equals(c3)).isEqualTo(c1.compareTo(c3) == 0);

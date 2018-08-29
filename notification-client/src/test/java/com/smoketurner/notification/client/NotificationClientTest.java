@@ -16,11 +16,6 @@
 package com.smoketurner.notification.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import com.google.common.collect.ImmutableList;
-import com.smoketurner.notification.api.Notification;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.junit.DropwizardClientRule;
 import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
@@ -39,6 +34,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import com.google.common.collect.ImmutableList;
+import com.smoketurner.notification.api.Notification;
+import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.testing.junit.DropwizardClientRule;
 
 public class NotificationClientTest {
 
@@ -47,7 +46,7 @@ public class NotificationClientTest {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Notification> fetch(@PathParam("username") String username) {
-      return ImmutableList.of(Notification.builder().withId(1L).build());
+      return ImmutableList.of(Notification.create("1"));
     }
 
     @POST
@@ -115,7 +114,7 @@ public class NotificationClientTest {
 
   @Test
   public void testStore() throws Exception {
-    final Notification expected = Notification.builder().withId(1L).build();
+    final Notification expected = Notification.create("1");
     final Optional<Notification> actual = client.store("test", expected);
     assertThat(actual.isPresent()).isTrue();
     assertThat(actual.get()).isEqualTo(expected);
@@ -123,7 +122,7 @@ public class NotificationClientTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testStoreEmptyUsername() throws Exception {
-    final Notification expected = Notification.builder().withId(1L).build();
+    final Notification expected = Notification.create("1");
     client.store("", expected);
   }
 

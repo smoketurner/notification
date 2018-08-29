@@ -25,14 +25,14 @@ import org.slf4j.LoggerFactory;
 public class NotificationListDeletion extends UpdateValue.Update<NotificationListObject> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NotificationListDeletion.class);
-  private final Collection<Long> ids;
+  private final Collection<String> ids;
 
   /**
    * Constructor
    *
    * @param ids Notification IDs to delete
    */
-  public NotificationListDeletion(final Collection<Long> ids) {
+  public NotificationListDeletion(final Collection<String> ids) {
     this.ids = Objects.requireNonNull(ids, "ids == null");
   }
 

@@ -16,7 +16,6 @@
 package com.smoketurner.notification.application.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Optional;
 import org.junit.Test;
 
@@ -27,110 +26,110 @@ public class RangeHeaderTest {
     RangeHeader expected =
         RangeHeader.builder()
             .field("id")
-            .fromId(1L)
+            .fromId("1")
             .fromInclusive(true)
-            .toId(26L)
+            .toId("26")
             .toInclusive(true)
             .max(1)
             .build();
     RangeHeader actual = RangeHeader.parse("id 1..26; max=1");
     assertThat(actual).isEqualTo(expected);
     assertThat(actual.getField().get()).isEqualTo("id");
-    assertThat(actual.getFromId().get()).isEqualTo(1L);
+    assertThat(actual.getFromId().get()).isEqualTo("1");
     assertThat(actual.getFromInclusive().get()).isEqualTo(true);
-    assertThat(actual.getToId().get()).isEqualTo(26L);
+    assertThat(actual.getToId().get()).isEqualTo("26");
     assertThat(actual.getToInclusive().get()).isEqualTo(true);
     assertThat(actual.getMax().get()).isEqualTo(1);
 
     expected =
         RangeHeader.builder()
             .field("id")
-            .fromId(1L)
+            .fromId("1")
             .fromInclusive(true)
-            .toId(26L)
+            .toId("26")
             .toInclusive(true)
             .build();
     actual = RangeHeader.parse("id 1..26");
     assertThat(actual).isEqualTo(expected);
     assertThat(actual.getField().get()).isEqualTo("id");
-    assertThat(actual.getFromId().get()).isEqualTo(1L);
+    assertThat(actual.getFromId().get()).isEqualTo("1");
     assertThat(actual.getFromInclusive().get()).isEqualTo(true);
-    assertThat(actual.getToId().get()).isEqualTo(26L);
+    assertThat(actual.getToId().get()).isEqualTo("26");
     assertThat(actual.getToInclusive().get()).isEqualTo(true);
     assertThat(actual.getMax()).isEqualTo(Optional.empty());
 
     expected =
         RangeHeader.builder()
             .field("id")
-            .fromId(1L)
+            .fromId("1")
             .fromInclusive(true)
-            .toId(26L)
+            .toId("26")
             .toInclusive(true)
             .build();
     actual = RangeHeader.parse("id 1..26;");
     assertThat(actual).isEqualTo(expected);
     assertThat(actual.getField().get()).isEqualTo("id");
-    assertThat(actual.getFromId().get()).isEqualTo(1L);
+    assertThat(actual.getFromId().get()).isEqualTo("1");
     assertThat(actual.getFromInclusive().get()).isEqualTo(true);
-    assertThat(actual.getToId().get()).isEqualTo(26L);
+    assertThat(actual.getToId().get()).isEqualTo("26");
     assertThat(actual.getToInclusive().get()).isEqualTo(true);
     assertThat(actual.getMax()).isEqualTo(Optional.empty());
 
     expected =
         RangeHeader.builder()
             .field("id")
-            .fromId(1L)
+            .fromId("1")
             .fromInclusive(true)
-            .toId(26L)
+            .toId("26")
             .toInclusive(true)
             .max(1)
             .build();
     actual = RangeHeader.parse("id 1..26   ;    max=1");
     assertThat(actual).isEqualTo(expected);
     assertThat(actual.getField().get()).isEqualTo("id");
-    assertThat(actual.getFromId().get()).isEqualTo(1L);
+    assertThat(actual.getFromId().get()).isEqualTo("1");
     assertThat(actual.getFromInclusive().get()).isEqualTo(true);
-    assertThat(actual.getToId().get()).isEqualTo(26L);
+    assertThat(actual.getToId().get()).isEqualTo("26");
     assertThat(actual.getToInclusive().get()).isEqualTo(true);
     assertThat(actual.getMax().get()).isEqualTo(1);
 
-    expected = RangeHeader.builder().field("id").fromId(1L).fromInclusive(true).max(1).build();
+    expected = RangeHeader.builder().field("id").fromId("1").fromInclusive(true).max(1).build();
     actual = RangeHeader.parse("id 1..; max=1");
     assertThat(actual).isEqualTo(expected);
     assertThat(actual.getField().get()).isEqualTo("id");
-    assertThat(actual.getFromId().get()).isEqualTo(1L);
+    assertThat(actual.getFromId().get()).isEqualTo("1");
     assertThat(actual.getFromInclusive().get()).isEqualTo(true);
     assertThat(actual.getToId()).isEqualTo(Optional.empty());
     assertThat(actual.getToInclusive()).isEqualTo(Optional.empty());
     assertThat(actual.getMax().get()).isEqualTo(1);
 
-    expected = RangeHeader.builder().field("id").fromId(1L).fromInclusive(false).max(1).build();
+    expected = RangeHeader.builder().field("id").fromId("1").fromInclusive(false).max(1).build();
     actual = RangeHeader.parse("id ]1..; max=1");
     assertThat(actual).isEqualTo(expected);
     assertThat(actual.getField().get()).isEqualTo("id");
-    assertThat(actual.getFromId().get()).isEqualTo(1L);
+    assertThat(actual.getFromId().get()).isEqualTo("1");
     assertThat(actual.getFromInclusive().get()).isEqualTo(false);
     assertThat(actual.getToId()).isEqualTo(Optional.empty());
     assertThat(actual.getToInclusive()).isEqualTo(Optional.empty());
     assertThat(actual.getMax().get()).isEqualTo(1);
 
-    expected = RangeHeader.builder().field("id").toId(26L).toInclusive(true).max(1).build();
+    expected = RangeHeader.builder().field("id").toId("26").toInclusive(true).max(1).build();
     actual = RangeHeader.parse("id ..26; max=1");
     assertThat(actual).isEqualTo(expected);
     assertThat(actual.getField().get()).isEqualTo("id");
     assertThat(actual.getFromId()).isEqualTo(Optional.empty());
     assertThat(actual.getFromInclusive()).isEqualTo(Optional.empty());
-    assertThat(actual.getToId().get()).isEqualTo(26L);
+    assertThat(actual.getToId().get()).isEqualTo("26");
     assertThat(actual.getToInclusive().get()).isEqualTo(true);
     assertThat(actual.getMax().get()).isEqualTo(1);
 
-    expected = RangeHeader.builder().field("id").toId(26L).toInclusive(false).max(1).build();
+    expected = RangeHeader.builder().field("id").toId("26").toInclusive(false).max(1).build();
     actual = RangeHeader.parse("id ..26[; max=1");
     assertThat(actual).isEqualTo(expected);
     assertThat(actual.getField().get()).isEqualTo("id");
     assertThat(actual.getFromId()).isEqualTo(Optional.empty());
     assertThat(actual.getFromInclusive()).isEqualTo(Optional.empty());
-    assertThat(actual.getToId().get()).isEqualTo(26L);
+    assertThat(actual.getToId().get()).isEqualTo("26");
     assertThat(actual.getToInclusive().get()).isEqualTo(false);
     assertThat(actual.getMax().get()).isEqualTo(1);
 

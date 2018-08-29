@@ -45,7 +45,7 @@ public class NotificationListConverterTest {
 
     final Notification n1 =
         Notification.builder("test-category", "this is a test")
-            .withId(1L)
+            .withId("1")
             .withCreatedAt(now)
             .build();
     final NotificationListObject expected = new NotificationListObject();
@@ -53,7 +53,7 @@ public class NotificationListConverterTest {
 
     final NotificationPB pb =
         NotificationPB.newBuilder()
-            .setId(1L)
+            .setId("1")
             .setCategory("test-category")
             .setMessage("this is a test")
             .setCreatedAt(now.toInstant().toEpochMilli())

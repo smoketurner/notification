@@ -40,9 +40,6 @@ public class NotificationConfiguration extends Configuration {
 
   @Valid @NotNull @JsonProperty private final RiakFactory riak = new RiakFactory();
 
-  @Valid @NotNull @JsonProperty
-  private final SnowizardConfiguration snowizard = new SnowizardConfiguration();
-
   @JsonProperty
   public Duration getRiakTimeout() {
     return riakTimeout;
@@ -76,10 +73,5 @@ public class NotificationConfiguration extends Configuration {
   @JsonProperty
   public RiakFactory getRiak() {
     return riak;
-  }
-
-  @JsonProperty
-  public SnowizardConfiguration getSnowizard() {
-    return snowizard;
   }
 }

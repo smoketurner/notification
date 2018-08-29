@@ -42,7 +42,7 @@ public class NotificationStoreBenchmark {
   @Setup
   public void setUp() {
     for (long i = 0; i < 1000000; i++) {
-      notifications.add(Notification.create(i));
+      notifications.add(Notification.create(String.valueOf(i)));
     }
   }
 
@@ -53,12 +53,12 @@ public class NotificationStoreBenchmark {
 
   @Benchmark
   public Optional<Notification> tryFind() {
-    return NotificationStore.tryFind(notifications, 10000);
+    return NotificationStore.tryFind(notifications, "10000");
   }
 
   @Benchmark
   public int indexOf() {
-    return NotificationStore.indexOf(notifications, 10000);
+    return NotificationStore.indexOf(notifications, "10000");
   }
 
   public static void main(String[] args) throws Exception {

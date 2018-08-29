@@ -15,20 +15,18 @@
  */
 package com.smoketurner.notification.application.core;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
-import com.google.common.primitives.Longs;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.validation.constraints.NotNull;
 
 public final class RangeHeader {
 
@@ -39,7 +37,7 @@ public final class RangeHeader {
 
   @Nullable private final String field;
 
-  @NotNull private final Range<Long> range;
+  private final Range<String> range;
 
   @Nullable private final Integer max;
 
@@ -93,11 +91,11 @@ public final class RangeHeader {
 
     @Nullable private String field;
 
-    @Nullable private Long fromId;
+    @Nullable private String fromId;
 
     private boolean fromInclusive = false;
 
-    @Nullable private Long toId;
+    @Nullable private String toId;
 
     private boolean toInclusive = false;
 
@@ -108,29 +106,35 @@ public final class RangeHeader {
       return this;
     }
 
-    public Builder fromId(@Nullable final Long id) {
+    public Builder fromId(@Nullable final String id) {
       if (id == null) {
         fromInclusive = false;
+      } else if (id.isEmpty()) {
+        fromId = null;
+      } else {
+        fromId = id;
       }
-      this.fromId = id;
       return this;
     }
 
     public Builder fromInclusive(final boolean inclusive) {
-      this.fromInclusive = inclusive;
+      fromInclusive = inclusive;
       return this;
     }
 
-    public Builder toId(@Nullable final Long id) {
+    public Builder toId(@Nullable final String id) {
       if (id == null) {
         toInclusive = false;
+      } else if (id.isEmpty()) {
+        toId = null;
+      } else {
+        toId = id;
       }
-      this.toId = id;
       return this;
     }
 
     public Builder toInclusive(final boolean inclusive) {
-      this.toInclusive = inclusive;
+      toInclusive = inclusive;
       return this;
     }
 
@@ -164,8 +168,8 @@ public final class RangeHeader {
       final Matcher first = ID_PATTERN.matcher(parts.get(0));
       if (first.matches()) {
 
-        final Long fromId = Longs.tryParse(first.group("fromId"));
-        final Long toId = Longs.tryParse(first.group("toId"));
+        final String fromId = first.group("fromId");
+        final String toId = first.group("toId");
 
         builder.field(first.group("field")).fromId(fromId).toId(toId);
 
@@ -196,7 +200,7 @@ public final class RangeHeader {
     return Optional.ofNullable(field);
   }
 
-  public Optional<Long> getFromId() {
+  public Optional<String> getFromId() {
     if (!range.hasLowerBound()) {
       return Optional.empty();
     }
@@ -210,7 +214,7 @@ public final class RangeHeader {
     return Optional.of(range.lowerBoundType() == BoundType.CLOSED);
   }
 
-  public Optional<Long> getToId() {
+  public Optional<String> getToId() {
     if (!range.hasUpperBound()) {
       return Optional.empty();
     }

@@ -183,6 +183,6 @@ public class RollupTest {
   }
 
   private Notification createNotification(final long id) {
-    return Notification.builder("new-follower").withId(id).build();
+    return Notification.builder("new-follower").withId(String.valueOf(id)).build();
   }
 }

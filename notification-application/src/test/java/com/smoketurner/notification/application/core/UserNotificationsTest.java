@@ -35,7 +35,7 @@ public class UserNotificationsTest {
 
   @Test
   public void testUnseen() {
-    final List<Notification> unseen = Collections.singletonList(createNotification(1L));
+    final List<Notification> unseen = Collections.singletonList(Notification.create("1"));
     final UserNotifications notifications = new UserNotifications(unseen);
     assertThat(notifications.isEmpty()).isFalse();
     assertThat(notifications.getUnseen()).containsExactlyElementsOf(unseen);
@@ -44,18 +44,14 @@ public class UserNotificationsTest {
 
   @Test
   public void testSeenUnseen() {
-    final List<Notification> unseen = Collections.singletonList(createNotification(1L));
-    final List<Notification> seen = Collections.singletonList(createNotification(2L));
+    final List<Notification> unseen = Collections.singletonList(Notification.create("1"));
+    final List<Notification> seen = Collections.singletonList(Notification.create("2"));
     final List<Notification> expected =
-        Arrays.asList(createNotification(2L), createNotification(1L));
+        Arrays.asList(Notification.create("2"), Notification.create("1"));
     final UserNotifications notifications = new UserNotifications(unseen, seen);
     assertThat(notifications.isEmpty()).isFalse();
     assertThat(notifications.getUnseen()).containsExactlyElementsOf(unseen);
     assertThat(notifications.getSeen()).containsExactlyElementsOf(seen);
     assertThat(notifications.getNotifications()).containsExactlyElementsOf(expected);
-  }
-
-  private Notification createNotification(final long id) {
-    return Notification.builder().withId(id).build();
   }
 }

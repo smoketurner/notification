@@ -51,7 +51,7 @@ public final class CursorObject implements Comparable<CursorObject> {
 
   @RiakVTag @Nullable private String vtag;
 
-  @Nullable private Long value;
+  @Nullable private String value;
 
   /** Constructor */
   public CursorObject() {
@@ -66,9 +66,10 @@ public final class CursorObject implements Comparable<CursorObject> {
    */
   @JsonCreator
   public CursorObject(
-      @JsonProperty("key") final String key, @JsonProperty("value") final long value) {
+      @JsonProperty("key") final String key, @JsonProperty("value") final String value) {
     this.key = Objects.requireNonNull(key, "key == null");
     this.value = value;
+    ;
   }
 
   @Nullable
@@ -79,12 +80,12 @@ public final class CursorObject implements Comparable<CursorObject> {
 
   @Nullable
   @JsonProperty
-  public Long getValue() {
+  public String getValue() {
     return value;
   }
 
   @JsonProperty
-  public void setValue(final long value) {
+  public void setValue(final String value) {
     this.value = value;
   }
 

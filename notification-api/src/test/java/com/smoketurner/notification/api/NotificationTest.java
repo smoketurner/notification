@@ -37,7 +37,7 @@ public class NotificationTest {
   public void setUp() throws Exception {
     final Notification notification2 =
         Notification.builder("new-follower", "you have a new follower")
-            .withId(12346L)
+            .withId("12346")
             .withCreatedAt(ZonedDateTime.parse("2015-06-29T21:04:12Z"))
             .withUnseen(true)
             .withProperties(ImmutableMap.of("first_name", "Test 2", "last_name", "User 2"))
@@ -45,7 +45,7 @@ public class NotificationTest {
 
     notification =
         Notification.builder("new-follower", "you have a new follower")
-            .withId(12345L)
+            .withId("12345")
             .withCreatedAt(ZonedDateTime.parse("2015-06-29T21:04:12Z"))
             .withUnseen(true)
             .withProperties(ImmutableMap.of("first_name", "Test", "last_name", "User"))
@@ -72,19 +72,19 @@ public class NotificationTest {
   @Test
   public void testGetId() throws Exception {
     final Notification n1 = Notification.builder().build();
-    assertThat(n1.getId(5L)).isEqualTo(5L);
-    final Notification n2 = Notification.create(1000L);
-    assertThat(n2.getId(6L)).isEqualTo(1000L);
+    assertThat(n1.getId("5")).isEqualTo("5");
+    final Notification n2 = Notification.create("1000");
+    assertThat(n2.getId("6")).isEqualTo("1000");
   }
 
   @Test
   public void testToString() throws Exception {
     final ZonedDateTime now = ZonedDateTime.parse("2015-08-14T21:25:19.533Z");
     final Notification n1 =
-        Notification.builder("test-category", "").withId(1L).withCreatedAt(now).build();
+        Notification.builder("test-category", "").withId("1").withCreatedAt(now).build();
     assertThat(n1.toString())
         .isEqualTo(
-            "Notification{id=Optional[1], idStr=Optional[1],"
+            "Notification{id=Optional[1],"
                 + " category=test-category, message=,"
                 + " createdAt=2015-08-14T21:25:19.533Z, unseen=Optional.empty,"
                 + " properties={}, notifications=[]}");
@@ -92,16 +92,16 @@ public class NotificationTest {
 
   @Test
   public void testBuilder() throws Exception {
-    final Notification n1 = Notification.create(1L);
+    final Notification n1 = Notification.create("1");
     final Notification n2 = Notification.builder(n1).build();
     assertThat(n1).isEqualTo(n2);
   }
 
   @Test
   public void testComparison() throws Exception {
-    final Notification n1 = Notification.create(1L);
-    final Notification n2 = Notification.create(2L);
-    final Notification n3 = Notification.create(3L);
+    final Notification n1 = Notification.create("1");
+    final Notification n2 = Notification.create("2");
+    final Notification n3 = Notification.create("3");
 
     assertThat(n1.compareTo(n2)).isEqualTo(1);
     assertThat(n2.compareTo(n1)).isEqualTo(-1);
@@ -113,7 +113,7 @@ public class NotificationTest {
 
     assertThat(notifications).containsExactly(n3, n2, n1);
 
-    final Notification n1b = Notification.builder().withId(1L).withUnseen(true).build();
+    final Notification n1b = Notification.builder().withId("1").withUnseen(true).build();
 
     assertThat(n1.compareTo(n1b) == 0).isEqualTo(n1.equals(n1b));
     assertThat(n1.equals(null)).isFalse();
@@ -121,9 +121,9 @@ public class NotificationTest {
 
   @Test
   public void testNaturalOrdering() {
-    final Notification n1 = Notification.builder("test").withId(1L).build();
-    final Notification n2 = Notification.builder("test").withId(2L).build();
-    final Notification n3 = Notification.builder("test").withId(1L).build();
+    final Notification n1 = Notification.builder("test").withId("1").build();
+    final Notification n2 = Notification.builder("test").withId("2").build();
+    final Notification n3 = Notification.builder("test").withId("1").build();
     assertThat(n1.equals(n2)).isEqualTo(n1.compareTo(n2) == 0);
     assertThat(n2.equals(n3)).isEqualTo(n2.compareTo(n3) == 0);
     assertThat(n1.equals(n3)).isEqualTo(n1.compareTo(n3) == 0);

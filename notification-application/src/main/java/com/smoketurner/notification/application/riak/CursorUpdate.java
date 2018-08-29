@@ -25,7 +25,7 @@ public class CursorUpdate extends UpdateValue.Update<CursorObject> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CursorUpdate.class);
   private final String key;
-  private final long value;
+  private final String value;
 
   /**
    * Constructor
@@ -33,7 +33,7 @@ public class CursorUpdate extends UpdateValue.Update<CursorObject> {
    * @param key Cursor key
    * @param value Cursor value
    */
-  public CursorUpdate(final String key, final long value) {
+  public CursorUpdate(final String key, final String value) {
     this.key = Objects.requireNonNull(key, "key == null");
     this.value = value;
   }

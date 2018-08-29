@@ -46,8 +46,6 @@ public class NotificationApplicationTest {
 
   @Before
   public void setup() throws Exception {
-    config.getSnowizard().setDatacenterId(1);
-    config.getSnowizard().setWorkerId(1);
     when(environment.metrics()).thenReturn(registry);
     when(environment.jersey()).thenReturn(jersey);
     when(environment.getObjectMapper()).thenReturn(mapper);

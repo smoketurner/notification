@@ -19,15 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import com.basho.riak.client.api.RiakClient;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
-import com.smoketurner.notification.api.Notification;
-import com.smoketurner.notification.application.core.IdGenerator;
-import com.smoketurner.notification.application.core.UserNotifications;
-import io.dropwizard.util.Duration;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +28,14 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Before;
 import org.junit.Test;
+import com.basho.riak.client.api.RiakClient;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
+import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.IdGenerator;
+import com.smoketurner.notification.application.core.UserNotifications;
+import io.dropwizard.util.Duration;
 
 public class NotificationStoreTest {
 
@@ -57,14 +56,14 @@ public class NotificationStoreTest {
 
   @Test
   public void testSplitNotifications() throws Exception {
-    when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME)).thenReturn(Optional.of(4L));
+    when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME)).thenReturn(Optional.of("4"));
 
-    final Notification n1 = Notification.create(1);
-    final Notification n2 = Notification.create(2);
-    final Notification n3 = Notification.create(3);
-    final Notification n4 = Notification.create(4);
-    final Notification n5 = Notification.create(5);
-    final Notification n6 = Notification.create(6);
+    final Notification n1 = Notification.create("1");
+    final Notification n2 = Notification.create("2");
+    final Notification n3 = Notification.create("3");
+    final Notification n4 = Notification.create("4");
+    final Notification n5 = Notification.create("5");
+    final Notification n6 = Notification.create("6");
 
     final Notification n1Seen =
         Notification.builder().fromNotification(n1).withUnseen(false).build();
@@ -94,14 +93,14 @@ public class NotificationStoreTest {
 
   @Test
   public void testSplitNotificationsFirst() throws Exception {
-    when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME)).thenReturn(Optional.of(0L));
+    when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME)).thenReturn(Optional.of(""));
 
-    final Notification n1 = Notification.create(1);
-    final Notification n2 = Notification.create(2);
-    final Notification n3 = Notification.create(3);
-    final Notification n4 = Notification.create(4);
-    final Notification n5 = Notification.create(5);
-    final Notification n6 = Notification.create(6);
+    final Notification n1 = Notification.create("1");
+    final Notification n2 = Notification.create("2");
+    final Notification n3 = Notification.create("3");
+    final Notification n4 = Notification.create("4");
+    final Notification n5 = Notification.create("5");
+    final Notification n6 = Notification.create("6");
 
     final Notification n1Seen =
         Notification.builder().fromNotification(n1).withUnseen(true).build();
@@ -124,7 +123,7 @@ public class NotificationStoreTest {
 
     final UserNotifications actual = store.splitNotifications(TEST_USER, notifications);
     verify(cursors).fetch(TEST_USER, NotificationStore.CURSOR_NAME);
-    verify(cursors).store(TEST_USER, NotificationStore.CURSOR_NAME, 6L);
+    verify(cursors).store(TEST_USER, NotificationStore.CURSOR_NAME, "6");
     assertThat(actual.getNotifications()).containsExactlyElementsOf(expected);
     assertThat(actual.getUnseen()).containsExactly(n6Seen, n5Seen, n4Seen, n3Seen, n2Seen, n1Seen);
     assertThat(actual.getSeen()).isEmpty();
@@ -133,9 +132,9 @@ public class NotificationStoreTest {
   @Test
   public void testSplitNotificationsNoCursor() throws Exception {
     when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME))
-        .thenReturn(Optional.<Long>empty());
+        .thenReturn(Optional.<String>empty());
 
-    final Notification n1 = Notification.create(1);
+    final Notification n1 = Notification.create("1");
 
     final Notification n1Unseen =
         Notification.builder().fromNotification(n1).withUnseen(true).build();
@@ -145,7 +144,7 @@ public class NotificationStoreTest {
 
     final UserNotifications actual = store.splitNotifications(TEST_USER, notifications);
     verify(cursors).fetch(TEST_USER, NotificationStore.CURSOR_NAME);
-    verify(cursors).store(TEST_USER, NotificationStore.CURSOR_NAME, 1L);
+    verify(cursors).store(TEST_USER, NotificationStore.CURSOR_NAME, "1");
     assertThat(actual.getNotifications()).containsExactlyElementsOf(expected);
   }
 
@@ -172,20 +171,21 @@ public class NotificationStoreTest {
   @Test
   public void testSetUnseenState() throws Exception {
     ImmutableList.Builder<Notification> builder = ImmutableList.builder();
-    for (long i = 1; i < 11; i++) {
-      builder.add(Notification.create(i));
+    for (int i = 1; i < 11; i++) {
+      builder.add(Notification.create(String.format("%02d", i)));
     }
     final List<Notification> notifications = builder.build();
 
     builder = ImmutableList.builder();
-    for (long i = 1; i < 11; i++) {
-      builder.add(Notification.builder().withId(i).withUnseen(true).build());
+    for (int i = 1; i < 11; i++) {
+      builder.add(Notification.builder().withId(String.format("%02d", i)).withUnseen(true).build());
     }
     final List<Notification> expectedUnseen = builder.build();
 
     builder = ImmutableList.builder();
-    for (long i = 1; i < 11; i++) {
-      builder.add(Notification.builder().withId(i).withUnseen(false).build());
+    for (int i = 1; i < 11; i++) {
+      builder.add(
+          Notification.builder().withId(String.format("%02d", i)).withUnseen(false).build());
     }
     final List<Notification> expectedSeen = builder.build();
 
@@ -199,16 +199,17 @@ public class NotificationStoreTest {
   public void testFindNotification() throws Exception {
     final Notification n100 =
         Notification.builder()
-            .withId(100L)
-            .withNotifications(Arrays.asList(Notification.create(101L), Notification.create(102L)))
+            .withId("100")
+            .withNotifications(
+                Arrays.asList(Notification.create("101"), Notification.create("102")))
             .build();
 
     final Notification n150 =
-        Notification.builder().withId(150L).withNotifications(Collections.emptyList()).build();
+        Notification.builder().withId("150").withNotifications(Collections.emptyList()).build();
 
     final ImmutableList.Builder<Notification> builder = ImmutableList.builder();
-    for (long i = 1; i < 11; i++) {
-      builder.add(Notification.create(i));
+    for (int i = 1; i < 11; i++) {
+      builder.add(Notification.create(String.format("%03d", i)));
     }
     builder.add(n100);
     builder.add(n150);
@@ -216,38 +217,38 @@ public class NotificationStoreTest {
 
     final List<Notification> notifications = builder.build();
 
-    assertThat(NotificationStore.tryFind(notifications, 1))
-        .isEqualTo(Optional.of(Notification.create(1)));
-    assertThat(NotificationStore.tryFind(notifications, 5))
-        .isEqualTo(Optional.of(Notification.create(5)));
-    assertThat(NotificationStore.tryFind(notifications, 10))
-        .isEqualTo(Optional.of(Notification.create(10)));
-    assertThat(NotificationStore.tryFind(notifications, 12))
+    assertThat(NotificationStore.tryFind(notifications, "001"))
+        .isEqualTo(Optional.of(Notification.create("001")));
+    assertThat(NotificationStore.tryFind(notifications, "005"))
+        .isEqualTo(Optional.of(Notification.create("005")));
+    assertThat(NotificationStore.tryFind(notifications, "010"))
+        .isEqualTo(Optional.of(Notification.create("010")));
+    assertThat(NotificationStore.tryFind(notifications, "012"))
         .isEqualTo(Optional.<Notification>empty());
-    assertThat(NotificationStore.tryFind(notifications, 100)).isEqualTo(Optional.of(n100));
-    assertThat(NotificationStore.tryFind(notifications, 101)).isEqualTo(Optional.of(n100));
-    assertThat(NotificationStore.tryFind(notifications, 102)).isEqualTo(Optional.of(n100));
-    assertThat(NotificationStore.tryFind(notifications, 103))
+    assertThat(NotificationStore.tryFind(notifications, "100")).isEqualTo(Optional.of(n100));
+    assertThat(NotificationStore.tryFind(notifications, "101")).isEqualTo(Optional.of(n100));
+    assertThat(NotificationStore.tryFind(notifications, "102")).isEqualTo(Optional.of(n100));
+    assertThat(NotificationStore.tryFind(notifications, "103"))
         .isEqualTo(Optional.<Notification>empty());
-    assertThat(NotificationStore.tryFind(notifications, 150)).isEqualTo(Optional.of(n150));
+    assertThat(NotificationStore.tryFind(notifications, "150")).isEqualTo(Optional.of(n150));
   }
 
   @Test
   public void testSkip() throws Exception {
     final ImmutableSortedSet.Builder<Notification> builder =
         ImmutableSortedSet.<Notification>naturalOrder();
-    for (long i = 1; i <= 100; i++) {
-      builder.add(Notification.create(i));
+    for (int i = 1; i <= 100; i++) {
+      builder.add(Notification.create(String.format("%03d", i)));
     }
     final ImmutableSortedSet<Notification> notifications = builder.build();
 
     final ImmutableList.Builder<Notification> builder2 = ImmutableList.<Notification>builder();
-    for (long i = 100; i > 90; i--) {
-      builder2.add(Notification.create(i));
+    for (int i = 100; i > 90; i--) {
+      builder2.add(Notification.create(String.format("%03d", i)));
     }
     final List<Notification> expected = builder2.build();
 
-    final Iterable<Notification> actual = store.skip(notifications, 0, true, 10);
+    final Iterable<Notification> actual = store.skip(notifications, "", true, 10);
     assertThat(actual).containsExactlyElementsOf(expected);
   }
 
@@ -255,18 +256,18 @@ public class NotificationStoreTest {
   public void testSkipWithStart() throws Exception {
     final ImmutableSortedSet.Builder<Notification> builder =
         ImmutableSortedSet.<Notification>naturalOrder();
-    for (long i = 1; i <= 100; i++) {
-      builder.add(Notification.create(i));
+    for (int i = 1; i <= 100; i++) {
+      builder.add(Notification.create(String.format("%03d", i)));
     }
     final ImmutableSortedSet<Notification> notifications = builder.build();
 
     final ImmutableList.Builder<Notification> builder2 = ImmutableList.<Notification>builder();
-    for (long i = 55; i > 45; i--) {
-      builder2.add(Notification.create(i));
+    for (int i = 55; i > 45; i--) {
+      builder2.add(Notification.create(String.format("%03d", i)));
     }
     final List<Notification> expected = builder2.build();
 
-    final Iterable<Notification> actual = store.skip(notifications, 56, false, 10);
+    final Iterable<Notification> actual = store.skip(notifications, "056", false, 10);
     assertThat(actual).containsExactlyElementsOf(expected);
   }
 
@@ -274,18 +275,18 @@ public class NotificationStoreTest {
   public void testSkipWithStartNotFound() throws Exception {
     final ImmutableSortedSet.Builder<Notification> builder =
         ImmutableSortedSet.<Notification>naturalOrder();
-    for (long i = 1; i <= 100; i++) {
-      builder.add(Notification.create(i));
+    for (int i = 1; i <= 100; i++) {
+      builder.add(Notification.create(String.format("%04d", i)));
     }
     final ImmutableSortedSet<Notification> notifications = builder.build();
 
     final ImmutableList.Builder<Notification> builder2 = ImmutableList.<Notification>builder();
-    for (long i = 100; i > 90; i--) {
-      builder2.add(Notification.create(i));
+    for (int i = 100; i > 90; i--) {
+      builder2.add(Notification.create(String.format("%04d", i)));
     }
     final List<Notification> expected = builder2.build();
 
-    final Iterable<Notification> actual = store.skip(notifications, 1000, true, 10);
+    final Iterable<Notification> actual = store.skip(notifications, "1000", true, 10);
     assertThat(actual).containsExactlyElementsOf(expected);
   }
 }

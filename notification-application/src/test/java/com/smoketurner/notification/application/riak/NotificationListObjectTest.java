@@ -16,12 +16,11 @@
 package com.smoketurner.notification.application.riak;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import com.google.common.collect.ImmutableList;
-import com.smoketurner.notification.api.Notification;
 import java.util.SortedSet;
 import org.junit.Before;
 import org.junit.Test;
+import com.google.common.collect.ImmutableList;
+import com.smoketurner.notification.api.Notification;
 
 public class NotificationListObjectTest {
 
@@ -34,40 +33,40 @@ public class NotificationListObjectTest {
 
   @Test
   public void testMaximumNumberOfNotifications() {
-    for (long i = 0; i <= 2000; i++) {
-      list.addNotification(Notification.create(i));
+    for (int i = 0; i <= 2000; i++) {
+      list.addNotification(Notification.create(String.format("%04d", i)));
     }
 
     final SortedSet<Notification> actual = list.getNotifications();
     assertThat(actual).hasSize(1000);
-    assertThat(actual.first().getId().get()).isEqualTo(2000L);
-    assertThat(actual.last().getId().get()).isEqualTo(1001L);
+    assertThat(actual.first().getId().get()).isEqualTo("2000");
+    assertThat(actual.last().getId().get()).isEqualTo("1001");
   }
 
   @Test
   public void testMaximumNumberOfNotificationsCollection() {
     final ImmutableList.Builder<Notification> builder = ImmutableList.builder();
-    for (long i = 0; i <= 2000; i++) {
-      builder.add(Notification.create(i));
+    for (int i = 0; i <= 2000; i++) {
+      builder.add(Notification.create(String.format("%04d", i)));
     }
 
     list.addNotifications(builder.build());
 
     final SortedSet<Notification> actual = list.getNotifications();
     assertThat(actual).hasSize(1000);
-    assertThat(actual.first().getId().get()).isEqualTo(2000L);
-    assertThat(actual.last().getId().get()).isEqualTo(1001L);
+    assertThat(actual.first().getId().get()).isEqualTo("2000");
+    assertThat(actual.last().getId().get()).isEqualTo("1001");
   }
 
   @Test
   public void testNoDuplicateNotifications() {
-    for (long i = 0; i < 5; i++) {
-      list.addNotification(Notification.create(1L));
+    for (int i = 0; i < 5; i++) {
+      list.addNotification(Notification.create("1"));
     }
 
     final SortedSet<Notification> actual = list.getNotifications();
     assertThat(actual).hasSize(1);
-    assertThat(actual.first().getId().get()).isEqualTo(1L);
+    assertThat(actual.first().getId().get()).isEqualTo("1");
   }
 
   @Test
@@ -79,8 +78,8 @@ public class NotificationListObjectTest {
 
   @Test
   public void testDeleteNotification() {
-    list.deleteNotification(1L);
-    assertThat(list.getDeletedIds()).contains(1L);
+    list.deleteNotification("1");
+    assertThat(list.getDeletedIds()).contains("1");
   }
 
   @Test
