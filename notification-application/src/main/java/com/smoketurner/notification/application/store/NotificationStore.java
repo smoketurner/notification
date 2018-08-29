@@ -15,6 +15,19 @@
  */
 package com.smoketurner.notification.application.store;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
 import com.basho.riak.client.api.commands.buckets.StoreBucketProperties;
@@ -30,6 +43,7 @@ import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Ints;
 import com.smoketurner.notification.api.Notification;
@@ -43,19 +57,6 @@ import com.smoketurner.notification.application.riak.NotificationListDeletion;
 import com.smoketurner.notification.application.riak.NotificationListObject;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.util.Duration;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NotificationStore {
 
@@ -389,6 +390,12 @@ public class NotificationStore {
   public static Optional<Notification> tryFind(
       final Iterable<Notification> notifications, final String id) {
 
+    Objects.requireNonNull(notifications, "notifications == null");
+
+    if (Strings.isNullOrEmpty(id)) {
+      return Optional.empty();
+    }
+
     final com.google.common.base.Optional<Notification> result =
         Iterables.tryFind(
             notifications,
@@ -424,6 +431,12 @@ public class NotificationStore {
    * @return the position of the notification or -1 if not found
    */
   public static int indexOf(final Iterable<Notification> notifications, final String id) {
+
+    Objects.requireNonNull(notifications, "notifications == null");
+
+    if (Strings.isNullOrEmpty(id)) {
+      return -1;
+    }
 
     return Iterables.indexOf(
         notifications,
@@ -463,6 +476,7 @@ public class NotificationStore {
       final int limitSize) {
 
     Objects.requireNonNull(notifications, "notifications == null");
+
     final int position = indexOf(notifications, startId);
     if (position == -1) {
       return Iterables.limit(notifications, limitSize);
