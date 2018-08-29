@@ -15,6 +15,17 @@
  */
 package com.smoketurner.notification.application.resources;
 
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Iterables;
+import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.RangeHeader;
+import com.smoketurner.notification.application.core.StringSetParam;
+import com.smoketurner.notification.application.core.UserNotifications;
+import com.smoketurner.notification.application.exceptions.NotificationException;
+import com.smoketurner.notification.application.exceptions.NotificationStoreException;
+import com.smoketurner.notification.application.store.NotificationStore;
+import io.dropwizard.jersey.caching.CacheControl;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -37,17 +48,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.glassfish.jersey.server.JSONP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Iterables;
-import com.smoketurner.notification.api.Notification;
-import com.smoketurner.notification.application.core.RangeHeader;
-import com.smoketurner.notification.application.core.StringSetParam;
-import com.smoketurner.notification.application.core.UserNotifications;
-import com.smoketurner.notification.application.exceptions.NotificationException;
-import com.smoketurner.notification.application.exceptions.NotificationStoreException;
-import com.smoketurner.notification.application.store.NotificationStore;
-import io.dropwizard.jersey.caching.CacheControl;
 
 @Path("/v1/notifications")
 public class NotificationResource {

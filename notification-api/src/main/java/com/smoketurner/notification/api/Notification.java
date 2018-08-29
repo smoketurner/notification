@@ -15,14 +15,6 @@
  */
 package com.smoketurner.notification.api;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -33,6 +25,14 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.jackson.JsonSnakeCase;
+import java.time.Clock;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @JsonSnakeCase
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -61,8 +61,8 @@ public final class Notification implements Comparable<Notification> {
       @JsonProperty("category") final String category,
       @JsonProperty("message") final String message) {
     this.id = Optional.empty();
-    this.category = Objects.requireNonNull(category);
-    this.message = Objects.requireNonNull(message);
+    this.category = category;
+    this.message = message;
     this.createdAt = ZonedDateTime.now(Clock.systemUTC());
     this.unseen = Optional.empty();
     this.properties = Collections.emptyMap();

@@ -16,6 +16,11 @@
 package com.smoketurner.notification.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.google.common.collect.ImmutableList;
+import com.smoketurner.notification.api.Notification;
+import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.testing.junit.DropwizardClientRule;
 import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
@@ -34,10 +39,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import com.google.common.collect.ImmutableList;
-import com.smoketurner.notification.api.Notification;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.junit.DropwizardClientRule;
 
 public class NotificationClientTest {
 

@@ -15,11 +15,11 @@
  */
 package com.smoketurner.notification.application.riak;
 
+import com.basho.riak.client.api.commands.kv.UpdateValue;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.basho.riak.client.api.commands.kv.UpdateValue;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class CursorUpdate extends UpdateValue.Update<CursorObject> {
 

@@ -15,6 +15,10 @@
  */
 package com.smoketurner.notification.application.benchmarks;
 
+import com.google.common.collect.ImmutableMap;
+import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.api.Rule;
+import com.smoketurner.notification.application.core.Rollup;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,10 +32,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import com.google.common.collect.ImmutableMap;
-import com.smoketurner.notification.api.Notification;
-import com.smoketurner.notification.api.Rule;
-import com.smoketurner.notification.application.core.Rollup;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)

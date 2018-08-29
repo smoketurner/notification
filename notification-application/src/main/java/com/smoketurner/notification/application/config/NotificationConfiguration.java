@@ -15,14 +15,14 @@
  */
 package com.smoketurner.notification.application.config;
 
-import java.util.concurrent.TimeUnit;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.smoketurner.dropwizard.riak.RiakFactory;
 import io.dropwizard.Configuration;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
+import java.util.concurrent.TimeUnit;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class NotificationConfiguration extends Configuration {
 

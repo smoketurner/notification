@@ -16,6 +16,13 @@
 package com.smoketurner.notification.client;
 
 import static com.codahale.metrics.MetricRegistry.name;
+
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSortedSet;
+import com.smoketurner.notification.api.Notification;
 import java.io.Closeable;
 import java.net.URI;
 import java.util.Collection;
@@ -31,12 +38,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSortedSet;
-import com.smoketurner.notification.api.Notification;
 
 public class NotificationClient implements Closeable {
 

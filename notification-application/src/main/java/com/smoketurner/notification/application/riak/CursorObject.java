@@ -15,7 +15,6 @@
  */
 package com.smoketurner.notification.application.riak;
 
-import java.util.Objects;
 import com.basho.riak.client.api.annotations.RiakBucketName;
 import com.basho.riak.client.api.annotations.RiakContentType;
 import com.basho.riak.client.api.annotations.RiakKey;
@@ -32,6 +31,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)

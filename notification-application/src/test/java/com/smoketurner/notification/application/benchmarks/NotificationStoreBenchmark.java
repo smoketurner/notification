@@ -15,6 +15,8 @@
  */
 package com.smoketurner.notification.application.benchmarks;
 
+import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.store.NotificationStore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +31,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import com.smoketurner.notification.api.Notification;
-import com.smoketurner.notification.application.store.NotificationStore;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)

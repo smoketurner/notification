@@ -15,11 +15,6 @@
  */
 package com.smoketurner.notification.application.store;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
 import com.basho.riak.client.api.commands.buckets.StoreBucketProperties;
@@ -39,6 +34,11 @@ import com.smoketurner.notification.application.exceptions.NotificationStoreExce
 import com.smoketurner.notification.application.riak.CursorObject;
 import com.smoketurner.notification.application.riak.CursorUpdate;
 import io.dropwizard.util.Duration;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CursorStore {
 

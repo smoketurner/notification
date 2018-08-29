@@ -16,6 +16,15 @@
 package com.smoketurner.notification.application.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.NotificationApplication;
+import com.smoketurner.notification.application.config.NotificationConfiguration;
+import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.List;
 import java.util.TreeSet;
 import javax.ws.rs.client.Client;
@@ -28,14 +37,6 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-import com.smoketurner.notification.api.Notification;
-import com.smoketurner.notification.application.NotificationApplication;
-import com.smoketurner.notification.application.config.NotificationConfiguration;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.testing.ResourceHelpers;
-import io.dropwizard.testing.junit.DropwizardAppRule;
 
 public class NotificationsIT {
 

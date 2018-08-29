@@ -15,13 +15,6 @@
  */
 package com.smoketurner.notification.application.store;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.commands.datatypes.Context;
 import com.basho.riak.client.api.commands.datatypes.FetchDatatype;
@@ -49,6 +42,13 @@ import com.google.common.primitives.Ints;
 import com.smoketurner.notification.api.Rule;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import io.dropwizard.util.Duration;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RuleStore {
 
