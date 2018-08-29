@@ -15,11 +15,11 @@
  */
 package com.smoketurner.notification.application.riak;
 
-import com.basho.riak.client.api.commands.kv.UpdateValue;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.basho.riak.client.api.commands.kv.UpdateValue;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class CursorUpdate extends UpdateValue.Update<CursorObject> {
 
@@ -35,7 +35,7 @@ public class CursorUpdate extends UpdateValue.Update<CursorObject> {
    */
   public CursorUpdate(final String key, final String value) {
     this.key = Objects.requireNonNull(key, "key == null");
-    this.value = value;
+    this.value = Objects.requireNonNull(value, "value == null");
   }
 
   @Override
@@ -43,8 +43,9 @@ public class CursorUpdate extends UpdateValue.Update<CursorObject> {
     if (original == null) {
       LOGGER.debug("original is null, creating new cursor");
       original = new CursorObject(key, value);
+    } else {
+      original.setValue(value);
     }
-    original.setValue(value);
     return original;
   }
 }

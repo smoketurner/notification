@@ -16,13 +16,6 @@
 package com.smoketurner.notification.client;
 
 import static com.codahale.metrics.MetricRegistry.name;
-
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSortedSet;
-import com.smoketurner.notification.api.Notification;
 import java.io.Closeable;
 import java.net.URI;
 import java.util.Collection;
@@ -38,6 +31,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSortedSet;
+import com.smoketurner.notification.api.Notification;
 
 public class NotificationClient implements Closeable {
 
@@ -81,6 +80,7 @@ public class NotificationClient implements Closeable {
     try (Timer.Context context = fetchTimer.time()) {
       while (paginate) {
         LOGGER.info("GET {}", uri);
+
         final Invocation.Builder builder = client.target(uri).request(APPLICATION_JSON);
         if (nextRange != null) {
           builder.header("Range", nextRange);
@@ -115,7 +115,9 @@ public class NotificationClient implements Closeable {
    */
   public Optional<Notification> store(final String username, final Notification notification) {
     Objects.requireNonNull(notification, "notification == null");
+
     final URI uri = getTarget(username);
+
     LOGGER.debug("POST {}", uri);
 
     try (Timer.Context context = storeTimer.time()) {
@@ -136,11 +138,13 @@ public class NotificationClient implements Closeable {
    * @param username User to delete notifications from
    * @param ids Notification IDs to delete
    */
-  public void delete(final String username, final Collection<Long> ids) {
+  public void delete(final String username, final Collection<String> ids) {
     Objects.requireNonNull(ids, "ids == null");
     Preconditions.checkArgument(!ids.isEmpty(), "ids cannot be empty");
+
     final URI uri =
         UriBuilder.fromUri(getTarget(username)).queryParam("ids", Joiner.on(",").join(ids)).build();
+
     LOGGER.debug("DELETE {}", uri);
 
     try (Timer.Context context = deleteTimer.time()) {
@@ -157,6 +161,7 @@ public class NotificationClient implements Closeable {
    */
   public void delete(final String username) {
     final URI uri = getTarget(username);
+
     LOGGER.debug("DELETE {}", uri);
 
     try (Timer.Context context = deleteTimer.time()) {
@@ -173,7 +178,9 @@ public class NotificationClient implements Closeable {
    */
   public boolean ping() {
     final URI uri = UriBuilder.fromUri(rootUri).path("/ping").build();
+
     LOGGER.debug("GET {}", uri);
+
     final String response = client.target(uri).request().get(String.class);
     return "pong".equals(response);
   }
@@ -185,7 +192,9 @@ public class NotificationClient implements Closeable {
    */
   public String version() {
     final URI uri = UriBuilder.fromUri(rootUri).path("/version").build();
+
     LOGGER.debug("GET {}", uri);
+
     return client.target(uri).request().get(String.class);
   }
 

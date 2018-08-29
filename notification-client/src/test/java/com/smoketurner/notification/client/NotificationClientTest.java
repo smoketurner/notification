@@ -138,17 +138,17 @@ public class NotificationClientTest {
 
   @Test
   public void testDelete() throws Exception {
-    client.delete("test", ImmutableList.of(1L, 2L));
+    client.delete("test", ImmutableList.of("1", "2"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testDeleteEmptyUsername() throws Exception {
-    client.delete("", ImmutableList.of(1L));
+    client.delete("", ImmutableList.of("1"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testDeleteEmptyIds() throws Exception {
-    client.delete("test", ImmutableList.<Long>of());
+    client.delete("test", ImmutableList.<String>of());
   }
 
   @Test

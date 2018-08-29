@@ -19,15 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import com.basho.riak.client.api.RiakClient;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
-import com.smoketurner.notification.api.Notification;
-import com.smoketurner.notification.application.core.IdGenerator;
-import com.smoketurner.notification.application.core.UserNotifications;
-import io.dropwizard.util.Duration;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,11 +28,21 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Before;
 import org.junit.Test;
+import com.basho.riak.client.api.RiakClient;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
+import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.IdGenerator;
+import com.smoketurner.notification.application.core.UserNotifications;
+import io.dropwizard.util.Duration;
 
 public class NotificationStoreTest {
 
   private static final String TEST_USER = "test";
   private static final ZonedDateTime NOW = ZonedDateTime.parse("2015-07-17T17:43:25Z");
+  private static final String CURSOR_NAME = "cursors";
+
   private final RiakClient client = mock(RiakClient.class);
   private final CursorStore cursors = mock(CursorStore.class);
   private final IdGenerator idGenerator = mock(IdGenerator.class);
@@ -57,7 +58,7 @@ public class NotificationStoreTest {
 
   @Test
   public void testSplitNotifications() throws Exception {
-    when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME)).thenReturn(Optional.of("4"));
+    when(cursors.fetch(TEST_USER, CURSOR_NAME)).thenReturn(Optional.of("4"));
 
     final Notification n1 = Notification.create("1");
     final Notification n2 = Notification.create("2");
@@ -86,7 +87,7 @@ public class NotificationStoreTest {
         Arrays.asList(n6Unseen, n5Unseen, n4Seen, n3Seen, n2Seen, n1Seen);
 
     final UserNotifications actual = store.splitNotifications(TEST_USER, notifications);
-    verify(cursors).fetch(TEST_USER, NotificationStore.CURSOR_NAME);
+    verify(cursors).fetch(TEST_USER, CURSOR_NAME);
     assertThat(actual.getNotifications()).containsExactlyElementsOf(expected);
     assertThat(actual.getUnseen()).containsExactly(n6Unseen, n5Unseen);
     assertThat(actual.getSeen()).containsExactly(n4Seen, n3Seen, n2Seen, n1Seen);
@@ -94,7 +95,7 @@ public class NotificationStoreTest {
 
   @Test
   public void testSplitNotificationsFirst() throws Exception {
-    when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME)).thenReturn(Optional.of(""));
+    when(cursors.fetch(TEST_USER, CURSOR_NAME)).thenReturn(Optional.of(""));
 
     final Notification n1 = Notification.create("1");
     final Notification n2 = Notification.create("2");
@@ -123,8 +124,8 @@ public class NotificationStoreTest {
         Arrays.asList(n6Seen, n5Seen, n4Seen, n3Seen, n2Seen, n1Seen);
 
     final UserNotifications actual = store.splitNotifications(TEST_USER, notifications);
-    verify(cursors).fetch(TEST_USER, NotificationStore.CURSOR_NAME);
-    verify(cursors).store(TEST_USER, NotificationStore.CURSOR_NAME, "6");
+    verify(cursors).fetch(TEST_USER, CURSOR_NAME);
+    verify(cursors).store(TEST_USER, CURSOR_NAME, "6");
     assertThat(actual.getNotifications()).containsExactlyElementsOf(expected);
     assertThat(actual.getUnseen()).containsExactly(n6Seen, n5Seen, n4Seen, n3Seen, n2Seen, n1Seen);
     assertThat(actual.getSeen()).isEmpty();
@@ -132,8 +133,7 @@ public class NotificationStoreTest {
 
   @Test
   public void testSplitNotificationsNoCursor() throws Exception {
-    when(cursors.fetch(TEST_USER, NotificationStore.CURSOR_NAME))
-        .thenReturn(Optional.<String>empty());
+    when(cursors.fetch(TEST_USER, CURSOR_NAME)).thenReturn(Optional.<String>empty());
 
     final Notification n1 = Notification.create("1");
 
@@ -144,8 +144,8 @@ public class NotificationStoreTest {
     final List<Notification> expected = Collections.singletonList(n1Unseen);
 
     final UserNotifications actual = store.splitNotifications(TEST_USER, notifications);
-    verify(cursors).fetch(TEST_USER, NotificationStore.CURSOR_NAME);
-    verify(cursors).store(TEST_USER, NotificationStore.CURSOR_NAME, "1");
+    verify(cursors).fetch(TEST_USER, CURSOR_NAME);
+    verify(cursors).store(TEST_USER, CURSOR_NAME, "1");
     assertThat(actual.getNotifications()).containsExactlyElementsOf(expected);
   }
 

@@ -15,6 +15,19 @@
  */
 package com.smoketurner.notification.application.store;
 
+import java.time.Clock;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
 import com.basho.riak.client.api.commands.buckets.StoreBucketProperties;
@@ -44,25 +57,16 @@ import com.smoketurner.notification.application.riak.NotificationListDeletion;
 import com.smoketurner.notification.application.riak.NotificationListObject;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.util.Duration;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NotificationStore {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NotificationStore.class);
-  public static final String CURSOR_NAME = "notifications";
+  private static final String CURSOR_NAME = "notifications";
   private static final Namespace NAMESPACE = new Namespace("notifications");
+
+  // Riak request timeout default is 60s
+  private static final int DEFAULT_TIMEOUT_MS = 60000;
+
   private final RiakClient client;
   private final IdGenerator idGenerator;
   private final CursorStore cursors;
@@ -105,8 +109,10 @@ public class NotificationStore {
     this.cursors = Objects.requireNonNull(cursors, "cursors == null");
     this.ruleStore = Objects.requireNonNull(ruleStore, "ruleStore == null");
 
-    Objects.requireNonNull(timeout, "riakTimeout == null");
-    this.timeout = Ints.checkedCast(timeout.toMilliseconds());
+    this.timeout =
+        Optional.ofNullable(timeout)
+            .map(t -> Ints.checkedCast(t.toMilliseconds()))
+            .orElse(DEFAULT_TIMEOUT_MS);
     this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
   }
 
@@ -218,9 +224,8 @@ public class NotificationStore {
     final String lastSeenId = cursor.orElse("");
     LOGGER.debug("User ({}) last seen notification ID: {}", username, lastSeenId);
 
-    // if the latest seen notification ID is less than the newest
-    // notification ID, then update the cursor to the newest notification
-    // ID.
+    // if the latest seen notification ID is less than the newest notification ID, then update the
+    // cursor to the newest notification ID.
     if (lastSeenId.compareTo(newestId) < 0) {
       LOGGER.debug("User ({}) updating cursor to {}", username, newestId);
       cursors.store(username, CURSOR_NAME, newestId);
@@ -229,8 +234,7 @@ public class NotificationStore {
     // get the parent ID of the last seen notification ID
     final Optional<Notification> lastNotification = tryFind(notifications, lastSeenId);
     if (!lastNotification.isPresent()) {
-      // if the last notification is not found, set all of the
-      // notifications as unseen
+      // if the last notification is not found, set all of the notifications as unseen
       return new UserNotifications(unseenRollup.rollup(setUnseenState(notifications, true)));
     }
 
@@ -408,9 +412,8 @@ public class NotificationStore {
                 return true;
               }
 
-              // Check to see if the notification is included in any
-              // rolled up notifications. This code should not be hit as
-              // tryFind() is called prior to the rollups happening, but
+              // Check to see if the notification is included in any rolled up notifications. This
+              // code should not be hit as tryFind() is called prior to the rollups happening, but
               // we include this here for completeness.
               final Collection<Notification> children = notification.getNotifications();
               if (children.isEmpty()) {
@@ -449,8 +452,7 @@ public class NotificationStore {
             return true;
           }
 
-          // then check to see if the notification is included in any rolled
-          // up notifications
+          // then check to see if the notification is included in any rolled up notifications
           final Collection<Notification> children = notification.getNotifications();
           if (children.isEmpty()) {
             return false;

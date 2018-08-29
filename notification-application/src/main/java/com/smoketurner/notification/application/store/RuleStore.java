@@ -15,6 +15,13 @@
  */
 package com.smoketurner.notification.application.store;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.commands.datatypes.Context;
 import com.basho.riak.client.api.commands.datatypes.FetchDatatype;
@@ -42,14 +49,6 @@ import com.google.common.primitives.Ints;
 import com.smoketurner.notification.api.Rule;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import io.dropwizard.util.Duration;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import javax.validation.constraints.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RuleStore {
 
@@ -57,6 +56,9 @@ public class RuleStore {
   private static final String BUCKET_NAME = "rules";
   private static final Namespace NAMESPACE = new Namespace("maps", BUCKET_NAME);
   private static final Location LOCATION = new Location(NAMESPACE, BUCKET_NAME);
+
+  // Riak request timeout default is 60s
+  private static final int DEFAULT_TIMEOUT_MS = 60000;
 
   private final RiakClient client;
   private final LoadingCache<String, Map<String, Rule>> cache;
@@ -84,6 +86,7 @@ public class RuleStore {
       final Duration cacheTimeout,
       final Duration timeout,
       final Duration requestTimeout) {
+
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(RuleStore.class, "fetch"));
     this.storeTimer = registry.timer(MetricRegistry.name(RuleStore.class, "store"));
@@ -92,8 +95,10 @@ public class RuleStore {
 
     this.client = Objects.requireNonNull(client, "client == null");
 
-    Objects.requireNonNull(timeout, "riakTimeout == null");
-    this.timeout = Ints.checkedCast(timeout.toMilliseconds());
+    this.timeout =
+        Optional.ofNullable(timeout)
+            .map(t -> Ints.checkedCast(t.toMilliseconds()))
+            .orElse(DEFAULT_TIMEOUT_MS);
     this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
 
     // set up a cache for the rules
@@ -106,8 +111,7 @@ public class RuleStore {
                   public Map<String, Rule> load(String key) throws NotificationStoreException {
                     cacheMisses.mark();
 
-                    // all rules are stored under a common key, so we don't
-                    // need to reference it
+                    // all rules are stored under a common key, so we don't need to reference it
                     return fetch().orElse(Collections.emptyMap());
                   }
                 });
@@ -147,10 +151,7 @@ public class RuleStore {
       final FetchMap.Response response = client.execute(fetchMap);
 
       final RiakMap map = response.getDatatype();
-      if (map == null) {
-        return Optional.empty();
-      }
-      return Optional.of(getRules(map));
+      return Optional.ofNullable(map).map(m -> getRules(m));
     } catch (ExecutionException e) {
       LOGGER.error("Unable to fetch key: " + LOCATION, e);
       throw new NotificationStoreException(e);
@@ -191,7 +192,7 @@ public class RuleStore {
    * @param map the map from Riak to convert
    * @return a map of rule objects where the key is the category
    */
-  private static Map<String, Rule> getRules(@NotNull final RiakMap map) {
+  private static Map<String, Rule> getRules(final RiakMap map) {
     final ImmutableMap.Builder<String, Rule> rules = ImmutableMap.builder();
 
     for (BinaryValue category : map.view().keySet()) {
@@ -246,8 +247,7 @@ public class RuleStore {
    * @param rule Rule to store
    * @throws NotificationStoreException if unable to store the rule
    */
-  public void store(@NotNull final String category, @NotNull final Rule rule)
-      throws NotificationStoreException {
+  public void store(final String category, final Rule rule) throws NotificationStoreException {
 
     Objects.requireNonNull(category, "category == null");
     Preconditions.checkArgument(!category.isEmpty(), "category cannot be empty");
@@ -260,9 +260,7 @@ public class RuleStore {
     op.update(category, getUpdate(rule, fetchContext));
 
     final UpdateMap.Builder builder = new UpdateMap.Builder(LOCATION, op).withTimeout(timeout);
-    if (fetchContext.isPresent()) {
-      builder.withContext(fetchContext.get());
-    }
+    fetchContext.ifPresent(c -> builder.withContext(c));
 
     LOGGER.debug("Storing key (async): {}", LOCATION);
 
@@ -277,6 +275,8 @@ public class RuleStore {
       Thread.currentThread().interrupt();
       throw new NotificationStoreException(e);
     }
+
+    cache.invalidateAll();
   }
 
   /**
@@ -286,8 +286,7 @@ public class RuleStore {
    * @param context Riak context from previous fetch operation
    * @return Riak Map update operation
    */
-  private static MapUpdate getUpdate(
-      @NotNull final Rule rule, @NotNull final Optional<Context> context) {
+  private static MapUpdate getUpdate(final Rule rule, final Optional<Context> context) {
     final MapUpdate op = new MapUpdate();
     if (rule.getMaxSize().isPresent()) {
       op.update(Rule.MAX_SIZE, new RegisterUpdate(String.valueOf(rule.getMaxSize().get())));
@@ -313,14 +312,13 @@ public class RuleStore {
    * @param category Rule category to delete
    * @throws NotificationStoreException if unable to delete the rule
    */
-  public void remove(@NotNull final String category) throws NotificationStoreException {
+  public void remove(final String category) throws NotificationStoreException {
     Objects.requireNonNull(category, "category == null");
     Preconditions.checkArgument(!category.isEmpty(), "category cannot be empty");
 
     final Optional<Context> fetchContext = fetchContext();
     if (!fetchContext.isPresent()) {
-      // if we have no existing context, that means the key didn't exist,
-      // so just return.
+      // if we have no existing context, that means the key didn't exist, so just return.
       return;
     }
 
@@ -343,6 +341,8 @@ public class RuleStore {
       Thread.currentThread().interrupt();
       throw new NotificationStoreException(e);
     }
+
+    cache.invalidateAll();
   }
 
   /**
@@ -354,6 +354,7 @@ public class RuleStore {
     final DeleteValue deleteValue = new DeleteValue.Builder(LOCATION).withTimeout(timeout).build();
 
     LOGGER.debug("Deleting key (async): {}", LOCATION);
+
     try (Timer.Context context = deleteTimer.time()) {
       final RiakFuture<Void, Location> future = client.executeAsync(deleteValue);
       future.await(requestTimeout.getQuantity(), requestTimeout.getUnit());
@@ -365,5 +366,7 @@ public class RuleStore {
       Thread.currentThread().interrupt();
       throw new NotificationStoreException(e);
     }
+
+    cache.invalidateAll();
   }
 }

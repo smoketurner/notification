@@ -15,6 +15,11 @@
  */
 package com.smoketurner.notification.application.store;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
 import com.basho.riak.client.api.commands.buckets.StoreBucketProperties;
@@ -34,16 +39,14 @@ import com.smoketurner.notification.application.exceptions.NotificationStoreExce
 import com.smoketurner.notification.application.riak.CursorObject;
 import com.smoketurner.notification.application.riak.CursorUpdate;
 import io.dropwizard.util.Duration;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CursorStore {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CursorStore.class);
   private static final Namespace NAMESPACE = new Namespace("cursors");
+
+  // Riak request timeout default is 60s
+  private static final int DEFAULT_TIMEOUT_MS = 60000;
   private final RiakClient client;
 
   // timeouts
@@ -71,8 +74,10 @@ public class CursorStore {
 
     this.client = Objects.requireNonNull(client, "client == null");
 
-    Objects.requireNonNull(timeout, "riakTimeout == null");
-    this.timeout = Ints.checkedCast(timeout.toMilliseconds());
+    this.timeout =
+        Optional.ofNullable(timeout)
+            .map(t -> Ints.checkedCast(t.toMilliseconds()))
+            .orElse(DEFAULT_TIMEOUT_MS);
     this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
   }
 
@@ -136,10 +141,7 @@ public class CursorStore {
       throw new NotificationStoreException(e);
     }
 
-    if (cursor == null) {
-      return Optional.empty();
-    }
-    return Optional.of(cursor.getValue());
+    return Optional.ofNullable(cursor).map(c -> c.getValue());
   }
 
   /**
