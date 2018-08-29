@@ -81,6 +81,7 @@ public class NotificationClient implements Closeable {
     try (Timer.Context context = fetchTimer.time()) {
       while (paginate) {
         LOGGER.info("GET {}", uri);
+
         final Invocation.Builder builder = client.target(uri).request(APPLICATION_JSON);
         if (nextRange != null) {
           builder.header("Range", nextRange);
@@ -115,7 +116,9 @@ public class NotificationClient implements Closeable {
    */
   public Optional<Notification> store(final String username, final Notification notification) {
     Objects.requireNonNull(notification, "notification == null");
+
     final URI uri = getTarget(username);
+
     LOGGER.debug("POST {}", uri);
 
     try (Timer.Context context = storeTimer.time()) {
@@ -136,11 +139,13 @@ public class NotificationClient implements Closeable {
    * @param username User to delete notifications from
    * @param ids Notification IDs to delete
    */
-  public void delete(final String username, final Collection<Long> ids) {
+  public void delete(final String username, final Collection<String> ids) {
     Objects.requireNonNull(ids, "ids == null");
     Preconditions.checkArgument(!ids.isEmpty(), "ids cannot be empty");
+
     final URI uri =
         UriBuilder.fromUri(getTarget(username)).queryParam("ids", Joiner.on(",").join(ids)).build();
+
     LOGGER.debug("DELETE {}", uri);
 
     try (Timer.Context context = deleteTimer.time()) {
@@ -157,6 +162,7 @@ public class NotificationClient implements Closeable {
    */
   public void delete(final String username) {
     final URI uri = getTarget(username);
+
     LOGGER.debug("DELETE {}", uri);
 
     try (Timer.Context context = deleteTimer.time()) {
@@ -173,7 +179,9 @@ public class NotificationClient implements Closeable {
    */
   public boolean ping() {
     final URI uri = UriBuilder.fromUri(rootUri).path("/ping").build();
+
     LOGGER.debug("GET {}", uri);
+
     final String response = client.target(uri).request().get(String.class);
     return "pong".equals(response);
   }
@@ -185,7 +193,9 @@ public class NotificationClient implements Closeable {
    */
   public String version() {
     final URI uri = UriBuilder.fromUri(rootUri).path("/version").build();
+
     LOGGER.debug("GET {}", uri);
+
     return client.target(uri).request().get(String.class);
   }
 

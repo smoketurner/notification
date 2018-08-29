@@ -37,12 +37,12 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 @State(Scope.Benchmark)
 public class NotificationStoreBenchmark {
 
-  private final List<Notification> notifications = new ArrayList<>(1000000);
+  private final List<Notification> notifications = new ArrayList<>(100000);
 
   @Setup
   public void setUp() {
-    for (long i = 0; i < 1000000; i++) {
-      notifications.add(Notification.create(i));
+    for (int i = 0; i < 100000; i++) {
+      notifications.add(Notification.create(String.format("%05d", i)));
     }
   }
 
@@ -53,12 +53,12 @@ public class NotificationStoreBenchmark {
 
   @Benchmark
   public Optional<Notification> tryFind() {
-    return NotificationStore.tryFind(notifications, 10000);
+    return NotificationStore.tryFind(notifications, "10000");
   }
 
   @Benchmark
   public int indexOf() {
-    return NotificationStore.indexOf(notifications, 10000);
+    return NotificationStore.indexOf(notifications, "10000");
   }
 
   public static void main(String[] args) throws Exception {

@@ -19,8 +19,8 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
-import com.smoketurner.notification.application.core.LongSetParam;
 import com.smoketurner.notification.application.core.RangeHeader;
+import com.smoketurner.notification.application.core.StringSetParam;
 import com.smoketurner.notification.application.core.UserNotifications;
 import com.smoketurner.notification.application.exceptions.NotificationException;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
@@ -100,8 +100,8 @@ public class NotificationResource {
       return Response.ok(notifications).header(ACCEPT_RANGES_HEADER, RANGE_NAME).build();
     }
 
-    // The newest notification is always the first notification in the list
-    // and is used to set the Last-Modified response header below.
+    // The newest notification is always the first notification in the list and is used to set the
+    // Last-Modified response header below.
     final Notification newest = notifications.first();
     final Notification oldest = notifications.last();
 
@@ -117,7 +117,7 @@ public class NotificationResource {
     if (rangeHeader == null) {
       builder = Response.ok();
       try {
-        to = Iterables.getLast(store.skip(notifications, from.getId(0L), true, limit));
+        to = Iterables.getLast(store.skip(notifications, from.getId(""), true, limit));
       } catch (NoSuchElementException e) {
         LOGGER.debug("List of notifications is empty, using oldest", e);
         to = oldest;
@@ -138,9 +138,9 @@ public class NotificationResource {
           }
           fromInclusive = range.getFromInclusive().orElse(true);
 
-          to = Iterables.getLast(store.skip(notifications, from.getId(0L), fromInclusive, limit));
+          to = Iterables.getLast(store.skip(notifications, from.getId(""), fromInclusive, limit));
         } else {
-          to = Iterables.getLast(store.skip(notifications, from.getId(0L), true, limit));
+          to = Iterables.getLast(store.skip(notifications, from.getId(""), true, limit));
         }
       } catch (NoSuchElementException e) {
         LOGGER.debug("List of notifications is empty, using oldest", e);
@@ -157,14 +157,14 @@ public class NotificationResource {
     final ImmutableSortedSet<Notification> subSet =
         notifications.subSet(from, fromInclusive, to, toInclusive);
     if (!subSet.isEmpty()) {
-      final long firstId = subSet.first().getId(0L);
-      final long lastId = subSet.last().getId(0L);
+      final String firstId = subSet.first().getId("");
+      final String lastId = subSet.last().getId("");
 
       // Add the Content-Range and Next-Range response headers
-      builder.header(CONTENT_RANGE_HEADER, String.format("%s %d..%d", RANGE_NAME, firstId, lastId));
+      builder.header(CONTENT_RANGE_HEADER, String.format("%s %s..%s", RANGE_NAME, firstId, lastId));
       if (subSet.last().compareTo(oldest) < 0) {
         builder.header(
-            NEXT_RANGE_HEADER, String.format("%s ]%d..; max=%d", RANGE_NAME, lastId, limit));
+            NEXT_RANGE_HEADER, String.format("%s ]%s..; max=%d", RANGE_NAME, lastId, limit));
       }
     }
 
@@ -199,7 +199,7 @@ public class NotificationResource {
   @Path("/{username}")
   public Response delete(
       @PathParam("username") final String username,
-      @QueryParam("ids") final LongSetParam idsParam) {
+      @QueryParam("ids") final StringSetParam idsParam) {
 
     try {
       if (idsParam != null) {

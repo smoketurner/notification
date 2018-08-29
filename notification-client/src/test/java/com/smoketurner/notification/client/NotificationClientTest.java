@@ -47,7 +47,7 @@ public class NotificationClientTest {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Notification> fetch(@PathParam("username") String username) {
-      return ImmutableList.of(Notification.builder().withId(1L).build());
+      return ImmutableList.of(Notification.create("1"));
     }
 
     @POST
@@ -115,7 +115,7 @@ public class NotificationClientTest {
 
   @Test
   public void testStore() throws Exception {
-    final Notification expected = Notification.builder().withId(1L).build();
+    final Notification expected = Notification.create("1");
     final Optional<Notification> actual = client.store("test", expected);
     assertThat(actual.isPresent()).isTrue();
     assertThat(actual.get()).isEqualTo(expected);
@@ -123,7 +123,7 @@ public class NotificationClientTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testStoreEmptyUsername() throws Exception {
-    final Notification expected = Notification.builder().withId(1L).build();
+    final Notification expected = Notification.create("1");
     client.store("", expected);
   }
 
@@ -139,17 +139,17 @@ public class NotificationClientTest {
 
   @Test
   public void testDelete() throws Exception {
-    client.delete("test", ImmutableList.of(1L, 2L));
+    client.delete("test", ImmutableList.of("1", "2"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testDeleteEmptyUsername() throws Exception {
-    client.delete("", ImmutableList.of(1L));
+    client.delete("", ImmutableList.of("1"));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testDeleteEmptyIds() throws Exception {
-    client.delete("test", ImmutableList.<Long>of());
+    client.delete("test", ImmutableList.<String>of());
   }
 
   @Test

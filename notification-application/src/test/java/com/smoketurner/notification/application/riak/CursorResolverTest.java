@@ -35,7 +35,7 @@ public class CursorResolverTest {
 
   @Test
   public void testSingleSibling() throws Exception {
-    final CursorObject list = new CursorObject("test", 1L);
+    final CursorObject list = new CursorObject("test", "1");
     final List<CursorObject> siblings = Collections.singletonList(list);
     final CursorObject actual = resolver.resolve(siblings);
     assertThat(actual).isEqualTo(list);
@@ -44,18 +44,18 @@ public class CursorResolverTest {
   @Test
   @SuppressWarnings("NullAway")
   public void testMultipleSibling() throws Exception {
-    final CursorObject cursor1 = new CursorObject("test", 1L);
-    final CursorObject cursor2 = new CursorObject("test", 2L);
-    final CursorObject cursor3 = new CursorObject("test", 3L);
-    final CursorObject cursor4 = new CursorObject("test", 4L);
-    final CursorObject cursor5 = new CursorObject("test", 5L);
-    final CursorObject cursor6 = new CursorObject("test", 6L);
+    final CursorObject cursor1 = new CursorObject("test", "1");
+    final CursorObject cursor2 = new CursorObject("test", "2");
+    final CursorObject cursor3 = new CursorObject("test", "3");
+    final CursorObject cursor4 = new CursorObject("test", "4");
+    final CursorObject cursor5 = new CursorObject("test", "5");
+    final CursorObject cursor6 = new CursorObject("test", "6");
 
     final List<CursorObject> siblings =
         Arrays.asList(cursor1, cursor2, cursor3, cursor4, cursor5, cursor6);
 
     final CursorObject actual = resolver.resolve(siblings);
     assertThat(actual).isEqualTo(cursor6);
-    assertThat(actual.getValue()).isEqualTo(6L);
+    assertThat(actual.getValue()).isEqualTo("6");
   }
 }

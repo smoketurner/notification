@@ -23,14 +23,14 @@ import io.dropwizard.jersey.params.AbstractParam;
 import java.util.Collections;
 import java.util.Set;
 
-public class LongSetParam extends AbstractParam<Set<Long>> {
+public class StringSetParam extends AbstractParam<Set<String>> {
 
-  public LongSetParam(String input) {
+  public StringSetParam(String input) {
     super(input);
   }
 
   @Override
-  protected Set<Long> parse(@Nullable final String input) throws Exception {
+  protected Set<String> parse(@Nullable final String input) throws Exception {
     if (Strings.isNullOrEmpty(input)) {
       return Collections.emptySet();
     }
@@ -38,14 +38,6 @@ public class LongSetParam extends AbstractParam<Set<Long>> {
     final Iterable<String> splitter =
         Splitter.on(',').omitEmptyStrings().trimResults().split(input);
 
-    final ImmutableSet.Builder<Long> builder = ImmutableSet.builder();
-    for (String value : splitter) {
-      try {
-        builder.add(Long.parseLong(value));
-      } catch (NumberFormatException ignore) {
-        // ignore invalid numbers
-      }
-    }
-    return builder.build();
+    return ImmutableSet.copyOf(splitter);
   }
 }

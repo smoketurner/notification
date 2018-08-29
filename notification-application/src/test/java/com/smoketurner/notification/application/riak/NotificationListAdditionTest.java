@@ -24,7 +24,7 @@ public class NotificationListAdditionTest {
 
   @Test
   public void testAddsToNotification() {
-    final Notification notification = Notification.create(1L);
+    final Notification notification = Notification.create("1");
 
     final NotificationListAddition update = new NotificationListAddition(notification);
 
@@ -40,7 +40,7 @@ public class NotificationListAdditionTest {
 
   @Test
   public void testNoOriginal() {
-    final Notification notification = Notification.create(1L);
+    final Notification notification = Notification.create("1");
 
     final NotificationListAddition update = new NotificationListAddition(notification);
 

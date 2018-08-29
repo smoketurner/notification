@@ -30,6 +30,7 @@ import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.Ints;
 import com.smoketurner.notification.api.Notification;
@@ -54,15 +55,18 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NotificationStore {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NotificationStore.class);
-  public static final String CURSOR_NAME = "notifications";
+  private static final String CURSOR_NAME = "notifications";
   private static final Namespace NAMESPACE = new Namespace("notifications");
+
+  // Riak request timeout default is 60s
+  private static final int DEFAULT_TIMEOUT_MS = 60000;
+
   private final RiakClient client;
   private final IdGenerator idGenerator;
   private final CursorStore cursors;
@@ -86,6 +90,8 @@ public class NotificationStore {
    * @param idGenerator ID Generator
    * @param cursors Cursor data store
    * @param ruleStore Rule data store
+   * @param timeout Riak server-side timeout
+   * @param requestTimeout Riak client-side timeout
    */
   public NotificationStore(
       final RiakClient client,
@@ -105,8 +111,10 @@ public class NotificationStore {
     this.cursors = Objects.requireNonNull(cursors, "cursors == null");
     this.ruleStore = Objects.requireNonNull(ruleStore, "ruleStore == null");
 
-    Objects.requireNonNull(timeout, "riakTimeout == null");
-    this.timeout = Ints.checkedCast(timeout.toMilliseconds());
+    this.timeout =
+        Optional.ofNullable(timeout)
+            .map(t -> Ints.checkedCast(t.toMilliseconds()))
+            .orElse(DEFAULT_TIMEOUT_MS);
     this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
   }
 
@@ -136,7 +144,7 @@ public class NotificationStore {
    * @return Optional list of notifications or absent
    * @throws NotificationStoreException if unable to fetch the notifications
    */
-  public Optional<UserNotifications> fetch(@NotNull final String username)
+  public Optional<UserNotifications> fetch(final String username)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -182,7 +190,7 @@ public class NotificationStore {
    * @throws NotificationStoreException if unable to update the cursor
    */
   public UserNotifications splitNotifications(
-      @NotNull final String username, @Nullable final SortedSet<Notification> notifications)
+      final String username, @Nullable final SortedSet<Notification> notifications)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -195,7 +203,7 @@ public class NotificationStore {
 
     // get the ID of the most recent notification (this should never be
     // zero)
-    final long newestId = notifications.first().getId(0L);
+    final String newestId = notifications.first().getId("");
     LOGGER.debug("User ({}) newest notification ID: {}", username, newestId);
 
     // fetch rules from cache
@@ -204,7 +212,7 @@ public class NotificationStore {
 
     final Rollup unseenRollup = new Rollup(rules);
 
-    final Optional<Long> cursor = cursors.fetch(username, CURSOR_NAME);
+    final Optional<String> cursor = cursors.fetch(username, CURSOR_NAME);
     if (!cursor.isPresent()) {
       // if the user has no cursor, update the cursor to the newest
       // notification
@@ -215,13 +223,12 @@ public class NotificationStore {
       return new UserNotifications(unseenRollup.rollup(setUnseenState(notifications, true)));
     }
 
-    final long lastSeenId = cursor.orElse(0L);
+    final String lastSeenId = cursor.orElse("");
     LOGGER.debug("User ({}) last seen notification ID: {}", username, lastSeenId);
 
-    // if the latest seen notification ID is less than the newest
-    // notification ID, then update the cursor to the newest notification
-    // ID.
-    if (lastSeenId < newestId) {
+    // if the latest seen notification ID is less than the newest notification ID, then update the
+    // cursor to the newest notification ID.
+    if (lastSeenId.compareTo(newestId) < 0) {
       LOGGER.debug("User ({}) updating cursor to {}", username, newestId);
       cursors.store(username, CURSOR_NAME, newestId);
     }
@@ -229,8 +236,7 @@ public class NotificationStore {
     // get the parent ID of the last seen notification ID
     final Optional<Notification> lastNotification = tryFind(notifications, lastSeenId);
     if (!lastNotification.isPresent()) {
-      // if the last notification is not found, set all of the
-      // notifications as unseen
+      // if the last notification is not found, set all of the notifications as unseen
       return new UserNotifications(unseenRollup.rollup(setUnseenState(notifications, true)));
     }
 
@@ -255,8 +261,7 @@ public class NotificationStore {
    * @return the stored notification
    * @throws NotificationStoreException if unable to store the notification
    */
-  public Notification store(
-      @NotNull final String username, @NotNull final Notification notification)
+  public Notification store(final String username, final Notification notification)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -300,7 +305,7 @@ public class NotificationStore {
    * @param username User to delete all the notifications
    * @throws NotificationStoreException if unable to delete the notifications
    */
-  public void removeAll(@NotNull final String username) throws NotificationStoreException {
+  public void removeAll(final String username) throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
     Preconditions.checkArgument(!username.isEmpty(), "username cannot be empty");
@@ -331,7 +336,7 @@ public class NotificationStore {
    * @param ids Notification IDs to remove
    * @throws NotificationStoreException if unable to remove the notifications
    */
-  public void remove(@NotNull final String username, @NotNull final Collection<Long> ids)
+  public void remove(final String username, final Collection<String> ids)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -374,7 +379,7 @@ public class NotificationStore {
    * @return the updated notifications
    */
   public static Stream<Notification> setUnseenState(
-      @NotNull final Iterable<Notification> notifications, final boolean unseen) {
+      final Iterable<Notification> notifications, final boolean unseen) {
 
     return StreamSupport.stream(notifications.spliterator(), false)
         .map(notification -> Notification.builder(notification).withUnseen(unseen).build());
@@ -389,23 +394,28 @@ public class NotificationStore {
    * @return the notification
    */
   public static Optional<Notification> tryFind(
-      @NotNull final Iterable<Notification> notifications, final long id) {
+      final Iterable<Notification> notifications, final String id) {
+
+    Objects.requireNonNull(notifications, "notifications == null");
+
+    if (Strings.isNullOrEmpty(id)) {
+      return Optional.empty();
+    }
 
     final com.google.common.base.Optional<Notification> result =
         Iterables.tryFind(
             notifications,
             notification -> {
               // first check that the ID matches
-              final Optional<Long> notificationId = notification.getId();
+              final Optional<String> notificationId = notification.getId();
               if (!notificationId.isPresent()) {
                 return false;
-              } else if (notificationId.get() == id) {
+              } else if (id.equals(notificationId.get())) {
                 return true;
               }
 
-              // Check to see if the notification is included in any
-              // rolled up notifications. This code should not be hit as
-              // tryFind() is called prior to the rollups happening, but
+              // Check to see if the notification is included in any rolled up notifications. This
+              // code should not be hit as tryFind() is called prior to the rollups happening, but
               // we include this here for completeness.
               final Collection<Notification> children = notification.getNotifications();
               if (children.isEmpty()) {
@@ -425,21 +435,26 @@ public class NotificationStore {
    * @param id Notification ID to find
    * @return the position of the notification or -1 if not found
    */
-  public static int indexOf(@NotNull final Iterable<Notification> notifications, final long id) {
+  public static int indexOf(final Iterable<Notification> notifications, final String id) {
+
+    Objects.requireNonNull(notifications, "notifications == null");
+
+    if (Strings.isNullOrEmpty(id)) {
+      return -1;
+    }
 
     return Iterables.indexOf(
         notifications,
         notification -> {
           // first check that the ID matches
-          final Optional<Long> notificationId = notification.getId();
+          final Optional<String> notificationId = notification.getId();
           if (!notificationId.isPresent()) {
             return false;
-          } else if (notificationId.get() == id) {
+          } else if (id.equals(notificationId.get())) {
             return true;
           }
 
-          // then check to see if the notification is included in any rolled
-          // up notifications
+          // then check to see if the notification is included in any rolled up notifications
           final Collection<Notification> children = notification.getNotifications();
           if (children.isEmpty()) {
             return false;
@@ -459,11 +474,13 @@ public class NotificationStore {
    * @return Iterable containing the subset of the original notifications
    */
   public Iterable<Notification> skip(
-      @NotNull final Iterable<Notification> notifications,
-      final long startId,
+      final Iterable<Notification> notifications,
+      final String startId,
       final boolean inclusive,
       final int limitSize) {
+
     Objects.requireNonNull(notifications, "notifications == null");
+
     final int position = indexOf(notifications, startId);
     if (position == -1) {
       return Iterables.limit(notifications, limitSize);

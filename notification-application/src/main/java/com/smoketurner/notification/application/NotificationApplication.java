@@ -39,7 +39,6 @@ import com.smoketurner.notification.application.riak.NotificationListResolver;
 import com.smoketurner.notification.application.store.CursorStore;
 import com.smoketurner.notification.application.store.NotificationStore;
 import com.smoketurner.notification.application.store.RuleStore;
-import com.smoketurner.snowizard.core.IdWorker;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -95,9 +94,7 @@ public class NotificationApplication extends Application<NotificationConfigurati
     environment.jersey().register(WebSecurityFilter.class);
 
     // snowizard
-    final IdWorker snowizard = configuration.getSnowizard().build(environment);
-    final IdGenerator idGenerator =
-        new IdGenerator(snowizard, configuration.getSnowizard().isEnabled());
+    final IdGenerator idGenerator = new IdGenerator();
 
     // riak
     final RiakClient client = configuration.getRiak().build();

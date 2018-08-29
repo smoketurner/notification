@@ -28,7 +28,7 @@ public class NotificationConfiguration extends Configuration {
 
   @NotNull
   @MinDuration(value = 1, unit = TimeUnit.SECONDS)
-  private Duration ruleCacheTimeout = Duration.seconds(30);
+  private Duration ruleCacheTimeout = Duration.minutes(5);
 
   @NotNull
   @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
@@ -39,9 +39,6 @@ public class NotificationConfiguration extends Configuration {
   private Duration riakRequestTimeout = Duration.seconds(5);
 
   @Valid @NotNull @JsonProperty private final RiakFactory riak = new RiakFactory();
-
-  @Valid @NotNull @JsonProperty
-  private final SnowizardConfiguration snowizard = new SnowizardConfiguration();
 
   @JsonProperty
   public Duration getRiakTimeout() {
@@ -76,10 +73,5 @@ public class NotificationConfiguration extends Configuration {
   @JsonProperty
   public RiakFactory getRiak() {
     return riak;
-  }
-
-  @JsonProperty
-  public SnowizardConfiguration getSnowizard() {
-    return snowizard;
   }
 }

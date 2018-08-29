@@ -37,7 +37,6 @@ import io.dropwizard.util.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +44,9 @@ public class CursorStore {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CursorStore.class);
   private static final Namespace NAMESPACE = new Namespace("cursors");
+
+  // Riak request timeout default is 60s
+  private static final int DEFAULT_TIMEOUT_MS = 60000;
   private final RiakClient client;
 
   // timeouts
@@ -65,6 +67,7 @@ public class CursorStore {
    */
   public CursorStore(
       final RiakClient client, final Duration timeout, final Duration requestTimeout) {
+
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(CursorStore.class, "fetch"));
     this.storeTimer = registry.timer(MetricRegistry.name(CursorStore.class, "store"));
@@ -72,8 +75,10 @@ public class CursorStore {
 
     this.client = Objects.requireNonNull(client, "client == null");
 
-    Objects.requireNonNull(timeout, "riakTimeout == null");
-    this.timeout = Ints.checkedCast(timeout.toMilliseconds());
+    this.timeout =
+        Optional.ofNullable(timeout)
+            .map(t -> Ints.checkedCast(t.toMilliseconds()))
+            .orElse(DEFAULT_TIMEOUT_MS);
     this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
   }
 
@@ -104,7 +109,7 @@ public class CursorStore {
    * @return the last seen notification ID
    * @throws NotificationStoreException if unable to fetch the cursor
    */
-  public Optional<Long> fetch(@NotNull final String username, @NotNull final String cursorName)
+  public Optional<String> fetch(final String username, final String cursorName)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -137,10 +142,7 @@ public class CursorStore {
       throw new NotificationStoreException(e);
     }
 
-    if (cursor == null) {
-      return Optional.empty();
-    }
-    return Optional.of(cursor.getValue());
+    return Optional.ofNullable(cursor).map(c -> c.getValue());
   }
 
   /**
@@ -151,8 +153,7 @@ public class CursorStore {
    * @param value Value to set
    * @throws NotificationStoreException if unable to update the cursor
    */
-  public void store(
-      @NotNull final String username, @NotNull final String cursorName, final long value)
+  public void store(final String username, final String cursorName, final String value)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -192,7 +193,7 @@ public class CursorStore {
    * @param cursorName Name of the cursor
    * @throws NotificationStoreException if unable to delete the cursor
    */
-  public void delete(@NotNull final String username, @NotNull final String cursorName)
+  public void delete(final String username, final String cursorName)
       throws NotificationStoreException {
 
     Objects.requireNonNull(username, "username == null");
@@ -225,7 +226,7 @@ public class CursorStore {
    * @param cursorName Name of the cursor to fetch
    * @return the key name
    */
-  public String getCursorKey(@NotNull final String username, @NotNull final String cursorName) {
+  public String getCursorKey(final String username, final String cursorName) {
     return username + "-" + cursorName;
   }
 }

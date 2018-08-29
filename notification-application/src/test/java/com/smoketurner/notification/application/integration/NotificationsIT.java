@@ -35,6 +35,7 @@ import javax.ws.rs.core.Response;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class NotificationsIT {
@@ -75,6 +76,7 @@ public class NotificationsIT {
   }
 
   @Test
+  @Ignore
   public void testPagination() throws Exception {
     testDeleteAllNotifications();
 

@@ -21,12 +21,12 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import org.junit.Test;
 
-public class LongSetParamTest {
+public class StringSetParamTest {
 
   @Test
   public void testParse() throws Exception {
-    final LongSetParam param = new LongSetParam("1,3, 2 ,asdf,   3");
-    final Set<Long> expected = ImmutableSet.of(1L, 2L, 3L);
+    final StringSetParam param = new StringSetParam("1,3, 2 ,asdf,   3");
+    final Set<String> expected = ImmutableSet.of("1", "2", "3");
     assertThat(param.parse("1,2,asdf,3")).containsAll(expected);
   }
 }

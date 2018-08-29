@@ -1,9 +1,3 @@
-# Snowizard-specific options.
-snowizard:
-
-  datacenterId: 1
-  workerId: 1
-
 # Riak-specific options.
 riak:
 

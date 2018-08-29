@@ -24,7 +24,7 @@ public class NotificationListDeletionTest {
 
   @Test
   public void testDeletesFromNotification() {
-    final ImmutableList<Long> ids = ImmutableList.of(1L, 2L, 3L);
+    final ImmutableList<String> ids = ImmutableList.of("1", "2", "3");
     final NotificationListDeletion update = new NotificationListDeletion(ids);
 
     final NotificationListObject original = new NotificationListObject();
@@ -39,7 +39,7 @@ public class NotificationListDeletionTest {
 
   @Test
   public void testNoOriginal() {
-    final ImmutableList<Long> ids = ImmutableList.of(1L, 2L, 3L);
+    final ImmutableList<String> ids = ImmutableList.of("1", "2", "3");
     final NotificationListDeletion update = new NotificationListDeletion(ids);
 
     final NotificationListObject expected = new NotificationListObject();

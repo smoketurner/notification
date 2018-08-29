@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @JsonSnakeCase
@@ -40,8 +39,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class Notification implements Comparable<Notification> {
 
-  private final Optional<Long> id;
-  private final Optional<String> idStr;
+  private final Optional<String> id;
 
   @NotEmpty private final String category;
 
@@ -55,45 +53,36 @@ public final class Notification implements Comparable<Notification> {
   /**
    * Constructor
    *
-   * @param id
-   * @param idStr
    * @param category
    * @param message
-   * @param createdAt
-   * @param unseen
-   * @param properties
-   * @param notifications
    */
   @JsonCreator
   private Notification(
-      @JsonProperty("id") @Nullable final Long id,
-      @JsonProperty("id_str") @Nullable final String idStr,
       @JsonProperty("category") final String category,
-      @JsonProperty("message") final String message,
-      @JsonProperty("created_at") @Nullable final ZonedDateTime createdAt,
-      @JsonProperty("unseen") @Nullable final Boolean unseen,
-      @JsonProperty("properties") @Nullable final Map<String, String> properties,
-      @JsonProperty("notifications") @Nullable final Collection<Notification> notifications) {
-    this.id = Optional.ofNullable(id);
-    this.idStr = Optional.ofNullable(idStr);
+      @JsonProperty("message") final String message) {
+    this.id = Optional.empty();
     this.category = category;
     this.message = message;
-    if (createdAt != null) {
-      this.createdAt = createdAt;
-    } else {
-      this.createdAt = ZonedDateTime.now(Clock.systemUTC());
-    }
-    this.unseen = Optional.ofNullable(unseen);
-    if (properties != null) {
-      this.properties = properties;
-    } else {
-      this.properties = Collections.emptyMap();
-    }
-    if (notifications != null) {
-      this.notifications = notifications;
-    } else {
-      this.notifications = Collections.emptyList();
-    }
+    this.createdAt = ZonedDateTime.now(Clock.systemUTC());
+    this.unseen = Optional.empty();
+    this.properties = Collections.emptyMap();
+    this.notifications = Collections.emptyList();
+  }
+
+  /**
+   * Constructor
+   *
+   * @param builder
+   */
+  private Notification(final Builder builder) {
+    this.id = Optional.ofNullable(builder.id);
+    this.category = builder.category;
+    this.message = builder.message;
+    this.createdAt =
+        Optional.ofNullable(builder.createdAt).orElse(ZonedDateTime.now(Clock.systemUTC()));
+    this.unseen = Optional.ofNullable(builder.unseen);
+    this.properties = Optional.ofNullable(builder.properties).orElse(Collections.emptyMap());
+    this.notifications = Optional.ofNullable(builder.notifications).orElse(Collections.emptyList());
   }
 
   /**
@@ -150,19 +139,17 @@ public final class Notification implements Comparable<Notification> {
    * @param id Notification ID
    * @return Notification
    */
-  public static Notification create(final long id) {
+  public static Notification create(final String id) {
     return builder().withId(id).build();
   }
 
   public static class Builder {
 
-    @Nullable private Long id;
+    @Nullable private String id;
 
-    @Nullable private String idStr;
+    private final String category;
 
-    @NotNull private final String category;
-
-    @NotNull private final String message;
+    private final String message;
 
     @Nullable private ZonedDateTime createdAt;
 
@@ -178,14 +165,13 @@ public final class Notification implements Comparable<Notification> {
      * @param category Notification category
      * @param message Notification message
      */
-    public Builder(@NotNull final String category, @NotNull final String message) {
+    public Builder(final String category, final String message) {
       this.category = Objects.requireNonNull(category);
       this.message = Objects.requireNonNull(message);
     }
 
-    public Builder fromNotification(@NotNull final Notification other) {
+    public Builder fromNotification(final Notification other) {
       this.id = other.id.orElse(null);
-      this.idStr = other.idStr.orElse(null);
       if (other.createdAt != null) {
         this.createdAt = other.createdAt;
       }
@@ -199,18 +185,12 @@ public final class Notification implements Comparable<Notification> {
       return this;
     }
 
-    public Builder withId(@Nullable final Long id) {
-      if (id == null) {
-        this.id = null;
-        this.idStr = null;
-      } else {
-        this.id = id;
-        this.idStr = String.valueOf(id);
-      }
+    public Builder withId(@Nullable final String id) {
+      this.id = id;
       return this;
     }
 
-    public Builder withCreatedAt(@NotNull final ZonedDateTime createdAt) {
+    public Builder withCreatedAt(final ZonedDateTime createdAt) {
       this.createdAt = Objects.requireNonNull(createdAt, "createdAt == null");
       return this;
     }
@@ -220,24 +200,23 @@ public final class Notification implements Comparable<Notification> {
       return this;
     }
 
-    public Builder withProperties(@NotNull final Map<String, String> properties) {
+    public Builder withProperties(final Map<String, String> properties) {
       this.properties = Objects.requireNonNull(properties, "properties == null");
       return this;
     }
 
-    public Builder withNotifications(@NotNull final Collection<Notification> notifications) {
+    public Builder withNotifications(final Collection<Notification> notifications) {
       this.notifications = Objects.requireNonNull(notifications, "notifications == null");
       return this;
     }
 
     public Notification build() {
-      return new Notification(
-          id, idStr, category, message, createdAt, unseen, properties, notifications);
+      return new Notification(this);
     }
   }
 
   @JsonProperty
-  public Optional<Long> getId() {
+  public Optional<String> getId() {
     return id;
   }
 
@@ -251,13 +230,8 @@ public final class Notification implements Comparable<Notification> {
    * @return Notification ID or zero if not set
    */
   @JsonIgnore
-  public long getId(final long value) {
+  public String getId(final String value) {
     return id.orElse(value);
-  }
-
-  @JsonProperty
-  public Optional<String> getIdStr() {
-    return idStr;
   }
 
   @JsonProperty
@@ -313,7 +287,6 @@ public final class Notification implements Comparable<Notification> {
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("id", id)
-        .add("idStr", idStr)
         .add("category", category)
         .add("message", message)
         .add("createdAt", createdAt)
@@ -332,7 +305,7 @@ public final class Notification implements Comparable<Notification> {
   @Override
   public int compareTo(final Notification that) {
     return ComparisonChain.start()
-        .compare(this.getId(0), that.getId(0), Ordering.natural().reverse())
+        .compare(this.getId(""), that.getId(""), Ordering.natural().reverse())
         .result();
   }
 }

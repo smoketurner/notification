@@ -52,7 +52,7 @@ public class NotificationListObject {
   @RiakVTag @Nullable private String vtag;
 
   private final TreeSet<Notification> notifications = new TreeSet<>();
-  private final Set<Long> deletedIds = new HashSet<>();
+  private final Set<String> deletedIds = new HashSet<>();
 
   /** Constructor */
   public NotificationListObject() {
@@ -82,11 +82,11 @@ public class NotificationListObject {
     }
   }
 
-  public void deleteNotification(final long id) {
+  public void deleteNotification(final String id) {
     deletedIds.add(id);
   }
 
-  public void deleteNotifications(final Collection<Long> ids) {
+  public void deleteNotifications(final Collection<String> ids) {
     deletedIds.addAll(ids);
   }
 
@@ -99,7 +99,7 @@ public class NotificationListObject {
     return notifications;
   }
 
-  public Set<Long> getDeletedIds() {
+  public Set<String> getDeletedIds() {
     return deletedIds;
   }
 

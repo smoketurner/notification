@@ -36,12 +36,10 @@ RUN ./mvnw clean package -DskipTests=true -Dmaven.javadoc.skip=true -Dmaven.sour
 
 FROM openjdk:8-jre-alpine
 
-ARG VERSION="1.2.2-SNAPSHOT"
+ARG VERSION="1.3.1-SNAPSHOT"
 
 LABEL name="notification" version=$VERSION
 
-ENV DW_DATACENTER_ID 1
-ENV DW_WORKER_ID 1
 ENV PORT 8080
 
 RUN apk add --no-cache curl

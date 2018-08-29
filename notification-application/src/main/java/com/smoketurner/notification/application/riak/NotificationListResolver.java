@@ -53,7 +53,7 @@ public class NotificationListResolver implements ConflictResolver<NotificationLi
 
       final Iterator<NotificationListObject> iterator = siblings.iterator();
       final NotificationListObject resolved = iterator.next();
-      final Set<Long> deletedIds = resolved.getDeletedIds();
+      final Set<String> deletedIds = resolved.getDeletedIds();
 
       // add all notifications
       while (iterator.hasNext()) {
@@ -92,7 +92,7 @@ public class NotificationListResolver implements ConflictResolver<NotificationLi
    * @param ids Notification IDs to delete
    */
   public static void removeNotifications(
-      final Collection<Notification> notifications, final Collection<Long> ids) {
+      final Collection<Notification> notifications, final Collection<String> ids) {
 
     notifications.removeIf(
         notification -> {
