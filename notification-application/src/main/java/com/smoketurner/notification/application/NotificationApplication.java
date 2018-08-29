@@ -48,8 +48,6 @@ import io.dropwizard.jersey.filter.RequestIdFilter;
 import io.dropwizard.jersey.filter.RuntimeFilter;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.federecio.dropwizard.swagger.SwaggerBundle;
-import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 public class NotificationApplication extends Application<NotificationConfiguration> {
 
@@ -70,16 +68,6 @@ public class NotificationApplication extends Application<NotificationConfigurati
     bootstrap.setConfigurationSourceProvider(
         new SubstitutingSourceProvider(
             bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
-
-    // add Swagger bundle
-    bootstrap.addBundle(
-        new SwaggerBundle<NotificationConfiguration>() {
-          @Override
-          protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(
-              final NotificationConfiguration configuration) {
-            return configuration.getSwagger();
-          }
-        });
 
     // add Riak bundle
     bootstrap.addBundle(

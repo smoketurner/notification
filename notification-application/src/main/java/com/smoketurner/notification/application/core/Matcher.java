@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.function.Predicate;
-import javax.validation.constraints.NotNull;
 
 public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
@@ -73,7 +72,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @param notification Notification to match
    * @return true if the notification matches, otherwise false
    */
-  public boolean checkMatch(@NotNull final Notification notification) {
+  public boolean checkMatch(final Notification notification) {
     if (!rule.getMatchOn().isPresent()) {
       return true;
     }
@@ -101,7 +100,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @param notification Notification to check
    * @return true if the notification category matches, otherwise false
    */
-  public boolean checkCategory(@NotNull final Notification notification) {
+  public boolean checkCategory(final Notification notification) {
     return Objects.equals(this.notification.getCategory(), notification.getCategory());
   }
 
@@ -111,7 +110,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @param notification Notification to check
    * @return true if the notification is within the maximum duration, otherwise false.
    */
-  public boolean checkDuration(@NotNull final Notification notification) {
+  public boolean checkDuration(final Notification notification) {
     if (!rule.getMaxDuration().isPresent()) {
       return true;
     }
@@ -132,7 +131,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @return true if the notification can be added, otherwise false.
    */
   @Override
-  public boolean test(@NotNull final Notification notification) {
+  public boolean test(final Notification notification) {
     if (notification != null
         && notification.getId().isPresent()
         && checkCategory(notification)
@@ -145,7 +144,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
   }
 
   @VisibleForTesting
-  boolean add(@NotNull final Collection<Notification> notifications) {
+  boolean add(final Collection<Notification> notifications) {
     return this.notifications.addAll(notifications);
   }
 
@@ -157,7 +156,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
   }
 
   @Override
-  public boolean equals(@Nullable final Object obj) {
+  public boolean equals(final Object obj) {
     if (this == obj) {
       return true;
     }

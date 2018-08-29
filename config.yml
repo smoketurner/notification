@@ -21,17 +21,6 @@ snowizard:
   workerId: ${DW_WORKER_ID:-1}
   enabled: true
 
-# Swagger-specific options.
-swagger:
-
-  resourcePackage: com.smoketurner.notification.application.resources
-  title: Notification API
-  version: v1
-  description: Notification service API
-  contact: jplock@smoketurner.com
-  license: Apache 2.0
-  licenseUrl: https://www.apache.org/licenses/LICENSE-2.0
-
 # Riak-specific options.
 riak:
 

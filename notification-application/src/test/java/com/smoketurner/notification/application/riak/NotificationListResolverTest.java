@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
-@SuppressWarnings("NullAway")
 public class NotificationListResolverTest {
 
   private final NotificationListResolver resolver = new NotificationListResolver();
@@ -45,6 +44,7 @@ public class NotificationListResolverTest {
   }
 
   @Test
+  @SuppressWarnings("NullAway")
   public void testSingleSiblingWithDelete() throws Exception {
     final NotificationListObject list = new NotificationListObject("test");
     list.addNotification(Notification.create(1L));
@@ -56,6 +56,7 @@ public class NotificationListResolverTest {
   }
 
   @Test
+  @SuppressWarnings("NullAway")
   public void testMultipleSibling() throws Exception {
     final Notification n1 = Notification.create(1L);
     final Notification n2 = Notification.create(2L);
@@ -97,6 +98,7 @@ public class NotificationListResolverTest {
   }
 
   @Test
+  @SuppressWarnings("NullAway")
   public void testMultipleSiblingWithDeletes() throws Exception {
     final Notification n1 = Notification.create(1L);
     final Notification n2 = Notification.create(2L);

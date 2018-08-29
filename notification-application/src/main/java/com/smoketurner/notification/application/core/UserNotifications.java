@@ -19,7 +19,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.TreeSet;
@@ -100,7 +99,7 @@ public final class UserNotifications {
   }
 
   @Override
-  public boolean equals(@Nullable final Object obj) {
+  public boolean equals(final Object obj) {
     if (this == obj) {
       return true;
     }

@@ -26,12 +26,6 @@ import com.smoketurner.notification.application.exceptions.NotificationException
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.store.NotificationStore;
 import io.dropwizard.jersey.caching.CacheControl;
-import io.dropwizard.jersey.errors.ErrorMessage;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -56,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/v1/notifications")
-@Api(value = "notifications")
 public class NotificationResource {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NotificationResource.class);
@@ -83,23 +76,9 @@ public class NotificationResource {
   @Path("/{username}")
   @Produces({MediaType.APPLICATION_JSON, "application/javascript"})
   @CacheControl(mustRevalidate = true, noCache = true, noStore = true)
-  @ApiOperation(
-      value = "Fetch Notifications",
-      notes = "Return notifications for the given username",
-      responseContainer = "List",
-      response = Notification.class)
-  @ApiResponses(
-      value = {
-        @ApiResponse(
-            code = 500,
-            message = "Unable to fetch notifications",
-            response = ErrorMessage.class),
-        @ApiResponse(code = 404, message = "Notifications not found", response = ErrorMessage.class)
-      })
   public Response fetch(
-      @ApiParam(value = "range header", required = false) @HeaderParam("Range")
-          final String rangeHeader,
-      @ApiParam(value = "username", required = true) @PathParam("username") final String username) {
+      @HeaderParam("Range") final String rangeHeader,
+      @PathParam("username") final String username) {
 
     final Optional<UserNotifications> list;
     try {
@@ -197,21 +176,9 @@ public class NotificationResource {
   @Path("/{username}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(
-      value = "Store Notification",
-      notes = "Add a new notification",
-      response = Notification.class)
-  @ApiResponses(
-      value = {
-        @ApiResponse(
-            code = 500,
-            message = "Unable to store notification",
-            response = ErrorMessage.class)
-      })
   public Response add(
-      @ApiParam(value = "username", required = true) @PathParam("username") final String username,
-      @ApiParam(value = "notification", required = true) @NotNull @Valid
-          final Notification notification) {
+      @PathParam("username") final String username,
+      @NotNull @Valid final Notification notification) {
 
     final Notification storedNotification;
     try {
@@ -230,17 +197,9 @@ public class NotificationResource {
   @DELETE
   @Timed
   @Path("/{username}")
-  @ApiOperation(value = "Delete Notifications", notes = "Delete individual or all notifications")
-  @ApiResponses(
-      value = {
-        @ApiResponse(
-            code = 500,
-            message = "Unable to delete notifications",
-            response = ErrorMessage.class)
-      })
   public Response delete(
-      @ApiParam(value = "username", required = true) @PathParam("username") final String username,
-      @ApiParam(value = "ids", required = false) @QueryParam("ids") final LongSetParam idsParam) {
+      @PathParam("username") final String username,
+      @QueryParam("ids") final LongSetParam idsParam) {
 
     try {
       if (idsParam != null) {

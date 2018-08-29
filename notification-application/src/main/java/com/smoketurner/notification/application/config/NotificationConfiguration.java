@@ -20,7 +20,6 @@ import com.smoketurner.dropwizard.riak.RiakFactory;
 import io.dropwizard.Configuration;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
-import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import java.util.concurrent.TimeUnit;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -38,9 +37,6 @@ public class NotificationConfiguration extends Configuration {
   @NotNull
   @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
   private Duration riakRequestTimeout = Duration.seconds(5);
-
-  @Valid @NotNull @JsonProperty
-  public final SwaggerBundleConfiguration swagger = new SwaggerBundleConfiguration();
 
   @Valid @NotNull @JsonProperty private final RiakFactory riak = new RiakFactory();
 
@@ -75,11 +71,6 @@ public class NotificationConfiguration extends Configuration {
   @JsonProperty
   public void setRuleCacheTimeout(final Duration timeout) {
     this.ruleCacheTimeout = timeout;
-  }
-
-  @JsonProperty
-  public SwaggerBundleConfiguration getSwagger() {
-    return swagger;
   }
 
   @JsonProperty
