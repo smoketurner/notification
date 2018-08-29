@@ -16,6 +16,7 @@
 package com.smoketurner.notification.application.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Optional;
 import org.junit.Test;
 

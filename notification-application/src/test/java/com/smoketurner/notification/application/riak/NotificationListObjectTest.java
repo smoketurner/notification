@@ -16,11 +16,12 @@
 package com.smoketurner.notification.application.riak;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.google.common.collect.ImmutableList;
+import com.smoketurner.notification.api.Notification;
 import java.util.SortedSet;
 import org.junit.Before;
 import org.junit.Test;
-import com.google.common.collect.ImmutableList;
-import com.smoketurner.notification.api.Notification;
 
 public class NotificationListObjectTest {
 

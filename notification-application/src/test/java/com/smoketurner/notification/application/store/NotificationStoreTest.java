@@ -19,6 +19,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.basho.riak.client.api.RiakClient;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
+import com.smoketurner.notification.api.Notification;
+import com.smoketurner.notification.application.core.IdGenerator;
+import com.smoketurner.notification.application.core.UserNotifications;
+import io.dropwizard.util.Duration;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,14 +37,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.junit.Before;
 import org.junit.Test;
-import com.basho.riak.client.api.RiakClient;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
-import com.smoketurner.notification.api.Notification;
-import com.smoketurner.notification.application.core.IdGenerator;
-import com.smoketurner.notification.application.core.UserNotifications;
-import io.dropwizard.util.Duration;
 
 public class NotificationStoreTest {
 

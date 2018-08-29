@@ -15,19 +15,6 @@
  */
 package com.smoketurner.notification.application.store;
 
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.basho.riak.client.api.RiakClient;
 import com.basho.riak.client.api.cap.UnresolvedConflictException;
 import com.basho.riak.client.api.commands.buckets.StoreBucketProperties;
@@ -57,6 +44,19 @@ import com.smoketurner.notification.application.riak.NotificationListDeletion;
 import com.smoketurner.notification.application.riak.NotificationListObject;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.util.Duration;
+import java.time.Clock;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NotificationStore {
 

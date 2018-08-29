@@ -17,11 +17,12 @@ package com.smoketurner.notification.application.riak;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.jackson.Jackson;
 import java.util.TreeSet;
 import org.junit.Before;
 import org.junit.Test;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.jackson.Jackson;
 
 public class CursorObjectTest {
 
