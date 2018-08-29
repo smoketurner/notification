@@ -71,6 +71,7 @@ public class NotificationListObjectTest {
   }
 
   @Test
+  @SuppressWarnings("NullAway")
   public void testEquals() {
     final NotificationListObject list = new NotificationListObject();
     assertThat(list.equals(null)).isFalse();

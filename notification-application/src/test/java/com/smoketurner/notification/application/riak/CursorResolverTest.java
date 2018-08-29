@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
-@SuppressWarnings("NullAway")
 public class CursorResolverTest {
 
   private final CursorResolver resolver = new CursorResolver();
@@ -43,6 +42,7 @@ public class CursorResolverTest {
   }
 
   @Test
+  @SuppressWarnings("NullAway")
   public void testMultipleSibling() throws Exception {
     final CursorObject cursor1 = new CursorObject("test", 1L);
     final CursorObject cursor2 = new CursorObject("test", 2L);
