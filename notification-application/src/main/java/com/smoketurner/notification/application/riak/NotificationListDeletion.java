@@ -16,10 +16,9 @@
 package com.smoketurner.notification.application.riak;
 
 import com.basho.riak.client.api.commands.kv.UpdateValue;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Collection;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,7 @@ public class NotificationListDeletion extends UpdateValue.Update<NotificationLis
    *
    * @param ids Notification IDs to delete
    */
-  public NotificationListDeletion(@NotNull final Collection<Long> ids) {
+  public NotificationListDeletion(final Collection<Long> ids) {
     this.ids = Objects.requireNonNull(ids, "ids == null");
   }
 

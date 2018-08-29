@@ -16,9 +16,8 @@
 package com.smoketurner.notification.application.riak;
 
 import com.basho.riak.client.api.commands.kv.UpdateValue;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ public class CursorUpdate extends UpdateValue.Update<CursorObject> {
    * @param key Cursor key
    * @param value Cursor value
    */
-  public CursorUpdate(@NotNull final String key, final long value) {
+  public CursorUpdate(final String key, final long value) {
     this.key = Objects.requireNonNull(key, "key == null");
     this.value = value;
   }

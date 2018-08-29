@@ -26,7 +26,6 @@ import io.dropwizard.jersey.protobuf.ProtocolBufferMediaType;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +38,7 @@ public class NotificationListConverter extends Converter<NotificationListObject>
   }
 
   @Override
-  public NotificationListObject toDomain(
-      @NotNull final BinaryValue value, @NotNull final String contentType) {
+  public NotificationListObject toDomain(final BinaryValue value, final String contentType) {
     if (!ProtocolBufferMediaType.APPLICATION_PROTOBUF.equals(contentType)) {
       LOGGER.error("Invalid Content-Type: {}", contentType);
       throw new ConversionException("Invalid Content-Type: " + contentType);
@@ -64,7 +62,7 @@ public class NotificationListConverter extends Converter<NotificationListObject>
   }
 
   @Override
-  public ContentAndType fromDomain(@NotNull final NotificationListObject domainObject) {
+  public ContentAndType fromDomain(final NotificationListObject domainObject) {
     final NotificationListPB.Builder builder =
         NotificationListPB.newBuilder().addAllDeletedId(domainObject.getDeletedIds());
 
@@ -80,7 +78,7 @@ public class NotificationListConverter extends Converter<NotificationListObject>
         BinaryValue.unsafeCreate(list.toByteArray()), ProtocolBufferMediaType.APPLICATION_PROTOBUF);
   }
 
-  private static Notification convert(@NotNull final NotificationPB notification) {
+  private static Notification convert(final NotificationPB notification) {
     return Notification.builder(notification.getCategory(), notification.getMessage())
         .withId(notification.getId())
         .withCreatedAt(
@@ -90,7 +88,7 @@ public class NotificationListConverter extends Converter<NotificationListObject>
         .build();
   }
 
-  private static NotificationPB convert(@NotNull final Notification notification) {
+  private static NotificationPB convert(final Notification notification) {
     return NotificationPB.newBuilder()
         .setId(notification.getId().get())
         .setCategory(notification.getCategory())

@@ -19,13 +19,13 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.api.Rule;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.function.Predicate;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.validation.constraints.NotNull;
 
 public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
@@ -46,7 +46,7 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
    * @param rule Rule for this match
    * @param notification First notification to match the rule
    */
-  public Matcher(@NotNull final Rule rule, @NotNull final Notification notification) {
+  public Matcher(final Rule rule, final Notification notification) {
     this.rule = Objects.requireNonNull(rule, "rule == null");
     this.notification = Objects.requireNonNull(notification, "notification == null");
 

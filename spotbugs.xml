@@ -15,4 +15,8 @@
     limitations under the License.
 
 -->
-<FindBugsFilter/>
+<FindBugsFilter>
+    <Match>
+        <Package name="~com\.smoketurner\.notification\.application\.protos.*" />
+    </Match>
+</FindBugsFilter>

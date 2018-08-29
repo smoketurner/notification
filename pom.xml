@@ -21,7 +21,7 @@
     <parent>
         <groupId>com.smoketurner.dropwizard</groupId>
         <artifactId>dropwizard-pom</artifactId>
-        <version>0.0.7</version>
+        <version>0.0.8</version>
     </parent>
 
     <groupId>com.smoketurner.notification</groupId>
@@ -32,6 +32,10 @@
     <name>notification</name>
     <description>Notification</description>
     <url>https://github.com/smoketurner/notification</url>
+
+    <properties>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+    </properties>
 
     <modules>
         <module>notification-api</module>
@@ -45,6 +49,21 @@
         <url>https://github.com/smoketurner/notification</url>
         <tag>HEAD</tag>
     </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>javax.activation-api</artifactId>
+            <version>1.2.0</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <extensions>

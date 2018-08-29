@@ -28,6 +28,7 @@ import java.util.TreeSet;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("NullAway")
 public class NotificationTest {
   private final ObjectMapper MAPPER = Jackson.newObjectMapper();
   private Notification notification;

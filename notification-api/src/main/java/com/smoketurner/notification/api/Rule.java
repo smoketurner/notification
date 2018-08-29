@@ -21,14 +21,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.jackson.JsonSnakeCase;
 import io.dropwizard.util.Duration;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.concurrent.Immutable;
-import org.jetbrains.annotations.Nullable;
 
-@Immutable
 @JsonSnakeCase
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -51,17 +50,13 @@ public final class Rule {
    */
   @JsonCreator
   private Rule(
-      @JsonProperty(MAX_SIZE) final Optional<Integer> maxSize,
-      @JsonProperty(MAX_DURATION) final Optional<Duration> maxDuration,
-      @JsonProperty(MATCH_ON) final Optional<String> matchOn) {
-    this.maxSize = maxSize;
-    this.maxDuration = maxDuration;
-    if (matchOn.isPresent()) {
-      if (matchOn.get().isEmpty()) {
-        this.matchOn = Optional.empty();
-      } else {
-        this.matchOn = matchOn;
-      }
+      @JsonProperty(MAX_SIZE) @Nullable final Integer maxSize,
+      @JsonProperty(MAX_DURATION) @Nullable final Duration maxDuration,
+      @JsonProperty(MATCH_ON) @Nullable final String matchOn) {
+    this.maxSize = Optional.ofNullable(maxSize);
+    this.maxDuration = Optional.ofNullable(maxDuration);
+    if (!Strings.isNullOrEmpty(matchOn)) {
+      this.matchOn = Optional.of(matchOn);
     } else {
       this.matchOn = Optional.empty();
     }
@@ -98,10 +93,7 @@ public final class Rule {
     }
 
     public Rule build() {
-      return new Rule(
-          Optional.ofNullable(maxSize),
-          Optional.ofNullable(maxDuration),
-          Optional.ofNullable(matchOn));
+      return new Rule(maxSize, maxDuration, matchOn);
     }
   }
 
@@ -126,7 +118,7 @@ public final class Rule {
   }
 
   @Override
-  public boolean equals(@Nullable final Object obj) {
+  public boolean equals(final Object obj) {
     if (this == obj) {
       return true;
     }

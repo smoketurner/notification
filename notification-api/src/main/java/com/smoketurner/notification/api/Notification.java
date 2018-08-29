@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.jackson.JsonSnakeCase;
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -31,12 +32,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.concurrent.Immutable;
+import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-@Immutable
 @JsonSnakeCase
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -68,22 +66,34 @@ public final class Notification implements Comparable<Notification> {
    */
   @JsonCreator
   private Notification(
-      @JsonProperty("id") final Optional<Long> id,
-      @JsonProperty("id_str") final Optional<String> idStr,
+      @JsonProperty("id") @Nullable final Long id,
+      @JsonProperty("id_str") @Nullable final String idStr,
       @JsonProperty("category") final String category,
       @JsonProperty("message") final String message,
-      @JsonProperty("created_at") final Optional<ZonedDateTime> createdAt,
-      @JsonProperty("unseen") final Optional<Boolean> unseen,
-      @JsonProperty("properties") final Optional<Map<String, String>> properties,
-      @JsonProperty("notifications") final Optional<Collection<Notification>> notifications) {
-    this.id = id;
-    this.idStr = idStr;
+      @JsonProperty("created_at") @Nullable final ZonedDateTime createdAt,
+      @JsonProperty("unseen") @Nullable final Boolean unseen,
+      @JsonProperty("properties") @Nullable final Map<String, String> properties,
+      @JsonProperty("notifications") @Nullable final Collection<Notification> notifications) {
+    this.id = Optional.ofNullable(id);
+    this.idStr = Optional.ofNullable(idStr);
     this.category = category;
     this.message = message;
-    this.createdAt = createdAt.orElse(ZonedDateTime.now(Clock.systemUTC()));
-    this.unseen = unseen;
-    this.properties = properties.orElse(Collections.emptyMap());
-    this.notifications = notifications.orElse(Collections.emptyList());
+    if (createdAt != null) {
+      this.createdAt = createdAt;
+    } else {
+      this.createdAt = ZonedDateTime.now(Clock.systemUTC());
+    }
+    this.unseen = Optional.ofNullable(unseen);
+    if (properties != null) {
+      this.properties = properties;
+    } else {
+      this.properties = Collections.emptyMap();
+    }
+    if (notifications != null) {
+      this.notifications = notifications;
+    } else {
+      this.notifications = Collections.emptyList();
+    }
   }
 
   /**
@@ -222,14 +232,7 @@ public final class Notification implements Comparable<Notification> {
 
     public Notification build() {
       return new Notification(
-          Optional.ofNullable(id),
-          Optional.ofNullable(idStr),
-          category,
-          message,
-          Optional.ofNullable(createdAt),
-          Optional.ofNullable(unseen),
-          Optional.ofNullable(properties),
-          Optional.ofNullable(notifications));
+          id, idStr, category, message, createdAt, unseen, properties, notifications);
     }
   }
 
@@ -288,7 +291,7 @@ public final class Notification implements Comparable<Notification> {
   }
 
   @Override
-  public boolean equals(@Nullable final Object obj) {
+  public boolean equals(final Object obj) {
     if (this == obj) {
       return true;
     }

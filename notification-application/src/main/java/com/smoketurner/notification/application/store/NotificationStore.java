@@ -41,6 +41,7 @@ import com.smoketurner.notification.application.exceptions.NotificationStoreExce
 import com.smoketurner.notification.application.riak.NotificationListAddition;
 import com.smoketurner.notification.application.riak.NotificationListDeletion;
 import com.smoketurner.notification.application.riak.NotificationListObject;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.util.Duration;
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -53,8 +54,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,12 +88,12 @@ public class NotificationStore {
    * @param ruleStore Rule data store
    */
   public NotificationStore(
-      @NotNull final RiakClient client,
-      @NotNull final IdGenerator idGenerator,
-      @NotNull final CursorStore cursors,
-      @NotNull final RuleStore ruleStore,
-      @NotNull final Duration timeout,
-      @NotNull final Duration requestTimeout) {
+      final RiakClient client,
+      final IdGenerator idGenerator,
+      final CursorStore cursors,
+      final RuleStore ruleStore,
+      final Duration timeout,
+      final Duration requestTimeout) {
 
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(NotificationStore.class, "fetch"));

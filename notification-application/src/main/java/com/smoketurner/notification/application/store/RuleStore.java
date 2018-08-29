@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import org.jetbrains.annotations.NotNull;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,10 +80,10 @@ public class RuleStore {
    * @param requestTimeout Riak client-side timeout
    */
   public RuleStore(
-      @NotNull final RiakClient client,
-      @NotNull final Duration cacheTimeout,
-      @NotNull final Duration timeout,
-      @NotNull final Duration requestTimeout) {
+      final RiakClient client,
+      final Duration cacheTimeout,
+      final Duration timeout,
+      final Duration requestTimeout) {
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(RuleStore.class, "fetch"));
     this.storeTimer = registry.timer(MetricRegistry.name(RuleStore.class, "store"));

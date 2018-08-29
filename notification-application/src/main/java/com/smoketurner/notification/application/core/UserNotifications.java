@@ -19,16 +19,13 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.concurrent.Immutable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-@Immutable
 public final class UserNotifications {
 
   private final Iterable<Notification> unseen;
@@ -40,8 +37,7 @@ public final class UserNotifications {
    * @param unseen Unseen notifications
    * @param seen Seen notifications
    */
-  public UserNotifications(
-      @NotNull final Iterable<Notification> unseen, @NotNull final Iterable<Notification> seen) {
+  public UserNotifications(final Iterable<Notification> unseen, final Iterable<Notification> seen) {
     this.unseen = Objects.requireNonNull(unseen, "unseen == null");
     this.seen = Objects.requireNonNull(seen, "seen == null");
   }
@@ -52,8 +48,7 @@ public final class UserNotifications {
    * @param unseen Unseen notifications
    * @param seen Seen notifications
    */
-  public UserNotifications(
-      @NotNull final Stream<Notification> unseen, @NotNull final Stream<Notification> seen) {
+  public UserNotifications(final Stream<Notification> unseen, final Stream<Notification> seen) {
     Objects.requireNonNull(unseen, "unseen == null");
     Objects.requireNonNull(seen, "seen == null");
 
@@ -66,7 +61,7 @@ public final class UserNotifications {
    *
    * @param unseen Unseen notifications
    */
-  public UserNotifications(@NotNull final Iterable<Notification> unseen) {
+  public UserNotifications(final Iterable<Notification> unseen) {
     this.unseen = Objects.requireNonNull(unseen, "unseen == null");
     this.seen = Collections.<Notification>emptySortedSet();
   }
@@ -76,7 +71,7 @@ public final class UserNotifications {
    *
    * @param unseen Unseen notifications
    */
-  public UserNotifications(@NotNull final Stream<Notification> unseen) {
+  public UserNotifications(final Stream<Notification> unseen) {
     Objects.requireNonNull(unseen, "unseen == null");
     this.unseen = unseen.collect(Collectors.toCollection(TreeSet::new));
     this.seen = Collections.<Notification>emptySortedSet();

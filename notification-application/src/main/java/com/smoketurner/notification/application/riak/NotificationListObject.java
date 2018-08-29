@@ -25,14 +25,13 @@ import com.basho.riak.client.api.annotations.RiakVTag;
 import com.basho.riak.client.api.cap.VClock;
 import com.google.common.base.MoreObjects;
 import com.smoketurner.notification.api.Notification;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class NotificationListObject {
 
@@ -65,7 +64,7 @@ public class NotificationListObject {
    *
    * @param key Notification key
    */
-  public NotificationListObject(@NotNull final String key) {
+  public NotificationListObject(final String key) {
     this.key = Objects.requireNonNull(key, "key == null");
   }
 

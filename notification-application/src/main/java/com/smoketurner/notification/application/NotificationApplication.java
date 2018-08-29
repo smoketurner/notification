@@ -23,6 +23,7 @@ import com.smoketurner.dropwizard.riak.RiakBundle;
 import com.smoketurner.dropwizard.riak.RiakFactory;
 import com.smoketurner.notification.application.config.NotificationConfiguration;
 import com.smoketurner.notification.application.core.IdGenerator;
+import com.smoketurner.notification.application.core.WebSecurityFilter;
 import com.smoketurner.notification.application.exceptions.NotificationExceptionMapper;
 import com.smoketurner.notification.application.managed.CursorStoreManager;
 import com.smoketurner.notification.application.managed.NotificationStoreManager;
@@ -103,6 +104,7 @@ public class NotificationApplication extends Application<NotificationConfigurati
     environment.jersey().register(RequestIdFilter.class);
     // adds a X-Runtime response header
     environment.jersey().register(RuntimeFilter.class);
+    environment.jersey().register(WebSecurityFilter.class);
 
     // snowizard
     final IdWorker snowizard = configuration.getSnowizard().build(environment);

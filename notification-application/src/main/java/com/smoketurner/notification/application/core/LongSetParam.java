@@ -18,10 +18,10 @@ package com.smoketurner.notification.application.core;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.jersey.params.AbstractParam;
 import java.util.Collections;
 import java.util.Set;
-import org.jetbrains.annotations.Nullable;
 
 public class LongSetParam extends AbstractParam<Set<Long>> {
 

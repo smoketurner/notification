@@ -20,7 +20,6 @@ import com.smoketurner.snowizard.core.IdWorker;
 import com.smoketurner.snowizard.exceptions.InvalidSystemClock;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +36,7 @@ public class IdGenerator {
    * @param snowizard Snowizard instance
    * @param enabled whether snowizard is enabled or not
    */
-  public IdGenerator(@NotNull final IdWorker snowizard, final boolean enabled) {
+  public IdGenerator(final IdWorker snowizard, final boolean enabled) {
     this.snowizard = Objects.requireNonNull(snowizard, "snowizard == null");
     this.enabled = enabled;
   }

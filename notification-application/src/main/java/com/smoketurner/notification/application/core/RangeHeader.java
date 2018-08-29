@@ -22,16 +22,14 @@ import com.google.common.collect.BoundType;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import com.google.common.primitives.Longs;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-@Immutable
 public final class RangeHeader {
 
   private static final Pattern ID_PATTERN =

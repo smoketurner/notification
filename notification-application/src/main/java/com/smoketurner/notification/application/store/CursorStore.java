@@ -37,7 +37,7 @@ import io.dropwizard.util.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import org.jetbrains.annotations.NotNull;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,9 +64,7 @@ public class CursorStore {
    * @param requestTimeout Riak client-side timeout
    */
   public CursorStore(
-      @NotNull final RiakClient client,
-      @NotNull final Duration timeout,
-      @NotNull final Duration requestTimeout) {
+      final RiakClient client, final Duration timeout, final Duration requestTimeout) {
     final MetricRegistry registry = SharedMetricRegistries.getOrCreate("default");
     this.fetchTimer = registry.timer(MetricRegistry.name(CursorStore.class, "fetch"));
     this.storeTimer = registry.timer(MetricRegistry.name(CursorStore.class, "store"));
