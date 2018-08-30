@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM openjdk:8-jdk-alpine AS BUILD_IMAGE
+FROM openjdk:10-jdk-slim AS BUILD_IMAGE
 
 WORKDIR /app
 
