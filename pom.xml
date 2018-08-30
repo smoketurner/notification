@@ -34,7 +34,7 @@
     <url>https://github.com/smoketurner/notification</url>
 
     <properties>
-        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
     </properties>
 
     <modules>
