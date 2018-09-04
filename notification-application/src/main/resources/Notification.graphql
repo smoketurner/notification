@@ -1,0 +1,53 @@
+scalar Map
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  notifications(username: String!): [Notification!]
+  rules: [RuleCategory!]
+}
+
+type Mutation {
+  createNotification(username: String!, notification: NotificationInput!): Notification
+  createRule(category: String!, rule: RuleInput!): Boolean!
+  removeAllNotifications(username: String!): Boolean!
+  removeAllRules: Boolean!
+  removeNotification(username: String!, ids: [ID!]!): Boolean!
+  removeRule(category: String!): Boolean!
+}
+
+type Notification {
+  id: ID!
+  category: String!
+  message: String!
+  unseen: Boolean!
+  createdAt: String!
+  properties: Map!
+  notifications: [Notification!]
+}
+
+type RuleCategory {
+  category: String!
+  rule: Rule!
+}
+
+type Rule {
+  maxSize: Int
+  maxDuration: String
+  matchOn: String
+}
+
+input NotificationInput {
+  category: String!
+  message: String!
+  properties: Map
+}
+
+input RuleInput {
+  maxSize: Int
+  maxDuration: String
+  matchOn: String
+}

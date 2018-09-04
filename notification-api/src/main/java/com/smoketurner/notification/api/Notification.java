@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @JsonSnakeCase
@@ -39,11 +40,20 @@ import org.hibernate.validator.constraints.NotEmpty;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class Notification implements Comparable<Notification> {
 
+  public static final int CATEGORY_MIN_LENGTH = 3;
+  public static final int CATEGORY_MAX_LENGTH = 20;
+  public static final int MESSAGE_MIN_LENGTH = 1;
+  public static final int MESSAGE_MAX_LENGTH = 255;
+
   private final Optional<String> id;
 
-  @NotEmpty private final String category;
+  @NotEmpty
+  @Length(min = CATEGORY_MIN_LENGTH, max = CATEGORY_MAX_LENGTH)
+  private final String category;
 
-  @NotEmpty private final String message;
+  @NotEmpty
+  @Length(min = MESSAGE_MIN_LENGTH, max = MESSAGE_MAX_LENGTH)
+  private final String message;
 
   private final ZonedDateTime createdAt;
   private final Optional<Boolean> unseen;
