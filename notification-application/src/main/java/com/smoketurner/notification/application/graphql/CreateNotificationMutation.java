@@ -51,8 +51,8 @@ public class CreateNotificationMutation implements DataFetcher<Notification> {
     }
 
     final Map<String, Object> input = environment.getArgument("notification");
-    if (input == null) {
-      throw new GraphQLValidationError("notification cannot be null");
+    if (input == null || input.isEmpty()) {
+      throw new GraphQLValidationError("notification cannot be empty");
     }
 
     final String category = String.valueOf(input.get("category")).trim();
@@ -71,8 +71,8 @@ public class CreateNotificationMutation implements DataFetcher<Notification> {
     }
 
     final String message = String.valueOf(input.get("message")).trim();
-    if (message == null || "null".equals(message)) {
-      throw new GraphQLValidationError("message cannot be null");
+    if (Strings.isNullOrEmpty(message) || "null".equals(message)) {
+      throw new GraphQLValidationError("message cannot be empty");
     }
 
     final int messageLength = message.codePointCount(0, message.length());

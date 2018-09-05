@@ -22,13 +22,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Ordering;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.jackson.JsonSnakeCase;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -315,7 +315,7 @@ public final class Notification implements Comparable<Notification> {
   @Override
   public int compareTo(final Notification that) {
     return ComparisonChain.start()
-        .compare(this.getId(""), that.getId(""), Ordering.natural().reverse())
+        .compare(this.getId(""), that.getId(""), Comparator.reverseOrder())
         .result();
   }
 }

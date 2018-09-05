@@ -49,8 +49,8 @@ public class RemoveRuleMutation implements DataFetcher<Boolean> {
     try {
       store.remove(category);
     } catch (NotificationStoreException e) {
-      LOGGER.error(String.format("Unable to remove rules for %s", category), e);
-      throw new GraphQLValidationError("Unable to remove rules");
+      LOGGER.error(String.format("Unable to remove rule for %s", category), e);
+      throw new GraphQLValidationError("Unable to remove rule");
     }
 
     return true;

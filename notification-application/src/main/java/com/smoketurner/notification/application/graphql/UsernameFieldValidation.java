@@ -31,7 +31,8 @@ public class UsernameFieldValidation implements FieldValidation {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(UsernameFieldValidation.class);
   private static final List<String> VALID_FIELDS =
-      ImmutableList.of("createNotification", "removeNotification", "removeAllNotifications");
+      ImmutableList.of(
+          "notifications", "createNotification", "removeNotification", "removeAllNotifications");
 
   private static final int USERNAME_MIN_LENGTH = 3;
   private static final int USERNAME_MAX_LENGTH = 64;
@@ -50,18 +51,23 @@ public class UsernameFieldValidation implements FieldValidation {
 
       final String username = fieldAndArguments.getArgumentValue("username");
 
-      final int length = username.codePointCount(0, username.length());
-
       if (Strings.isNullOrEmpty(username)) {
-        errors.add(environment.mkError("username cannot be empty"));
-      } else if (length < USERNAME_MIN_LENGTH || length > USERNAME_MAX_LENGTH) {
-        errors.add(
-            environment.mkError(
-                String.format(
-                    "username must be between %d and %d characters",
-                    USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH)));
-      } else if (!username.matches("[A-Za-z0-9]+")) {
-        errors.add(environment.mkError("username must only contain alphanumeric characters"));
+        errors.add(environment.mkError("username cannot be empty", fieldAndArguments));
+      } else {
+        final int length = username.codePointCount(0, username.length());
+
+        if (length < USERNAME_MIN_LENGTH || length > USERNAME_MAX_LENGTH) {
+          errors.add(
+              environment.mkError(
+                  String.format(
+                      "username must be between %d and %d characters",
+                      USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH),
+                  fieldAndArguments));
+        } else if (!username.matches("[A-Za-z0-9]+")) {
+          errors.add(
+              environment.mkError(
+                  "username must only contain alphanumeric characters", fieldAndArguments));
+        }
       }
     }
 

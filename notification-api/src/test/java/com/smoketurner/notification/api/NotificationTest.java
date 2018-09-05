@@ -102,6 +102,7 @@ public class NotificationTest {
     final Notification n1 = Notification.create("1");
     final Notification n2 = Notification.create("2");
     final Notification n3 = Notification.create("3");
+    final Notification n4 = Notification.create("");
 
     assertThat(n1.compareTo(n2)).isEqualTo(1);
     assertThat(n2.compareTo(n1)).isEqualTo(-1);
@@ -110,8 +111,9 @@ public class NotificationTest {
     notifications.add(n1);
     notifications.add(n2);
     notifications.add(n3);
+    notifications.add(n4);
 
-    assertThat(notifications).containsExactly(n3, n2, n1);
+    assertThat(notifications).containsExactly(n3, n2, n1, n4);
 
     final Notification n1b = Notification.builder().withId("1").withUnseen(true).build();
 

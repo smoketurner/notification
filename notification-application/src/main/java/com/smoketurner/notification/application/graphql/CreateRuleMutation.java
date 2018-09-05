@@ -67,13 +67,17 @@ public class CreateRuleMutation implements DataFetcher<Boolean> {
 
     final Rule.Builder builder = Rule.builder();
     if (input.containsKey("maxSize")) {
-      builder.withMaxSize((Integer) input.get("maxSize"));
+      try {
+        builder.withMaxSize(Integer.parseInt(String.valueOf(input.get("maxSize"))));
+      } catch (NumberFormatException e) {
+        throw new GraphQLValidationError("maxSize is not an integer");
+      }
     }
     if (input.containsKey("maxDuration")) {
       try {
         builder.withMaxDuration(Duration.parse(String.valueOf(input.get("maxDuration"))));
       } catch (IllegalArgumentException e) {
-        throw new GraphQLValidationError("Invalid duration");
+        throw new GraphQLValidationError("maxDuration is an invalid duration");
       }
     }
     if (input.containsKey("matchOn")) {

@@ -23,6 +23,7 @@ import com.smoketurner.notification.application.store.NotificationStore;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SortedSet;
@@ -60,7 +61,7 @@ public class NotificationDataFetcher implements DataFetcher<SortedSet<Notificati
     }
 
     if (!notifications.isPresent()) {
-      return null;
+      return Collections.emptySortedSet();
     }
 
     return notifications.get().getNotifications();

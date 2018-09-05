@@ -44,8 +44,8 @@ public class UserNotificationsTest {
 
   @Test
   public void testSeenUnseen() {
-    final List<Notification> unseen = Collections.singletonList(Notification.create("1"));
-    final List<Notification> seen = Collections.singletonList(Notification.create("2"));
+    final List<Notification> unseen = Collections.singletonList(Notification.create("2"));
+    final List<Notification> seen = Collections.singletonList(Notification.create("1"));
     final List<Notification> expected =
         Arrays.asList(Notification.create("2"), Notification.create("1"));
     final UserNotifications notifications = new UserNotifications(unseen, seen);
