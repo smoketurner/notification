@@ -115,7 +115,7 @@ public class CreateNotificationMutation implements DataFetcher<Notification> {
 
     @SuppressWarnings("unchecked")
     final Map<String, Object> map = (Map<String, Object>) obj;
-    if (map == null || map.isEmpty()) {
+    if (map.isEmpty()) {
       return Collections.emptyMap();
     }
 
