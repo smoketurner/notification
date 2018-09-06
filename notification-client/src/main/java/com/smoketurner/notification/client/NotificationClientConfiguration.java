@@ -21,7 +21,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class NotificationClientConfiguration extends JerseyClientConfiguration {
 
-  @NotEmpty private String uri = "http://localhost:8080";
+  @NotEmpty private String uri = "http://127.0.0.1:8080/api";
 
   public URI getUri() {
     return URI.create(uri);

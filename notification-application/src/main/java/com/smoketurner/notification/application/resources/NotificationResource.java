@@ -67,7 +67,7 @@ public class NotificationResource {
    * @param store Notification data store
    */
   public NotificationResource(final NotificationStore store) {
-    this.store = Objects.requireNonNull(store);
+    this.store = Objects.requireNonNull(store, "store == null");
   }
 
   @GET

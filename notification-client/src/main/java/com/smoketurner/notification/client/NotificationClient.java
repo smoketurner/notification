@@ -19,7 +19,6 @@ import static com.codahale.metrics.MetricRegistry.name;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
 import com.smoketurner.notification.api.Notification;
@@ -144,7 +143,7 @@ public class NotificationClient implements Closeable {
     Preconditions.checkArgument(!ids.isEmpty(), "ids cannot be empty");
 
     final URI uri =
-        UriBuilder.fromUri(getTarget(username)).queryParam("ids", Joiner.on(",").join(ids)).build();
+        UriBuilder.fromUri(getTarget(username)).queryParam("ids", String.join(",", ids)).build();
 
     LOGGER.debug("DELETE {}", uri);
 

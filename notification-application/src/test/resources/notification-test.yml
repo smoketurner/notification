@@ -1,3 +1,11 @@
+# GraphQL-specific options.
+graphql:
+
+  enableTracing: false
+  queryCache: maximumSize=0
+  schemaFiles:
+    - Notification.graphql
+
 # Riak-specific options.
 riak:
 
@@ -8,6 +16,7 @@ riak:
 server:
 
   type: simple
+  rootPath: /api/
   applicationContextPath: /
   connector:
     type: http

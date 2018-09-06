@@ -145,7 +145,8 @@ public class NotificationsIT {
   }
 
   private static String getUrl() {
-    return String.format("http://127.0.0.1:%d/v1/notifications/%s", RULE.getLocalPort(), TEST_USER);
+    return String.format(
+        "http://127.0.0.1:%d/api/v1/notifications/%s", RULE.getLocalPort(), TEST_USER);
   }
 
   private static Notification createNotification() {

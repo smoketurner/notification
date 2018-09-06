@@ -16,6 +16,7 @@
 package com.smoketurner.notification.application.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.smoketurner.dropwizard.graphql.GraphQLFactory;
 import com.smoketurner.dropwizard.riak.RiakFactory;
 import io.dropwizard.Configuration;
 import io.dropwizard.util.Duration;
@@ -39,6 +40,8 @@ public class NotificationConfiguration extends Configuration {
   private Duration riakRequestTimeout = Duration.seconds(5);
 
   @Valid @NotNull @JsonProperty private final RiakFactory riak = new RiakFactory();
+
+  @Valid @NotNull @JsonProperty private final GraphQLFactory graphql = new GraphQLFactory();
 
   @JsonProperty
   public Duration getRiakTimeout() {
@@ -73,5 +76,10 @@ public class NotificationConfiguration extends Configuration {
   @JsonProperty
   public RiakFactory getRiak() {
     return riak;
+  }
+
+  @JsonProperty
+  public GraphQLFactory getGraphQL() {
+    return graphql;
   }
 }
