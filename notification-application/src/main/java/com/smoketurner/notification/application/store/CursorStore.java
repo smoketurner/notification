@@ -29,7 +29,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 import com.google.common.base.Preconditions;
-import com.google.common.primitives.Ints;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.riak.CursorObject;
 import com.smoketurner.notification.application.riak.CursorUpdate;
@@ -77,7 +76,7 @@ public class CursorStore {
 
     this.timeout =
         Optional.ofNullable(timeout)
-            .map(t -> Ints.checkedCast(t.toMilliseconds()))
+            .map(t -> Math.toIntExact(t.toMilliseconds()))
             .orElse(DEFAULT_TIMEOUT_MS);
     this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
   }

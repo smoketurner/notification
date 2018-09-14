@@ -32,7 +32,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.google.common.primitives.Ints;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.api.Rule;
 import com.smoketurner.notification.application.core.IdGenerator;
@@ -113,7 +112,7 @@ public class NotificationStore {
 
     this.timeout =
         Optional.ofNullable(timeout)
-            .map(t -> Ints.checkedCast(t.toMilliseconds()))
+            .map(t -> Math.toIntExact(t.toMilliseconds()))
             .orElse(DEFAULT_TIMEOUT_MS);
     this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
   }

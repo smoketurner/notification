@@ -97,7 +97,7 @@ public class RuleStore {
 
     this.timeout =
         Optional.ofNullable(timeout)
-            .map(t -> Ints.checkedCast(t.toMilliseconds()))
+            .map(t -> Math.toIntExact(t.toMilliseconds()))
             .orElse(DEFAULT_TIMEOUT_MS);
     this.requestTimeout = Objects.requireNonNull(requestTimeout, "requestTimeout == null");
 
