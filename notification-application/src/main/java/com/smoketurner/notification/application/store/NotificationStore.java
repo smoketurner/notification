@@ -41,7 +41,6 @@ import com.smoketurner.notification.application.exceptions.NotificationStoreExce
 import com.smoketurner.notification.application.riak.NotificationListAddition;
 import com.smoketurner.notification.application.riak.NotificationListDeletion;
 import com.smoketurner.notification.application.riak.NotificationListObject;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.util.Duration;
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -54,6 +53,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

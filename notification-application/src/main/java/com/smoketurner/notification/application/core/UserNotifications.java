@@ -15,12 +15,12 @@
  */
 package com.smoketurner.notification.application.core;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.smoketurner.notification.api.Notification;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -118,6 +118,9 @@ public final class UserNotifications {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("unseen", unseen).add("seen", seen).toString();
+    return new StringJoiner(", ", UserNotifications.class.getSimpleName() + "{", "}")
+        .add("unseen=" + unseen)
+        .add("seen=" + seen)
+        .toString();
   }
 }

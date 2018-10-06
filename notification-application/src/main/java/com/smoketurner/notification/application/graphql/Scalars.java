@@ -15,7 +15,6 @@
  */
 package com.smoketurner.notification.application.graphql;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
 import graphql.language.ArrayValue;
 import graphql.language.BooleanValue;
 import graphql.language.EnumValue;
@@ -33,6 +32,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 /**
  * Portions copied from

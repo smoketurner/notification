@@ -16,8 +16,8 @@
 package com.smoketurner.notification.application.riak;
 
 import com.basho.riak.client.api.commands.kv.UpdateValue;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Objects;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

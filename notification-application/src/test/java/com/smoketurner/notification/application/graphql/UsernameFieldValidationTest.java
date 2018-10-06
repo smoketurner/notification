@@ -22,7 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
 import graphql.ErrorType;
 import graphql.GraphQLError;
 import graphql.execution.instrumentation.fieldvalidation.FieldAndArguments;
@@ -31,6 +30,7 @@ import graphql.language.Field;
 import graphql.language.SourceLocation;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.junit.Test;
 
 public class UsernameFieldValidationTest {

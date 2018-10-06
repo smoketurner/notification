@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM openjdk:10-jdk-slim AS BUILD_IMAGE
+FROM openjdk:11-jdk-slim AS BUILD_IMAGE
 
 WORKDIR /app
 
@@ -34,7 +34,7 @@ RUN ./mvnw clean package -DskipTests=true -Dmaven.javadoc.skip=true -Dmaven.sour
     rm notification-application/target/original-*.jar && \
     mv notification-application/target/*.jar app.jar
 
-FROM openjdk:8-jre-alpine
+FROM openjdk:11-jre-slim
 
 ARG VERSION="1.3.1-SNAPSHOT"
 

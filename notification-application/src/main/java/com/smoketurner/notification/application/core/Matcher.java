@@ -16,15 +16,15 @@
 package com.smoketurner.notification.application.core;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.MoreObjects;
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.api.Rule;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.function.Predicate;
+import javax.annotation.Nullable;
 
 public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
@@ -175,15 +175,15 @@ public class Matcher implements Predicate<Notification>, Comparable<Matcher> {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("notification", notification)
-        .add("rule", rule)
-        .add("notifications", notifications)
-        .add("maxSize", maxSize)
-        .add("firstMillis", firstMillis)
-        .add("maxDuration", maxDuration)
-        .add("matchOn", matchOn)
-        .add("matchValue", matchValue)
+    return new StringJoiner(", ", Matcher.class.getSimpleName() + "{", "}")
+        .add("notification=" + notification)
+        .add("rule=" + rule)
+        .add("notifications=" + notifications)
+        .add("maxSize=" + maxSize)
+        .add("firstMillis=" + firstMillis)
+        .add("maxDuration=" + maxDuration)
+        .add("matchOn=" + matchOn)
+        .add("matchValue=" + matchValue)
         .toString();
   }
 

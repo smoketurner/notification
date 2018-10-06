@@ -20,13 +20,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.jackson.JsonSnakeCase;
 import io.dropwizard.util.Duration;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.StringJoiner;
+import javax.annotation.Nullable;
 
 @JsonSnakeCase
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -55,7 +54,7 @@ public final class Rule {
       @JsonProperty(MATCH_ON) @Nullable final String matchOn) {
     this.maxSize = Optional.ofNullable(maxSize);
     this.maxDuration = Optional.ofNullable(maxDuration);
-    if (!Strings.isNullOrEmpty(matchOn)) {
+    if (matchOn != null && !matchOn.isEmpty()) {
       this.matchOn = Optional.of(matchOn);
     } else {
       this.matchOn = Optional.empty();
@@ -139,10 +138,10 @@ public final class Rule {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("maxSize", maxSize)
-        .add("maxDuration", maxDuration)
-        .add("matchOn", matchOn)
+    return new StringJoiner(", ", Rule.class.getSimpleName() + "{", "}")
+        .add("maxSize=" + maxSize)
+        .add("maxDuration=" + maxDuration)
+        .add("matchOn=" + matchOn)
         .toString();
   }
 }

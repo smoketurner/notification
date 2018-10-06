@@ -15,18 +15,18 @@
  */
 package com.smoketurner.notification.application.core;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 
 public final class RangeHeader {
 
@@ -254,10 +254,10 @@ public final class RangeHeader {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("field", field)
-        .add("range", range)
-        .add("max", max)
+    return new StringJoiner(", ", RangeHeader.class.getSimpleName() + "{", "}")
+        .add("field=" + field)
+        .add("range=" + range)
+        .add("max=" + max)
         .toString();
   }
 }

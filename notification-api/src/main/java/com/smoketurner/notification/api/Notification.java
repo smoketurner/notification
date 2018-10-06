@@ -20,9 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ComparisonChain;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import io.dropwizard.jackson.JsonSnakeCase;
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -32,6 +30,8 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.StringJoiner;
+import javax.annotation.Nullable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -295,14 +295,14 @@ public final class Notification implements Comparable<Notification> {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("id", id)
-        .add("category", category)
-        .add("message", message)
-        .add("createdAt", createdAt)
-        .add("unseen", unseen)
-        .add("properties", properties)
-        .add("notifications", notifications)
+    return new StringJoiner(", ", Notification.class.getSimpleName() + "{", "}")
+        .add("id=" + id)
+        .add("category=" + category)
+        .add("message=" + message)
+        .add("createdAt=" + createdAt)
+        .add("unseen=" + unseen)
+        .add("properties=" + properties)
+        .add("notifications=" + notifications)
         .toString();
   }
 
