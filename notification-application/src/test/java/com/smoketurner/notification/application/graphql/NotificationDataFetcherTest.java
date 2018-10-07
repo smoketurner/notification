@@ -23,15 +23,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import org.junit.Test;
+
 import com.smoketurner.notification.api.Notification;
 import com.smoketurner.notification.application.core.UserNotifications;
 import com.smoketurner.notification.application.exceptions.NotificationStoreException;
 import com.smoketurner.notification.application.store.NotificationStore;
 import graphql.schema.DataFetchingEnvironment;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import org.junit.Test;
 
 public class NotificationDataFetcherTest {
 
