@@ -68,7 +68,7 @@ Usage
 -----
 The Notification service provides RESTful URLs when creating, retrieving and deleting notifications. All of the API paths are in the form of `/v1/notifications/<username>`. In the following examples, we'll be using `test` as the username.
 
-API documentation is also available via [Swagger](http://swagger.io) at `http://localhost:8080/swagger`.
+API documentation is also available via [GraphiQL](https://github.com/graphql/graphiql) at `http://localhost:8080/graphql`.
 
 ### Creating a notification
 
