@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Smoke Turner, LLC (contact@smoketurner.com)
+ * Copyright © 2019 Smoke Turner, LLC (github@smoketurner.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,8 +119,7 @@ public class CreateNotificationMutation implements DataFetcher<Notification> {
       return Collections.emptyMap();
     }
 
-    return map.entrySet()
-        .stream()
+    return map.entrySet().stream()
         .collect(Collectors.toMap(Map.Entry::getKey, e -> String.valueOf(e.getValue()).trim()));
   }
 }

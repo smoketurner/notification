@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Smoke Turner, LLC (contact@smoketurner.com)
+ * Copyright © 2019 Smoke Turner, LLC (github@smoketurner.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,8 +53,7 @@ public class NotificationListConverter extends Converter<NotificationListObject>
     }
 
     final NotificationListObject obj = new NotificationListObject();
-    list.getNotificationList()
-        .stream()
+    list.getNotificationList().stream()
         .map(NotificationListConverter::convert)
         .forEach(obj::addNotification);
     obj.deleteNotifications(list.getDeletedIdList());
@@ -66,9 +65,7 @@ public class NotificationListConverter extends Converter<NotificationListObject>
     final NotificationListPB.Builder builder =
         NotificationListPB.newBuilder().addAllDeletedId(domainObject.getDeletedIds());
 
-    domainObject
-        .getNotifications()
-        .stream()
+    domainObject.getNotifications().stream()
         .map(NotificationListConverter::convert)
         .forEach(builder::addNotification);
 
